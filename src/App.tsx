@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Menu,
   MapPin,
@@ -54,23 +54,97 @@ const scaleIn = {
   visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } }
 };
 
+const projects = [
+  {
+    id: 1,
+    title: "AIC Amal - Donation Platform",
+    description: "A comprehensive donation platform for different kinds of financial support and fundraising. Cross-platform solution with web app, Android & iOS mobile apps for collecting general donations, subscriptions, sponsorships, campaigns, and more.",
+    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop",
+    tech: ['React Native', 'Next.js', 'Node.js', 'Razorpay', 'MongoDB', 'Cross-Platform'],
+    featured: true,
+    demo: "#"
+  },
+  {
+    id: 2,
+    title: "E-Commerce Platform",
+    description: "PlantBox is a complete e-commerce platform that allows users to buy and sell plants online. It features a user-friendly interface, secure payment integration, and a wide range of plant products.",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop",
+    tech: ['E-Commerce', 'Razorpay', 'Online Shopping', 'Wordpress'],
+    featured: true
+  },
+  {
+    id: 3,
+    title: "Results Management System",
+    description: "A comprehensive results management system for educational institutions, allowing for efficient handling of student results, grading, and reporting.",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop",
+    tech: ['Next.js', 'MongoDB', 'Supabase'],
+    featured: false
+  },
+  {
+    id: 4,
+    title: "Business Website",
+    description: "A creative Website for a dubai-based business, showcasing their services and portfolio with modern design and professional presentation.",
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop",
+    tech: ['Responsive', 'Mobile-Friendly', 'SEO-Optimized'],
+    featured: false,
+    overlay: {
+      yellow: "Solutions",
+      white1: "to make",
+      white2: "things easier"
+    }
+  },
+  {
+    id: 5,
+    title: "Business Website for RKD Works",
+    description: "Business website for RKD Works, showcasing their services and portfolio with responsive design and local SEO optimization features.",
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop",
+    tech: ['Business Website', 'SEO-Optimized', 'Responsive'],
+    featured: false,
+    overlayText: "RKD"
+  }
+];
+
 export default function App() {
+  const [activeFilter, setActiveFilter] = useState('All');
+
+  const filters = ['All', 'React Native', 'Next.js', 'Node.js', 'MongoDB', 'E-Commerce', 'SEO-Optimized', 'Responsive'];
+
+  const filteredProjects = activeFilter === 'All' 
+    ? projects 
+    : projects.filter(project => project.tech.some(t => t.toLowerCase() === activeFilter.toLowerCase()));
+
+  const featuredProjects = filteredProjects.filter(p => p.featured);
+  const otherProjects = filteredProjects.filter(p => !p.featured);
+
   return (
     <div className="min-h-screen bg-[#0A0F1C] text-white font-sans selection:bg-purple-500/30 relative overflow-x-hidden">
       {/* Navbar */}
-      <nav className="flex items-center justify-between px-6 py-6 md:px-12 lg:px-24 border-b border-white/5 relative z-10">
+      <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 md:px-12 lg:px-24 border-b border-white/5 bg-[#0A0F1C]/80 backdrop-blur-md z-50">
         <div className="text-2xl font-bold tracking-tight">
-          Salman<span className="text-purple-500">.</span>
+          RAZI<span className="text-purple-500">.</span>
         </div>
         
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
-          <a href="#" className="text-emerald-400 border-b-2 border-emerald-400 pb-1">Home</a>
-          <a href="#" className="hover:text-white transition-colors">About</a>
-          <a href="#" className="hover:text-white transition-colors">Services</a>
-          <a href="#" className="hover:text-white transition-colors">Skills</a>
-          <a href="#" className="hover:text-white transition-colors">Resume</a>
-          <a href="#" className="hover:text-white transition-colors">Projects</a>
-          <a href="#" className="hover:text-white transition-colors">Contact</a>
+          <a href="#home" className="relative group text-emerald-400 pb-1">
+            Home
+            <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 transition-all duration-300"></span>
+          </a>
+          <a href="#about" className="relative group hover:text-white transition-colors pb-1">
+            About
+            <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-emerald-400 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+          </a>
+          <a href="#services" className="relative group hover:text-white transition-colors pb-1">
+            Services
+            <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-emerald-400 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+          </a>
+          <a href="#projects" className="relative group hover:text-white transition-colors pb-1">
+            Projects
+            <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-emerald-400 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+          </a>
+          <a href="#contact" className="relative group hover:text-white transition-colors pb-1">
+            Contact
+            <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-emerald-400 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+          </a>
         </div>
 
         <div className="flex items-center space-x-6">
@@ -85,10 +159,11 @@ export default function App() {
 
       {/* Hero Section */}
       <motion.main 
+        id="home"
         initial="hidden" 
         animate="visible" 
         variants={staggerContainer}
-        className="max-w-7xl mx-auto px-6 py-16 md:py-24 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10"
+        className="scroll-mt-24 max-w-7xl mx-auto px-6 pt-32 pb-16 md:pt-40 md:pb-24 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10"
       >
         
         {/* Left Content */}
@@ -103,7 +178,7 @@ export default function App() {
           {/* Headings */}
           <div className="space-y-4">
             <h1 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent pb-2">
-              Salman MP
+              RAZI
             </h1>
             <h2 className="text-3xl md:text-4xl font-semibold text-gray-100">
               Web Designer & Developer
@@ -133,10 +208,10 @@ export default function App() {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4 pt-2">
-            <button className="flex items-center space-x-2 bg-[#8B5CF6] hover:bg-purple-600 text-white px-8 py-3.5 rounded-full font-medium transition-colors">
+            <a href="#projects" className="flex items-center space-x-2 bg-[#8B5CF6] hover:bg-purple-600 text-white px-8 py-3.5 rounded-full font-medium transition-colors">
               <span>View My Work</span>
               <ArrowDown size={18} />
-            </button>
+            </a>
             <button className="flex items-center space-x-2 bg-transparent border border-white/20 hover:bg-white/5 text-white px-8 py-3.5 rounded-full font-medium transition-colors">
               <Download size={18} />
               <span>View Resume</span>
@@ -175,7 +250,7 @@ export default function App() {
             
             <img 
               src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop" 
-              alt="Salman MP" 
+              alt="RAZI" 
               className="w-full h-full object-cover object-center filter grayscale contrast-125 brightness-90"
             />
             
@@ -187,11 +262,12 @@ export default function App() {
 
       {/* About Section */}
       <motion.section 
+        id="about"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={staggerContainer}
-        className="max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10"
+        className="scroll-mt-24 max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10"
       >
         {/* Left Content */}
         <motion.div variants={fadeInUp} className="space-y-8">
@@ -204,7 +280,7 @@ export default function App() {
             </div>
             
             <p>
-              I'm Salman MP, expert Web Designer & Developer in Malappuram, Kerala with over 7 years of experience in creating digital experiences that drive business results. My expertise spans across E-Commerce development, SEO optimization, digital marketing, and graphic design.
+              I'm RAZI, expert Web Designer & Developer in Malappuram, Kerala with over 7 years of experience in creating digital experiences that drive business results. My expertise spans across E-Commerce development, SEO optimization, digital marketing, and graphic design.
             </p>
             <p>
               I believe in creating websites that not only look stunning but also convert visitors into customers. Every project I undertake is designed with user experience, search engine optimization, and business growth in mind.
@@ -255,7 +331,7 @@ export default function App() {
             <div className="w-full h-full rounded-full border border-white/10 overflow-hidden relative z-10 bg-[#1A1F2E]">
               <img 
                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop" 
-                alt="Salman MP Coffee" 
+                alt="RAZI Coffee" 
                 className="w-full h-full object-cover object-center filter grayscale contrast-125 brightness-90"
               />
             </div>
@@ -313,11 +389,12 @@ export default function App() {
 
       {/* Services Section */}
       <motion.section 
+        id="services"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={staggerContainer}
-        className="max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 relative z-10"
+        className="scroll-mt-24 max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 relative z-10"
       >
         {/* Header */}
         <motion.div variants={fadeInUp} className="flex flex-col items-center text-center space-y-6 mb-16">
@@ -501,11 +578,12 @@ export default function App() {
 
       {/* Featured Work Section */}
       <motion.section 
+        id="projects"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={staggerContainer}
-        className="max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 relative z-10"
+        className="scroll-mt-24 max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 relative z-10"
       >
         {/* Header */}
         <motion.div variants={fadeInUp} className="flex flex-col items-center text-center space-y-6 mb-16">
@@ -518,217 +596,188 @@ export default function App() {
           <p className="text-gray-400 text-lg max-w-2xl mt-8">
             Here are some of my recent projects that showcase my skills and passion for creating exceptional digital experiences.
           </p>
-        </motion.div>
 
-        {/* Main Featured Project */}
-        <motion.div variants={fadeInUp} className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24">
-          {/* Project Image */}
-          <div className="relative rounded-2xl overflow-hidden group">
-            <img 
-              src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop" 
-              alt="AIC Amal - Donation Platform" 
-              className="w-full h-auto object-cover rounded-2xl transition-transform duration-500 group-hover:scale-105"
-            />
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-purple-900/20 group-hover:bg-transparent transition-colors duration-500"></div>
-          </div>
-
-          {/* Project Info */}
-          <div className="space-y-6">
-            <h3 className="text-3xl font-bold text-white">AIC Amal - Donation Platform</h3>
-            <p className="text-gray-400 leading-relaxed">
-              A comprehensive donation platform for different kinds of financial support and fundraising. Cross-platform solution with web app, Android & iOS mobile apps for collecting general donations, subscriptions, sponsorships, campaigns, and more.
-            </p>
-            
-            {/* Tech Stack */}
-            <div className="flex flex-wrap gap-2 pt-2">
-              {['React Native', 'Next.js', 'Node.js', 'Razorpay', 'MongoDB', 'Cross-Platform'].map((tech) => (
-                <span key={tech} className="px-3 py-1 text-xs font-medium text-gray-300 bg-white/5 border border-white/10 rounded-full">
-                  {tech}
-                </span>
-              ))}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex items-center space-x-4 pt-4">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors">
-                View Details
-              </button>
-              <button className="flex items-center space-x-2 bg-transparent border border-white/20 hover:bg-white/5 text-white px-6 py-2.5 rounded-full font-medium transition-colors">
-                <ExternalLink size={16} />
-                <span>Live Demo</span>
-              </button>
-            </div>
+          {/* Filter Buttons */}
+          <div className="flex flex-wrap justify-center gap-3 mt-12">
+            {filters.map((filter) => (
+              <motion.button
+                key={filter}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveFilter(filter)}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 relative ${
+                  activeFilter === filter
+                    ? 'text-white'
+                    : 'bg-white/5 text-gray-400 border border-white/10 hover:border-purple-500/50 hover:text-white'
+                }`}
+              >
+                {activeFilter === filter && (
+                  <motion.div
+                    layoutId="activeFilter"
+                    className="absolute inset-0 bg-purple-600 rounded-full shadow-lg shadow-purple-500/30 -z-10"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                {filter}
+              </motion.button>
+            ))}
           </div>
         </motion.div>
 
-        {/* Secondary Featured Project */}
-        <motion.div variants={fadeInUp} className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24">
-          {/* Project Info (Left on Desktop) */}
-          <div className="space-y-6 order-2 lg:order-1">
-            <h3 className="text-3xl font-bold text-white">E-Commerce Platform</h3>
-            <p className="text-gray-400 leading-relaxed">
-              PlantBox is a complete e-commerce platform that allows users to buy and sell plants online. It features a user-friendly interface, secure payment integration, and a wide range of plant products.
-            </p>
-            
-            {/* Tech Stack */}
-            <div className="flex flex-wrap gap-2 pt-2">
-              {['E-Commerce', 'Razorpay', 'Online Shopping', 'Wordpress'].map((tech) => (
-                <span key={tech} className="px-3 py-1 text-xs font-medium text-gray-300 bg-white/5 border border-white/10 rounded-full">
-                  {tech}
-                </span>
-              ))}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex items-center space-x-4 pt-4">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors">
-                View Details
-              </button>
-            </div>
-          </div>
-
-          {/* Project Image (Right on Desktop) */}
-          <div className="relative rounded-2xl overflow-hidden group order-1 lg:order-2">
-            <img 
-              src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop" 
-              alt="E-Commerce Platform" 
-              className="w-full h-auto object-cover rounded-2xl transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-        </motion.div>
-
-        {/* Other Notable Projects */}
-        <motion.div variants={fadeInUp} className="mt-32">
-          <div className="flex flex-col items-center text-center space-y-6 mb-16">
-            <h2 className="text-3xl font-bold text-white relative inline-block">
-              Other Notable Projects
-              {/* Underline gradient */}
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Project Card 1 */}
-            <div className="bg-[#1A1F2E] border border-white/5 rounded-2xl overflow-hidden group hover:border-white/10 transition-all">
-              <div className="h-48 overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Results Management System" 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-              </div>
-              <div className="p-6 space-y-4">
-                <h3 className="text-xl font-bold text-white">Results Management System</h3>
-                <p className="text-gray-400 text-sm leading-relaxed line-clamp-3">
-                  A comprehensive results management system for educational institutions, allowing for efficient handling of student results, grading, and reporting.
-                </p>
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {['Next.JS', 'MongoDB', 'Supabase'].map((tech) => (
-                    <span key={tech} className="px-2 py-1 text-[10px] font-medium text-gray-400 bg-white/5 rounded">
-                      {tech}
-                    </span>
-                  ))}
+        {/* Projects Grid */}
+        <div className="space-y-24">
+          <AnimatePresence mode="popLayout">
+            {featuredProjects.map((project) => (
+              <motion.div 
+                key={project.id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.4 }}
+                className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+              >
+                {/* Project Image */}
+                <div className={`relative rounded-2xl overflow-hidden group transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(139,92,246,0.2)] border border-transparent hover:border-purple-500/30 ${project.id % 2 === 0 ? 'lg:order-2' : ''}`}>
+                  <img 
+                    src={project.image} 
+                    alt={project.title} 
+                    className="w-full h-auto object-cover rounded-2xl transition-transform duration-700 group-hover:scale-110"
+                  />
+                  {project.id === 1 && <div className="absolute inset-0 bg-purple-900/20 group-hover:bg-transparent transition-colors duration-500"></div>}
                 </div>
-                <div className="pt-4">
-                  <a href="#" className="inline-flex items-center text-blue-400 text-sm font-medium hover:text-blue-300 transition-colors">
-                    View Details <ChevronRight size={16} className="ml-1" />
-                  </a>
-                </div>
-              </div>
-            </div>
 
-            {/* Project Card 2 */}
-            <div className="bg-[#1A1F2E] border border-white/5 rounded-2xl overflow-hidden group hover:border-white/10 transition-all">
-              <div className="h-48 overflow-hidden relative">
-                <img 
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Business Website" 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-yellow-400 font-bold text-xl">Solutions</div>
-                    <div className="text-white font-bold text-xl">to make</div>
-                    <div className="text-white font-bold text-xl">things easier</div>
+                {/* Project Info */}
+                <div className={`space-y-6 ${project.id % 2 === 0 ? 'lg:order-1' : ''}`}>
+                  <h3 className="text-3xl font-bold text-white">{project.title}</h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    {project.description}
+                  </p>
+                  
+                  {/* Tech Stack */}
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {project.tech.map((tech) => (
+                      <span key={tech} className="px-3 py-1 text-xs font-medium text-gray-300 bg-white/5 border border-white/10 rounded-full">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center space-x-4 pt-4">
+                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors">
+                      View Details
+                    </button>
+                    {project.demo && (
+                      <button className="flex items-center space-x-2 bg-transparent border border-white/20 hover:bg-white/5 text-white px-6 py-2.5 rounded-full font-medium transition-colors">
+                        <ExternalLink size={16} />
+                        <span>Live Demo</span>
+                      </button>
+                    )}
                   </div>
                 </div>
-              </div>
-              <div className="p-6 space-y-4">
-                <h3 className="text-xl font-bold text-white">Business Website</h3>
-                <p className="text-gray-400 text-sm leading-relaxed line-clamp-3">
-                  A creative Website for a dubai-based business, showcasing their services and portfolio with modern design and professional presentation.
-                </p>
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {['Responsive', 'Mobile-Friendly', 'SEO-Optimized'].map((tech) => (
-                    <span key={tech} className="px-2 py-1 text-[10px] font-medium text-gray-400 bg-white/5 rounded">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-                <div className="pt-4">
-                  <a href="#" className="inline-flex items-center text-blue-400 text-sm font-medium hover:text-blue-300 transition-colors">
-                    View Details <ChevronRight size={16} className="ml-1" />
-                  </a>
-                </div>
-              </div>
-            </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
 
-            {/* Project Card 3 */}
-            <div className="bg-[#1A1F2E] border border-white/5 rounded-2xl overflow-hidden group hover:border-white/10 transition-all">
-              <div className="h-48 overflow-hidden relative">
-                <img 
-                  src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Business Website for RKD Works" 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                  <div className="text-white font-bold text-2xl tracking-widest">RKD</div>
-                </div>
+        {/* Other Notable Projects */}
+        <AnimatePresence mode="popLayout">
+          {otherProjects.length > 0 && (
+            <motion.div 
+              layout
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="mt-32"
+            >
+              <div className="flex flex-col items-center text-center space-y-6 mb-16">
+                <h2 className="text-3xl font-bold text-white relative inline-block">
+                  Other Notable Projects
+                  {/* Underline gradient */}
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
+                </h2>
               </div>
-              <div className="p-6 space-y-4">
-                <h3 className="text-xl font-bold text-white">Business Website for RKD Works</h3>
-                <p className="text-gray-400 text-sm leading-relaxed line-clamp-3">
-                  Business website for RKD Works, showcasing their services and portfolio with responsive design and local SEO optimization features.
-                </p>
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {['Business Website', 'SEO-Optimized', 'Responsive'].map((tech) => (
-                    <span key={tech} className="px-2 py-1 text-[10px] font-medium text-gray-400 bg-white/5 rounded">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-                <div className="pt-4">
-                  <a href="#" className="inline-flex items-center text-blue-400 text-sm font-medium hover:text-blue-300 transition-colors">
-                    View Details <ChevronRight size={16} className="ml-1" />
-                  </a>
-                </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {otherProjects.map((project) => (
+                  <motion.div 
+                    key={project.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-[#1A1F2E] border border-white/5 rounded-2xl overflow-hidden group hover:border-purple-500/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] hover:scale-[1.03] transition-all duration-500"
+                  >
+                    <div className="h-48 overflow-hidden relative">
+                      <img 
+                        src={project.image} 
+                        alt={project.title} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      {project.overlay && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="text-yellow-400 font-bold text-xl">{project.overlay.yellow}</div>
+                            <div className="text-white font-bold text-xl">{project.overlay.white1}</div>
+                            <div className="text-white font-bold text-xl">{project.overlay.white2}</div>
+                          </div>
+                        </div>
+                      )}
+                      {project.overlayText && (
+                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                          <div className="text-white font-bold text-2xl tracking-widest">{project.overlayText}</div>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-6 space-y-4">
+                      <h3 className="text-xl font-bold text-white">{project.title}</h3>
+                      <p className="text-gray-400 text-sm leading-relaxed line-clamp-3">
+                        {project.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        {project.tech.map((tech) => (
+                          <span key={tech} className="px-2 py-1 text-[10px] font-medium text-gray-400 bg-white/5 rounded">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="pt-4">
+                        <a href="#" className="inline-flex items-center text-blue-400 text-sm font-medium hover:text-blue-300 transition-colors">
+                          View Details <ChevronRight size={16} className="ml-1" />
+                        </a>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-            </div>
-          </div>
-        </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Call to Action */}
         <motion.div variants={fadeInUp} className="mt-24 flex flex-col items-center text-center space-y-6">
           <p className="text-gray-400">Interested in working together or want to see more of my work?</p>
           <div className="flex items-center space-x-4">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium transition-colors">
+            <a href="#projects" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium transition-colors">
               View More Projects
-            </button>
-            <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full font-medium transition-colors">
+            </a>
+            <a href="#contact" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full font-medium transition-colors">
               Let's Talk
-            </button>
+            </a>
           </div>
         </motion.div>
       </motion.section>
 
       {/* Contact Section */}
       <motion.section 
+        id="contact"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={staggerContainer}
-        className="max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 relative z-10"
+        className="scroll-mt-24 max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 relative z-10"
       >
         {/* Header */}
         <motion.div variants={fadeInUp} className="flex flex-col items-center text-center space-y-4 mb-16">
@@ -832,7 +881,7 @@ export default function App() {
                 </div>
                 <div>
                   <div className="text-xs text-gray-400 mb-0.5">Email</div>
-                  <div className="text-sm font-medium text-white">hello@salmanmp.me</div>
+                  <div className="text-sm font-medium text-white">hello@razi.me</div>
                 </div>
               </div>
 
@@ -904,7 +953,7 @@ export default function App() {
                     </div>
                     <div>
                       <div className="text-xs text-gray-300 leading-relaxed">
-                        <span className="font-bold text-emerald-400">Salman:</span> Hi! 👋 Thanks for reaching out. I'm excited to hear about your project and how I can help bring your ideas to life!
+                        <span className="font-bold text-emerald-400">RAZI:</span> Hi! 👋 Thanks for reaching out. I'm excited to hear about your project and how I can help bring your ideas to life!
                       </div>
                       <div className="text-[10px] text-gray-500 mt-1">Usually replies instantly</div>
                     </div>
@@ -973,9 +1022,9 @@ export default function App() {
               Want to promote your service or product? Or, you have any query? Drop an email.
             </p>
             
-            <a href="mailto:hello@salmanmp.me" className="inline-flex items-center space-x-2 text-white font-medium hover:text-white/80 transition-colors mb-8">
+            <a href="mailto:hello@razi.me" className="inline-flex items-center space-x-2 text-white font-medium hover:text-white/80 transition-colors mb-8">
               <Mail size={18} />
-              <span>hello@salmanmp.me</span>
+              <span>hello@razi.me</span>
             </a>
 
             <div className="space-y-4">
