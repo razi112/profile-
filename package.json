@@ -11,10 +11,14 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@google/genai": "^1.29.0",
+    "@supabase/supabase-js": "^2.99.2",
     "@tailwindcss/vite": "^4.1.14",
+    "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^5.0.4",
     "dotenv": "^17.2.3",
+    "emailjs-com": "^3.2.0",
     "express": "^4.21.2",
     "framer-motion": "^12.38.0",
     "lucide-react": "^0.546.0",
@@ -22,6 +26,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-parallax-tilt": "^1.7.320",
+    "react-router-dom": "^7.13.1",
     "vite": "^6.2.0"
   },
   "devDependencies": {

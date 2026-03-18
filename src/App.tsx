@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import { supabase } from './supabase';
 import {
   Menu,
   MapPin,
@@ -36,19 +37,21 @@ import {
   MessageSquare
 } from 'lucide-react';
 
+const EASE = [0.22, 1, 0.36, 1] as any;
+
 const fadeInUp = {
   hidden: { opacity: 0, y: 60 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } }
 };
 
 const fadeInLeft = {
   hidden: { opacity: 0, x: -60 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: EASE } }
 };
 
 const fadeInRight = {
   hidden: { opacity: 0, x: 60 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: EASE } }
 };
 
 const staggerContainer = {
@@ -61,12 +64,12 @@ const staggerContainer = {
 
 const scaleIn = {
   hidden: { opacity: 0, scale: 0.85 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: EASE } }
 };
 
 const rotateIn = {
   hidden: { opacity: 0, rotate: -8, scale: 0.9 },
-  visible: { opacity: 1, rotate: 0, scale: 1, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
+  visible: { opacity: 1, rotate: 0, scale: 1, transition: { duration: 0.7, ease: EASE } }
 };
 
 // Floating orb background component
@@ -117,7 +120,7 @@ const projects = [
     image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?q=80&w=1000&auto=format&fit=crop",
     tech: ['React Native', 'Next.js', 'Node.js', 'OpenAI', 'MongoDB', 'Cross-Platform'],
     featured: true,
-    demo: "#"
+    demo: "https://aiislamofficial.vercel.app/"
   },
   {
     id: 2,
@@ -125,7 +128,8 @@ const projects = [
     description: "PlantBox is a complete e-commerce platform that allows users to buy and sell plants online. It features a user-friendly interface, secure payment integration, and a wide range of plant products.",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop",
     tech: ['E-Commerce', 'Razorpay', 'Online Shopping', 'Wordpress'],
-    featured: true
+    featured: true,
+    comingSoon: true
   },
   {
     id: 3,
@@ -133,7 +137,8 @@ const projects = [
     description: "A comprehensive results management system for educational institutions, allowing for efficient handling of student results, grading, and reporting.",
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop",
     tech: ['Next.js', 'MongoDB', 'Supabase'],
-    featured: false
+    featured: false,
+    comingSoon: true
   },
   {
     id: 4,
@@ -142,6 +147,7 @@ const projects = [
     image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop",
     tech: ['Responsive', 'Mobile-Friendly', 'SEO-Optimized'],
     featured: false,
+    comingSoon: true,
     overlay: {
       yellow: "Solutions",
       white1: "to make",
@@ -155,9 +161,114 @@ const projects = [
     image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop",
     tech: ['Business Website', 'SEO-Optimized', 'Responsive'],
     featured: false,
+    comingSoon: true,
     overlayText: "RKD"
   }
 ];
+
+function ContactForm() {
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm(f => ({ ...f, [k]: e.target.value }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.email || !form.message) return;
+    setStatus('sending');
+    setErrorMsg('');
+
+    console.log('[ContactForm] Submitting:', form);
+
+    const { error } = await supabase.from('messages').insert([{
+      name: form.name,
+      email: form.email,
+      subject: form.subject,
+      message: form.message,
+      read: false,
+    }]);
+
+    if (error) {
+      console.error('[ContactForm] Insert error:', error.message);
+      setErrorMsg(error.message);
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 5000);
+      return;
+    }
+
+    console.log('[ContactForm] Message saved successfully');
+    setStatus('success');
+    setForm({ name: '', email: '', subject: '', message: '' });
+    setTimeout(() => setStatus('idle'), 4000);
+  };
+
+  const inputCls = "w-full bg-[#131826] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:shadow-[0_0_12px_rgba(139,92,246,0.15)] transition-all";
+
+  return (
+    <motion.div variants={fadeInUp} className="space-y-8">
+      <h3 className="text-2xl font-bold text-white">Send me a message</h3>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2 md:col-span-2">
+            <label className="text-sm font-medium text-gray-300">Full Name</label>
+            <input type="text" value={form.name} onChange={set('name')} placeholder="John Doe" required className={inputCls} />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-300">Email Address</label>
+          <input type="email" value={form.email} onChange={set('email')} placeholder="john@example.com" required className={inputCls} />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-300">Subject</label>
+          <input type="text" value={form.subject} onChange={set('subject')} placeholder="Project Collaboration" className={inputCls} />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-300">Message</label>
+          <textarea rows={4} value={form.message} onChange={set('message')} placeholder="Tell me about your project..." required className={`${inputCls} resize-none`}></textarea>
+        </div>
+
+        <AnimatePresence mode="wait">
+          {status === 'success' ? (
+            <motion.div key="success" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              className="w-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-medium py-3.5 rounded-lg flex items-center justify-center space-x-2">
+              <CheckCircle2 size={18} /><span>Message sent successfully!</span>
+            </motion.div>
+          ) : status === 'error' ? (
+            <motion.div key="error" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              className="w-full bg-red-500/10 border border-red-500/30 text-red-400 font-medium py-3.5 rounded-lg flex items-center justify-center space-x-2 text-sm px-4">
+              <span>Failed: {errorMsg || 'Something went wrong. Try again.'}</span>
+            </motion.div>
+          ) : (
+            <motion.button key="btn" type="submit" disabled={status === 'sending'}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="btn-emerald w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 text-white font-medium py-3.5 rounded-lg flex items-center justify-center space-x-2 transition-colors">
+              {status === 'sending' ? (
+                <><motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full" /><span>Sending...</span></>
+              ) : (
+                <><Send size={18} /><span>Send Message</span></>
+              )}
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </form>
+
+      <div className="bg-[#131826] border border-white/5 rounded-2xl p-6 space-y-4">
+        <h4 className="text-lg font-bold text-white">Let's create something amazing together!</h4>
+        <p className="text-gray-400 text-sm leading-relaxed">Whether you have a specific project in mind or just want to explore possibilities, I'd love to hear from you.</p>
+        <ul className="space-y-2 pt-2">
+          {['Usually responds within 24 hours','Available for remote collaboration','Open to freelance and full-time opportunities','Building high-performing websites & SEO strategies'].map((item, i) => (
+            <li key={i} className="flex items-start space-x-2 text-sm text-gray-300">
+              <CheckCircle2 size={16} className="text-emerald-400 mt-0.5 shrink-0" /><span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function App() {
   const [activeFilter, setActiveFilter] = useState('All');
@@ -437,18 +548,26 @@ export default function App() {
         variants={staggerContainer}
         className="scroll-mt-24 max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10"
       >
+        {/* Section ambient glow */}
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[120px] pointer-events-none -z-10" />
+        <div className="absolute right-0 top-1/3 w-[400px] h-[400px] bg-blue-600/5 rounded-full blur-[100px] pointer-events-none -z-10" />
+
         {/* Left Content */}
         <motion.div variants={fadeInLeft} className="space-y-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-white">About Me</h2>
+          <div className="relative inline-block">
+            <h2 className="text-4xl md:text-5xl font-bold text-white">About Me</h2>
+            <div className="absolute -bottom-2 left-0 w-16 h-0.5 bg-gradient-to-r from-purple-500 to-transparent rounded-full" />
+            <div className="absolute -bottom-2 left-0 w-16 h-0.5 bg-purple-500 rounded-full blur-sm opacity-70" />
+          </div>
           
           <div className="space-y-6 text-gray-400 text-lg leading-relaxed relative">
             {/* Decorative Circle */}
-            <div className="absolute -left-8 top-2 w-6 h-6 rounded-full border border-white/10 flex items-center justify-center hidden md:flex">
-              <div className="w-1.5 h-1.5 bg-white/20 rounded-full"></div>
+            <div className="absolute -left-8 top-2 w-6 h-6 rounded-full border border-purple-500/30 flex items-center justify-center hidden md:flex shadow-[0_0_8px_rgba(139,92,246,0.3)]">
+              <div className="w-1.5 h-1.5 bg-purple-500/60 rounded-full"></div>
             </div>
             
             <p>
-              I'm RAZI, expert Web Designer & Developer in Malappuram, Kerala with over 7 years of experience in creating digital experiences that drive business results. My expertise spans across E-Commerce development, SEO optimization, digital marketing, and graphic design.
+              I'm RAZI, expert Web Designer & Developer in Malappuram, Kerala with over 1 years of experience in creating digital experiences that drive business results. My expertise spans across E-Commerce development, SEO optimization, digital marketing, and graphic design.
             </p>
             <p>
               I believe in creating websites that not only look stunning but also convert visitors into customers. Every project I undertake is designed with user experience, search engine optimization, and business growth in mind.
@@ -466,7 +585,7 @@ export default function App() {
                 'SEO Optimization', 'Digital Marketing', 'Mobile App Development',
                 'Graphic Design', 'Brand Strategy', 'Wikipedia Page Creation'
               ].map((skill) => (
-                <div key={skill} className="bg-[#13182B] border border-white/8 hover:border-white/20 transition-colors rounded-full px-5 py-2.5 text-sm font-medium text-gray-400 cursor-default">
+                <div key={skill} className="bg-[#13182B] border border-white/8 hover:border-purple-500/40 hover:text-white hover:shadow-[0_0_12px_rgba(139,92,246,0.2)] transition-all duration-300 rounded-full px-5 py-2.5 text-sm font-medium text-gray-400 cursor-default">
                   {skill}
                 </div>
               ))}
@@ -506,25 +625,25 @@ export default function App() {
 
             {/* Badge */}
             <div className="absolute bottom-6 right-0 bg-[#1A1F2E] border border-white/10 text-white font-bold px-6 py-2.5 rounded-full shadow-lg z-20 text-sm">
-              7+ Years
+              1 Year
             </div>
           </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-4 mt-12">
-            <div className="bg-[#131826] border border-white/5 rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 hover:bg-[#1A1F35] transition-colors">
-              <div className="w-12 h-12 bg-[#8B5CF6] text-white rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
-                <Award size={24} />
+            <div className="bg-[#131826] border border-white/5 hover:border-purple-500/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.12)] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300">
+              <div className="w-12 h-12 bg-purple-500/10 text-white rounded-xl flex items-center justify-center shadow-[0_0_12px_rgba(139,92,246,0.2)]">
+                <Award size={24} className="text-purple-400" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-white">50+</div>
+                <div className="text-3xl font-bold text-white">20+</div>
                 <div className="text-sm text-gray-400 mt-1">Projects Completed</div>
               </div>
             </div>
             
-            <div className="bg-[#131826] border border-white/5 rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 hover:bg-[#1A1F35] transition-colors">
-              <div className="w-12 h-12 bg-[#6366F1] text-white rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                <Users size={24} />
+            <div className="bg-[#131826] border border-white/5 hover:border-blue-500/30 hover:shadow-[0_0_20px_rgba(99,102,241,0.12)] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300">
+              <div className="w-12 h-12 bg-blue-500/10 text-white rounded-xl flex items-center justify-center shadow-[0_0_12px_rgba(99,102,241,0.2)]">
+                <Users size={24} className="text-blue-400" />
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">30+</div>
@@ -532,9 +651,9 @@ export default function App() {
               </div>
             </div>
 
-            <div className="bg-[#131826] border border-white/5 rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 hover:bg-[#1A1F35] transition-colors">
-              <div className="w-12 h-12 bg-white/5 text-white rounded-xl flex items-center justify-center">
-                <Coffee size={24} className="text-gray-400" />
+            <div className="bg-[#131826] border border-white/5 hover:border-amber-500/30 hover:shadow-[0_0_20px_rgba(245,158,11,0.1)] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300">
+              <div className="w-12 h-12 bg-amber-500/10 text-white rounded-xl flex items-center justify-center shadow-[0_0_12px_rgba(245,158,11,0.15)]">
+                <Coffee size={24} className="text-amber-400" />
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">1000+</div>
@@ -542,13 +661,13 @@ export default function App() {
               </div>
             </div>
 
-            <div className="bg-[#131826] border border-white/5 rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 hover:bg-[#1A1F35] transition-colors">
-              <div className="w-12 h-12 bg-white/5 text-white rounded-xl flex items-center justify-center">
-                <Heart size={24} className="text-gray-400" />
+            <div className="bg-[#131826] border border-white/5 hover:border-rose-500/30 hover:shadow-[0_0_20px_rgba(244,63,94,0.1)] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300">
+              <div className="w-12 h-12 bg-rose-500/10 text-white rounded-xl flex items-center justify-center shadow-[0_0_12px_rgba(244,63,94,0.15)]">
+                <Heart size={24} className="text-rose-400" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-white">7+</div>
-                <div className="text-sm text-gray-400 mt-1">Years of Experience</div>
+                <div className="text-3xl font-bold text-white">1</div>
+                <div className="text-sm text-gray-400 mt-1">Year of Experience</div>
               </div>
             </div>
           </div>
@@ -574,16 +693,24 @@ export default function App() {
         variants={staggerContainer}
         className="scroll-mt-24 max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 relative z-10"
       >
+        {/* Section ambient glow */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[700px] h-[400px] bg-purple-600/5 rounded-full blur-[130px] pointer-events-none -z-10" />
+        <div className="absolute right-0 bottom-1/3 w-[350px] h-[350px] bg-emerald-600/4 rounded-full blur-[100px] pointer-events-none -z-10" />
+
         {/* Header */}
         <motion.div variants={fadeInUp} className="flex flex-col items-center text-center space-y-6 mb-16">
           <div className="inline-flex items-center space-x-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm text-gray-300">
-            <Sparkles size={14} className="text-orange-400" />
+            <Sparkles size={14} className="text-purple-400/70" />
             <span>What I Offer</span>
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
-            Services & Expertise
-          </h2>
+          <div className="relative pb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-white">
+              Services & Expertise
+            </h2>
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-40 h-0.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent rounded-full" />
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-40 h-0.5 bg-purple-500 rounded-full blur-sm opacity-50" />
+          </div>
           
           <p className="text-gray-400 text-lg max-w-2xl">
             Comprehensive digital solutions to help your business thrive online. From concept to launch, I deliver exceptional results that exceed expectations.
@@ -598,11 +725,11 @@ export default function App() {
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Web Development Card (Active) */}
-          <motion.div variants={fadeInUp} className="card-shine bg-[#131826] border border-purple-500/20 rounded-2xl p-8 space-y-6 shadow-[0_0_20px_rgba(139,92,246,0.08)] relative overflow-hidden group transition-all hover:-translate-y-1 hover:border-purple-500/40">
+          <motion.div variants={fadeInUp} className="card-shine bg-[#131826] border border-purple-500/20 rounded-2xl p-8 space-y-6 shadow-[0_0_20px_rgba(139,92,246,0.08)] relative overflow-hidden group transition-all hover:-translate-y-1 hover:border-purple-500/50 hover:shadow-[0_0_35px_rgba(139,92,246,0.18)]">
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-500/5 to-transparent opacity-50"></div>
             <div className="relative z-10">
-              <div className="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6">
-                <CodeXml size={28} className="text-purple-400/80" />
+              <div className="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-purple-500/20 group-hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] transition-all duration-300">
+                <CodeXml size={28} className="text-purple-400/80 group-hover:text-purple-300 transition-colors" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Web Development</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6">
@@ -615,10 +742,10 @@ export default function App() {
           </motion.div>
 
           {/* E-Commerce Solutions Card */}
-          <motion.div variants={fadeInUp} className="card-shine bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1">
+          <motion.div variants={fadeInUp} className="card-shine bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1 hover:border-emerald-500/30 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)]">
             <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-white/8 transition-colors">
-                <ShoppingCart size={28} className="text-gray-400 group-hover:text-gray-300 transition-colors" />
+              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/10 group-hover:shadow-[0_0_16px_rgba(16,185,129,0.2)] transition-all duration-300">
+                <ShoppingCart size={28} className="text-gray-400 group-hover:text-emerald-400 transition-colors" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">E-Commerce Solutions</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">
@@ -631,10 +758,10 @@ export default function App() {
           </motion.div>
 
           {/* SEO Optimization Card */}
-          <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1">
+          <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1 hover:border-orange-500/30 hover:shadow-[0_0_30px_rgba(249,115,22,0.1)]">
             <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-white/8 transition-colors">
-                <Search size={28} className="text-gray-400 group-hover:text-gray-300 transition-colors" />
+              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-500/10 group-hover:shadow-[0_0_16px_rgba(249,115,22,0.2)] transition-all duration-300">
+                <Search size={28} className="text-gray-400 group-hover:text-orange-400 transition-colors" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">SEO Optimization</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">
@@ -647,10 +774,10 @@ export default function App() {
           </motion.div>
 
           {/* Digital Marketing Card */}
-          <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1">
+          <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1 hover:border-rose-500/30 hover:shadow-[0_0_30px_rgba(244,63,94,0.1)]">
             <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-white/8 transition-colors">
-                <TrendingUp size={28} className="text-gray-400 group-hover:text-gray-300 transition-colors" />
+              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-rose-500/10 group-hover:shadow-[0_0_16px_rgba(244,63,94,0.2)] transition-all duration-300">
+                <TrendingUp size={28} className="text-gray-400 group-hover:text-rose-400 transition-colors" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Digital Marketing</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">
@@ -663,10 +790,10 @@ export default function App() {
           </motion.div>
 
           {/* Graphic Design Card */}
-          <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1">
+          <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1 hover:border-purple-500/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)]">
             <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-white/8 transition-colors">
-                <Palette size={28} className="text-gray-400 group-hover:text-gray-300 transition-colors" />
+              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-purple-500/10 group-hover:shadow-[0_0_16px_rgba(139,92,246,0.2)] transition-all duration-300">
+                <Palette size={28} className="text-gray-400 group-hover:text-purple-400 transition-colors" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Graphic Design</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">
@@ -679,10 +806,10 @@ export default function App() {
           </motion.div>
 
           {/* Server Management Card */}
-          <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1">
+          <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1 hover:border-teal-500/30 hover:shadow-[0_0_30px_rgba(20,184,166,0.1)]">
             <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-white/8 transition-colors">
-                <Server size={28} className="text-gray-400 group-hover:text-gray-300 transition-colors" />
+              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-teal-500/10 group-hover:shadow-[0_0_16px_rgba(20,184,166,0.2)] transition-all duration-300">
+                <Server size={28} className="text-gray-400 group-hover:text-teal-400 transition-colors" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Server Management</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">
@@ -711,7 +838,7 @@ export default function App() {
                 <Trophy size={28} className="text-gray-400" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-white">50+</div>
+                <div className="text-3xl font-bold text-white">20+</div>
                 <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Projects Completed</div>
               </div>
             </div>
@@ -828,9 +955,17 @@ export default function App() {
                   <img 
                     src={project.image} 
                     alt={project.title} 
-                    className="w-full h-auto object-cover rounded-2xl transition-transform duration-700 group-hover:scale-110"
+                    className={`w-full h-auto object-cover rounded-2xl transition-transform duration-700 group-hover:scale-110 ${project.comingSoon ? 'brightness-50' : ''}`}
                   />
                   {project.id === 1 && <div className="absolute inset-0 bg-purple-900/20 group-hover:bg-transparent transition-colors duration-500"></div>}
+                  {project.comingSoon && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="flex items-center space-x-2 bg-black/60 backdrop-blur-sm border border-amber-400/30 rounded-full px-5 py-2.5">
+                        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                        <span className="text-amber-400 font-semibold tracking-wide">Coming Soon</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Project Info */}
@@ -851,14 +986,23 @@ export default function App() {
 
                   {/* Action Buttons */}
                   <div className="flex items-center space-x-4 pt-4">
-                    <button className="btn-primary bg-[#8B5CF6] hover:bg-purple-600 text-white px-6 py-2.5 rounded-full font-medium transition-colors">
-                      View Details
-                    </button>
-                    {project.demo && (
-                      <button className="btn-ghost flex items-center space-x-2 bg-transparent border border-white/20 text-white px-6 py-2.5 rounded-full font-medium">
-                        <ExternalLink size={16} />
-                        <span>Live Demo</span>
-                      </button>
+                    {project.comingSoon ? (
+                      <div className="flex items-center space-x-2 bg-white/5 border border-white/10 rounded-full px-6 py-2.5">
+                        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                        <span className="text-sm font-medium text-amber-400">Coming Soon</span>
+                      </div>
+                    ) : (
+                      <>
+                        <a href={project.demo || '#'} target="_blank" rel="noopener noreferrer" className="btn-primary bg-[#8B5CF6] hover:bg-purple-600 text-white px-6 py-2.5 rounded-full font-medium transition-colors">
+                          View Details
+                        </a>
+                        {project.demo && (
+                          <a href={project.demo} target="_blank" rel="noopener noreferrer" className="btn-ghost flex items-center space-x-2 bg-transparent border border-white/20 text-white px-6 py-2.5 rounded-full font-medium">
+                            <ExternalLink size={16} />
+                            <span>Live Demo</span>
+                          </a>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
@@ -900,7 +1044,7 @@ export default function App() {
                       <img 
                         src={project.image} 
                         alt={project.title} 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${project.comingSoon ? 'brightness-50' : ''}`}
                       />
                       {project.overlay && (
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -914,6 +1058,14 @@ export default function App() {
                       {project.overlayText && (
                         <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                           <div className="text-white font-bold text-2xl tracking-widest">{project.overlayText}</div>
+                        </div>
+                      )}
+                      {project.comingSoon && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="flex items-center space-x-2 bg-black/60 backdrop-blur-sm border border-amber-400/30 rounded-full px-4 py-2">
+                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                            <span className="text-amber-400 text-sm font-semibold tracking-wide">Coming Soon</span>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -930,9 +1082,16 @@ export default function App() {
                         ))}
                       </div>
                       <div className="pt-4">
-                        <a href="#" className="inline-flex items-center text-blue-400 text-sm font-medium hover:text-blue-300 transition-colors">
-                          View Details <ChevronRight size={16} className="ml-1" />
-                        </a>
+                        {project.comingSoon ? (
+                          <div className="inline-flex items-center space-x-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                            <span className="text-sm font-medium text-amber-400">Coming Soon</span>
+                          </div>
+                        ) : (
+                          <a href="#" className="inline-flex items-center text-gray-400 text-sm font-medium hover:text-white transition-colors">
+                            View Details <ChevronRight size={16} className="ml-1" />
+                          </a>
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -987,83 +1146,7 @@ export default function App() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left Column - Form */}
-          <motion.div variants={fadeInUp} className="space-y-8">
-            <h3 className="text-2xl font-bold text-white">Send me a message</h3>
-            
-            <form className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-300">First Name</label>
-                  <input 
-                    type="text" 
-                    placeholder="John"
-                    className="w-full bg-[#131826] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-300">Last Name</label>
-                  <input 
-                    type="text" 
-                    placeholder="Doe"
-                    className="w-full bg-[#131826] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">Email Address</label>
-                <input 
-                  type="email" 
-                  placeholder="john@example.com"
-                  className="w-full bg-[#131826] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">Subject</label>
-                <input 
-                  type="text" 
-                  placeholder="Project Collaboration"
-                  className="w-full bg-[#131826] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">Message</label>
-                <textarea 
-                  rows={4}
-                  placeholder="Tell me about your project..."
-                  className="w-full bg-[#131826] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors resize-none"
-                ></textarea>
-              </div>
-
-              <button type="button" className="btn-emerald w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3.5 rounded-lg flex items-center justify-center space-x-2 transition-colors">
-                <Send size={18} />
-                <span>Send Message</span>
-              </button>
-            </form>
-
-            {/* Info Box */}
-            <div className="bg-[#131826] border border-white/5 rounded-2xl p-6 space-y-4">
-              <h4 className="text-lg font-bold text-white">Let's create something amazing together!</h4>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                I'm always excited to take on new challenges and collaborate with passionate individuals and teams. Whether you have a specific project in mind or just want to explore possibilities, I'd love to hear from you.
-              </p>
-              <ul className="space-y-2 pt-2">
-                {[
-                  'Usually responds within 24 hours',
-                  'Available for remote collaboration',
-                  'Open to freelance and full-time opportunities',
-                  'Building high-performing websites & SEO strategies'
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start space-x-2 text-sm text-gray-300">
-                    <CheckCircle2 size={16} className="text-blue-400 mt-0.5 shrink-0" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </motion.div>
+          <ContactForm />
 
           {/* Right Column - Contact Info */}
           <motion.div variants={fadeInUp} className="space-y-6">
@@ -1247,19 +1330,119 @@ export default function App() {
         </div>
       </motion.div>
 
-      {/* Chat Button */}
-      <div className="fixed bottom-8 right-8 flex items-center space-x-4 z-20">
-        <div className="hidden md:flex bg-[#1A1F2E] text-gray-300 px-4 py-2.5 rounded-full text-sm border border-white/10 shadow-lg items-center">
-          <MessageCircle size={16} className="mr-2 text-gray-400" />
-          Need help? Let's Discuss!
-        </div>
-        <button className="relative bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-full shadow-lg transition-transform hover:scale-105">
-          <MessageCircle size={24} />
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#0A0F1C]">
-            1
-          </span>
-        </button>
-      </div>
+      {/* Chat Button + WhatsApp Popup */}
+      {(() => {
+        const [chatOpen, setChatOpen] = React.useState(false);
+        const waMessage = encodeURIComponent("Hi! I'm interested in discussing a project. Can we chat?");
+        const waLink = `https://wa.me/918129489071?text=${waMessage}`;
+        return (
+          <div className="fixed bottom-8 right-8 flex flex-col items-end space-y-3 z-50">
+            {/* Popup */}
+            <AnimatePresence>
+              {chatOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                  className="w-80 rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+                >
+                  {/* Header */}
+                  <div className="bg-emerald-500 px-4 py-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="relative">
+                        <div className="w-10 h-10 bg-emerald-400 rounded-full flex items-center justify-center">
+                          <MessageCircle size={20} className="text-white" />
+                        </div>
+                        <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-white rounded-full border-2 border-emerald-500"></span>
+                      </div>
+                      <div>
+                        <div className="text-white font-bold text-sm">RAZI KV</div>
+                        <div className="flex items-center space-x-1 text-emerald-100 text-xs">
+                          <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
+                          <span>Online now</span>
+                        </div>
+                      </div>
+                    </div>
+                    <button onClick={() => setChatOpen(false)} className="text-white/80 hover:text-white transition-colors">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                  </div>
+
+                  {/* Body */}
+                  <div className="bg-[#0F1623] px-4 py-5 space-y-4">
+                    {/* Incoming message */}
+                    <div className="flex items-start space-x-3">
+                      <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                        <MessageCircle size={14} className="text-white" />
+                      </div>
+                      <div className="bg-[#1A2235] rounded-2xl rounded-tl-none px-4 py-3 max-w-[220px]">
+                        <p className="text-white text-sm leading-relaxed">Hi there! 👋 Thanks for your interest. How can I help you today?</p>
+                        <div className="flex items-center space-x-1 mt-1.5 text-gray-500 text-[10px]">
+                          <Clock size={10} />
+                          <span>Just now</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Outgoing message */}
+                    <div className="bg-[#1A2235] rounded-2xl px-4 py-3">
+                      <p className="text-gray-300 text-sm leading-relaxed">Hi! I'm interested in discussing a project. Can we chat?</p>
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="bg-[#0F1623] px-4 pb-4 space-y-3 border-t border-white/5 pt-3">
+                    <a
+                      href={waLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-emerald w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl flex items-center justify-center space-x-2 transition-colors"
+                    >
+                      <Send size={16} />
+                      <span>Send via WhatsApp</span>
+                    </a>
+                    <p className="text-center text-gray-600 text-xs">We'll reply as soon as possible</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Trigger button row */}
+            <div className="flex items-center space-x-3">
+              {!chatOpen && (
+                <motion.div
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="hidden md:flex bg-[#1A1F2E] text-gray-300 px-4 py-2.5 rounded-full text-sm border border-white/10 shadow-lg items-center"
+                >
+                  <MessageCircle size={16} className="mr-2 text-gray-400" />
+                  Need help? Let's Discuss!
+                </motion.div>
+              )}
+              <button
+                onClick={() => setChatOpen(o => !o)}
+                className="relative bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-full shadow-lg shadow-emerald-500/30 transition-transform hover:scale-105"
+              >
+                <AnimatePresence mode="wait">
+                  {chatOpen ? (
+                    <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </motion.div>
+                  ) : (
+                    <motion.div key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                      <MessageCircle size={24} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                {!chatOpen && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#0A0F1C]">1</span>
+                )}
+              </button>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/5 bg-[#070B14]">
