@@ -529,16 +529,18 @@ export default function App() {
           {/* Image Container */}
           <motion.div
             style={{ rotate: imageRotate }}
+            whileHover={{ scale: 1.03 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="relative w-full max-w-[480px] aspect-square lg:aspect-[4/4.5] rounded-[2rem] bg-[#1A1F2E] border border-white/10 overflow-hidden shadow-2xl hover:shadow-purple-500/30 transition-shadow duration-500 group"
           >
             {/* Corner glows */}
-            <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/40 blur-[60px] rounded-full mix-blend-screen transition-all duration-700 group-hover:w-64 group-hover:h-64" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/30 blur-[60px] rounded-full mix-blend-screen transition-all duration-700 group-hover:w-64 group-hover:h-64" />
+            <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/40 blur-[60px] rounded-full mix-blend-screen transition-all duration-700 group-hover:w-64 group-hover:h-64 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/30 blur-[60px] rounded-full mix-blend-screen transition-all duration-700 group-hover:w-64 group-hover:h-64 pointer-events-none" />
 
             <img 
               src="https://i.pinimg.com/736x/be/62/bd/be62bda2f0917f849b036b86c00da298.jpg"
               alt="RAZI" 
-              className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+              className="w-full h-full object-cover object-top"
             />
 
             {/* Overlay gradient */}
@@ -679,7 +681,7 @@ export default function App() {
             {/* Main Image */}
             <div className="w-full h-full rounded-full border border-white/10 overflow-hidden relative z-10 bg-[#1A1F2E] group">
               <img 
-                src="https://i.pinimg.com/736x/be/62/bd/be62bda2f0917f849b036b86c00da298.jpg"
+                src="https://i.pinimg.com/736x/a0/10/04/a01004e01fee6fc2c3dcf76a1af31b01.jpg"
                 alt="RAZI" 
                 className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
               />
