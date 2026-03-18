@@ -271,7 +271,6 @@ function ContactForm() {
 }
 
 export default function App() {
-  const [activeFilter, setActiveFilter] = useState('All');
   const [activeSection, setActiveSection] = useState('home');
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 600], [0, -120]);
@@ -280,7 +279,7 @@ export default function App() {
   const imageRotate = useTransform(scrollY, [0, 600], [0, 4]);
 
   useEffect(() => {
-    const sections = ['home', 'about', 'services', 'projects', 'contact'];
+    const sections = ['home', 'about', 'services', 'contact'];
     const observers: IntersectionObserver[] = [];
 
     sections.forEach((id) => {
@@ -312,15 +311,6 @@ export default function App() {
     };
   }, []);
 
-  const filters = ['All', 'React Native', 'Next.js', 'Node.js', 'MongoDB', 'OpenAI', 'E-Commerce', 'SEO-Optimized', 'Responsive'];
-
-  const filteredProjects = activeFilter === 'All' 
-    ? projects 
-    : projects.filter(project => project.tech.some(t => t.toLowerCase() === activeFilter.toLowerCase()));
-
-  const featuredProjects = filteredProjects.filter(p => p.featured);
-  const otherProjects = filteredProjects.filter(p => !p.featured);
-
   return (
     <div className="min-h-screen bg-[#0A0F1C] text-white font-sans selection:bg-purple-500/30 relative overflow-x-hidden">
       <FloatingOrbs />
@@ -332,16 +322,86 @@ export default function App() {
         </a>
         
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
+          {/* Home */}
+          <a
+            href="#home"
+            className={`relative group pb-1 transition-colors ${activeSection === 'home' ? 'text-emerald-400' : 'hover:text-white'}`}
+          >
+            Home
+            <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left transition-transform duration-300 ${activeSection === 'home' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
+          </a>
+
+          {/* About — with hover dropdown preview */}
+          <div className="relative group">
+            <a
+              href="#about"
+              className={`relative pb-1 transition-colors inline-block ${activeSection === 'about' ? 'text-emerald-400' : 'hover:text-white'}`}
+            >
+              About
+              <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left transition-transform duration-300 ${activeSection === 'about' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
+            </a>
+
+            {/* Dropdown card */}
+            <div className="absolute top-full left-0 mt-4 w-[480px] opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out z-50 pointer-events-none group-hover:pointer-events-auto">
+              {/* Arrow */}
+              <div className="absolute -top-2 left-6 w-4 h-4 bg-[#131826] border-l border-t border-white/10 rotate-45" />
+
+              <div className="bg-[#131826] border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
+                <div className="flex gap-0">
+                  {/* Left — image */}
+                  <div className="w-52 shrink-0 relative overflow-hidden min-h-[240px]">
+                    <img
+                      src="https://i.pinimg.com/736x/be/62/bd/be62bda2f0917f849b036b86c00da298.jpg"
+                      alt="RAZI"
+                      className="w-full h-full object-cover object-top absolute inset-0"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#131826]/50" />
+                  </div>
+
+                  {/* Right — info */}
+                  <div className="flex-1 p-5 space-y-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-white font-bold text-base">Hi, I'm RAZI ✦</h3>
+                      </div>
+                      <div className="w-10 h-0.5 bg-gradient-to-r from-purple-500 to-emerald-500 rounded-full mt-1.5" />
+                    </div>
+
+                    <p className="text-gray-400 text-xs leading-relaxed">
+                      Web Designer & Developer with 7+ years of experience building stunning digital experiences, e-commerce platforms, and SEO strategies.
+                    </p>
+
+                    <div>
+                      <p className="text-gray-500 text-[10px] font-semibold uppercase tracking-wider mb-1.5">Core Skills</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {['Web Design', 'React', 'Next.js', 'SEO', 'E-Commerce'].map(s => (
+                          <span key={s} className="text-[10px] px-2 py-0.5 rounded-full border border-purple-500/30 text-purple-300 bg-purple-500/10">
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <a href="#about"
+                      className="inline-flex items-center gap-1.5 bg-gradient-to-r from-purple-600 to-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-full transition-all hover:opacity-90">
+                      Learn more about me →
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Remaining links */}
           {[
-            { id: 'home', label: 'Home' },
-            { id: 'about', label: 'About' },
-            { id: 'services', label: 'Services' },
-            { id: 'projects', label: 'Projects' },
-            { id: 'contact', label: 'Contact' },
-          ].map(({ id, label }) => (
+            { id: 'services', label: 'Services', href: '#services' },
+            { id: 'skills', label: 'Skills', href: '/skills' },
+            { id: 'projects', label: 'Projects', href: '/projects' },
+            { id: 'contact', label: 'Contact', href: '#contact' },
+          ].map(({ id, label, href }) => (
             <a
               key={id}
-              href={`#${id}`}
+              href={href}
               className={`relative group pb-1 transition-colors ${activeSection === id ? 'text-emerald-400' : 'hover:text-white'}`}
             >
               {label}
@@ -351,9 +411,11 @@ export default function App() {
         </div>
 
         <div className="flex items-center space-x-6">
-          <button className="btn-emerald hidden md:block bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-full font-medium transition-colors">
-            WhatsApp
-          </button>
+          <a href="https://wa.me/918129489071" target="_blank" rel="noopener noreferrer"
+            className="btn-emerald hidden md:flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-full font-medium transition-colors">
+            <MessageCircle size={16} />
+            <span>WhatsApp</span>
+          </a>
           <button className="text-gray-400 hover:text-white">
             <Menu size={24} />
           </button>
@@ -413,14 +475,14 @@ export default function App() {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4 pt-2">
-            <a href="#projects" className="btn-primary flex items-center space-x-2 bg-[#8B5CF6] hover:bg-purple-600 text-white px-8 py-3.5 rounded-full font-medium transition-colors">
+            <a href="/projects" className="btn-primary flex items-center space-x-2 bg-[#8B5CF6] hover:bg-purple-600 text-white px-8 py-3.5 rounded-full font-medium transition-colors">
               <span>View My Work</span>
               <ArrowDown size={18} />
             </a>
-            <button className="btn-ghost flex items-center space-x-2 bg-transparent border border-white/20 text-white px-8 py-3.5 rounded-full font-medium">
+            <a href="/resume" className="btn-ghost flex items-center space-x-2 bg-transparent border border-white/20 text-white px-8 py-3.5 rounded-full font-medium">
               <Download size={18} />
               <span>View Resume</span>
-            </button>
+            </a>
           </div>
 
           {/* Social Links */}
@@ -882,242 +944,6 @@ export default function App() {
       {/* Section Divider */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-24">
         <div className="flex items-center gap-4">
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
-          <motion.div whileInView={{ scale: [0, 1.5, 1] }} transition={{ duration: 0.8 }} viewport={{ once: true }}
-            className="w-2 h-2 bg-blue-500 rounded-full" />
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
-        </div>
-      </div>
-
-      {/* Featured Work Section */}
-      <motion.section 
-        id="projects"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={staggerContainer}
-        className="scroll-mt-24 max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 relative z-10"
-      >
-        {/* Header */}
-        <motion.div variants={fadeInUp} className="flex flex-col items-center text-center space-y-6 mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white relative inline-block">
-            Featured Work
-            {/* Underline gradient */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
-          </h2>
-          
-          <p className="text-gray-400 text-lg max-w-2xl mt-8">
-            Here are some of my recent projects that showcase my skills and passion for creating exceptional digital experiences.
-          </p>
-
-          {/* Filter Buttons */}
-          <div className="flex flex-wrap justify-center gap-3 mt-12">
-            {filters.map((filter) => (
-              <motion.button
-                key={filter}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setActiveFilter(filter)}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 relative ${
-                  activeFilter === filter
-                    ? 'text-white'
-                    : 'bg-white/5 text-gray-400 border border-white/10 hover:border-purple-500/50 hover:text-white'
-                }`}
-              >
-                {activeFilter === filter && (
-                  <motion.div
-                    layoutId="activeFilter"
-                    className="absolute inset-0 bg-purple-600 rounded-full shadow-lg shadow-purple-500/30 -z-10"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                {filter}
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Projects Grid */}
-        <div className="space-y-24">
-          <AnimatePresence mode="popLayout">
-            {featuredProjects.map((project) => (
-              <motion.div 
-                key={project.id}
-                layout
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.4 }}
-                className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
-              >
-                {/* Project Image */}
-                <div className={`relative rounded-2xl overflow-hidden group transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(139,92,246,0.2)] border border-transparent hover:border-purple-500/30 ${project.id % 2 === 0 ? 'lg:order-2' : ''}`}>
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
-                    className={`w-full h-auto object-cover rounded-2xl transition-transform duration-700 group-hover:scale-110 ${project.comingSoon ? 'brightness-50' : ''}`}
-                  />
-                  {project.id === 1 && <div className="absolute inset-0 bg-purple-900/20 group-hover:bg-transparent transition-colors duration-500"></div>}
-                  {project.comingSoon && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="flex items-center space-x-2 bg-black/60 backdrop-blur-sm border border-amber-400/30 rounded-full px-5 py-2.5">
-                        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                        <span className="text-amber-400 font-semibold tracking-wide">Coming Soon</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Project Info */}
-                <div className={`space-y-6 ${project.id % 2 === 0 ? 'lg:order-1' : ''}`}>
-                  <h3 className="text-3xl font-bold text-white">{project.title}</h3>
-                  <p className="text-gray-400 leading-relaxed">
-                    {project.description}
-                  </p>
-                  
-                  {/* Tech Stack */}
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {project.tech.map((tech) => (
-                      <span key={tech} className="px-3 py-1 text-xs font-medium text-gray-300 bg-white/5 border border-white/10 rounded-full">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex items-center space-x-4 pt-4">
-                    {project.comingSoon ? (
-                      <div className="flex items-center space-x-2 bg-white/5 border border-white/10 rounded-full px-6 py-2.5">
-                        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                        <span className="text-sm font-medium text-amber-400">Coming Soon</span>
-                      </div>
-                    ) : (
-                      <>
-                        <a href={project.demo || '#'} target="_blank" rel="noopener noreferrer" className="btn-primary bg-[#8B5CF6] hover:bg-purple-600 text-white px-6 py-2.5 rounded-full font-medium transition-colors">
-                          View Details
-                        </a>
-                        {project.demo && (
-                          <a href={project.demo} target="_blank" rel="noopener noreferrer" className="btn-ghost flex items-center space-x-2 bg-transparent border border-white/20 text-white px-6 py-2.5 rounded-full font-medium">
-                            <ExternalLink size={16} />
-                            <span>Live Demo</span>
-                          </a>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {/* Other Notable Projects */}
-        <AnimatePresence mode="popLayout">
-          {otherProjects.length > 0 && (
-            <motion.div 
-              layout
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="mt-32"
-            >
-              <div className="flex flex-col items-center text-center space-y-6 mb-16">
-                <h2 className="text-3xl font-bold text-white relative inline-block">
-                  Other Notable Projects
-                  {/* Underline gradient */}
-                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {otherProjects.map((project) => (
-                  <motion.div 
-                    key={project.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                    className="bg-[#1A1F2E] border border-white/5 rounded-2xl overflow-hidden group hover:border-purple-500/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] hover:scale-[1.03] transition-all duration-500"
-                  >
-                    <div className="h-48 overflow-hidden relative">
-                      <img 
-                        src={project.image} 
-                        alt={project.title} 
-                        className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${project.comingSoon ? 'brightness-50' : ''}`}
-                      />
-                      {project.overlay && (
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="text-yellow-400 font-bold text-xl">{project.overlay.yellow}</div>
-                            <div className="text-white font-bold text-xl">{project.overlay.white1}</div>
-                            <div className="text-white font-bold text-xl">{project.overlay.white2}</div>
-                          </div>
-                        </div>
-                      )}
-                      {project.overlayText && (
-                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                          <div className="text-white font-bold text-2xl tracking-widest">{project.overlayText}</div>
-                        </div>
-                      )}
-                      {project.comingSoon && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="flex items-center space-x-2 bg-black/60 backdrop-blur-sm border border-amber-400/30 rounded-full px-4 py-2">
-                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                            <span className="text-amber-400 text-sm font-semibold tracking-wide">Coming Soon</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-6 space-y-4">
-                      <h3 className="text-xl font-bold text-white">{project.title}</h3>
-                      <p className="text-gray-400 text-sm leading-relaxed line-clamp-3">
-                        {project.description}
-                      </p>
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        {project.tech.map((tech) => (
-                          <span key={tech} className="px-2 py-1 text-[10px] font-medium text-gray-400 bg-white/5 rounded">
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="pt-4">
-                        {project.comingSoon ? (
-                          <div className="inline-flex items-center space-x-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                            <span className="text-sm font-medium text-amber-400">Coming Soon</span>
-                          </div>
-                        ) : (
-                          <a href="#" className="inline-flex items-center text-gray-400 text-sm font-medium hover:text-white transition-colors">
-                            View Details <ChevronRight size={16} className="ml-1" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Call to Action */}
-        <motion.div variants={fadeInUp} className="mt-24 flex flex-col items-center text-center space-y-6">
-          <p className="text-gray-400">Interested in working together or want to see more of my work?</p>
-          <div className="flex items-center space-x-4">
-            <a href="#projects" className="btn-primary bg-[#8B5CF6] hover:bg-purple-600 text-white px-8 py-3 rounded-full font-medium transition-colors">
-              View More Projects
-            </a>
-            <a href="#contact" className="btn-ghost border border-white/20 text-white px-8 py-3 rounded-full font-medium">
-              Let's Talk
-            </a>
-          </div>
-        </motion.div>
-      </motion.section>
-
-      {/* Section Divider */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-24">
-        <div className="flex items-center gap-4">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-rose-500/30 to-transparent" />
           <motion.div whileInView={{ scale: [0, 1.5, 1] }} transition={{ duration: 0.8 }} viewport={{ once: true }}
             className="w-2 h-2 bg-rose-500 rounded-full" />
@@ -1284,7 +1110,7 @@ export default function App() {
                 <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                 <span className="text-xs text-gray-400">Available for new projects</span>
               </div>
-              <span className="text-xs font-bold text-emerald-400">2025</span>
+              <span className="text-xs font-bold text-emerald-400">2026</span>
             </div>
           </motion.div>
         </div>
@@ -1466,7 +1292,7 @@ export default function App() {
               {[
                 { label: 'Home', href: '#home' },
                 { label: 'About', href: '#about' },
-                { label: 'Work', href: '#projects' },
+                { label: 'Work', href: '/projects' },
                 { label: 'Services', href: '#services' },
                 { label: 'Contact', href: '#contact' },
               ].map(({ label, href }) => (
