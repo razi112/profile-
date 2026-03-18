@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
 import {
   Menu,
   MapPin,
@@ -37,30 +37,85 @@ import {
 } from 'lucide-react';
 
 const fadeInUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  hidden: { opacity: 0, y: 60 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
+};
+
+const fadeInLeft = {
+  hidden: { opacity: 0, x: -60 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
+};
+
+const fadeInRight = {
+  hidden: { opacity: 0, x: 60 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.15 }
+    transition: { staggerChildren: 0.12, delayChildren: 0.1 }
   }
 };
 
 const scaleIn = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } }
+  hidden: { opacity: 0, scale: 0.85 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
 };
+
+const rotateIn = {
+  hidden: { opacity: 0, rotate: -8, scale: 0.9 },
+  visible: { opacity: 1, rotate: 0, scale: 1, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
+};
+
+// Floating orb background component
+function FloatingOrbs() {
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      <motion.div
+        animate={{ x: [0, 80, -40, 0], y: [0, -60, 40, 0], scale: [1, 1.2, 0.9, 1] }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[10%] left-[5%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px]"
+      />
+      <motion.div
+        animate={{ x: [0, -60, 80, 0], y: [0, 80, -40, 0], scale: [1, 0.8, 1.3, 1] }}
+        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+        className="absolute top-[40%] right-[5%] w-[600px] h-[600px] bg-blue-600/8 rounded-full blur-[140px]"
+      />
+      <motion.div
+        animate={{ x: [0, 50, -70, 0], y: [0, -80, 60, 0], scale: [1, 1.1, 0.85, 1] }}
+        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 6 }}
+        className="absolute bottom-[10%] left-[30%] w-[400px] h-[400px] bg-emerald-600/8 rounded-full blur-[100px]"
+      />
+      <motion.div
+        animate={{ x: [0, -40, 60, 0], y: [0, 50, -30, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 9 }}
+        className="absolute top-[60%] left-[10%] w-[300px] h-[300px] bg-rose-600/6 rounded-full blur-[90px]"
+      />
+    </div>
+  );
+}
+
+// Animated grid lines background
+function GridBackground() {
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.03]"
+      style={{
+        backgroundImage: `linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)`,
+        backgroundSize: '60px 60px'
+      }}
+    />
+  );
+}
 
 const projects = [
   {
     id: 1,
-    title: "AIC Amal - Donation Platform",
-    description: "A comprehensive donation platform for different kinds of financial support and fundraising. Cross-platform solution with web app, Android & iOS mobile apps for collecting general donations, subscriptions, sponsorships, campaigns, and more.",
-    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop",
-    tech: ['React Native', 'Next.js', 'Node.js', 'Razorpay', 'MongoDB', 'Cross-Platform'],
+    title: "AI Islam - Your Best AI Tool",
+    description: "An intelligent AI-powered platform built for the Muslim community, offering Islamic knowledge, Quran tafsir, Hadith search, prayer guidance, and personalized spiritual assistance — all powered by advanced AI models.",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?q=80&w=1000&auto=format&fit=crop",
+    tech: ['React Native', 'Next.js', 'Node.js', 'OpenAI', 'MongoDB', 'Cross-Platform'],
     featured: true,
     demo: "#"
   },
@@ -106,8 +161,47 @@ const projects = [
 
 export default function App() {
   const [activeFilter, setActiveFilter] = useState('All');
+  const [activeSection, setActiveSection] = useState('home');
+  const { scrollY } = useScroll();
+  const heroY = useTransform(scrollY, [0, 600], [0, -120]);
+  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const imageY = useTransform(scrollY, [0, 600], [0, 60]);
+  const imageRotate = useTransform(scrollY, [0, 600], [0, 4]);
 
-  const filters = ['All', 'React Native', 'Next.js', 'Node.js', 'MongoDB', 'E-Commerce', 'SEO-Optimized', 'Responsive'];
+  useEffect(() => {
+    const sections = ['home', 'about', 'services', 'projects', 'contact'];
+    const observers: IntersectionObserver[] = [];
+
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const observer = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
+        { threshold: 0.3 }
+      );
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    // Magnetic mouse tracking for btn-primary
+    const handleMouseMove = (e: MouseEvent) => {
+      const btn = (e.currentTarget as HTMLElement);
+      const rect = btn.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      btn.style.setProperty('--mx', `${x}%`);
+      btn.style.setProperty('--my', `${y}%`);
+    };
+    const btns = document.querySelectorAll<HTMLElement>('.btn-primary');
+    btns.forEach(b => b.addEventListener('mousemove', handleMouseMove));
+
+    return () => {
+      observers.forEach((o) => o.disconnect());
+      btns.forEach(b => b.removeEventListener('mousemove', handleMouseMove));
+    };
+  }, []);
+
+  const filters = ['All', 'React Native', 'Next.js', 'Node.js', 'MongoDB', 'OpenAI', 'E-Commerce', 'SEO-Optimized', 'Responsive'];
 
   const filteredProjects = activeFilter === 'All' 
     ? projects 
@@ -118,37 +212,35 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#0A0F1C] text-white font-sans selection:bg-purple-500/30 relative overflow-x-hidden">
+      <FloatingOrbs />
+      <GridBackground />
       {/* Navbar */}
       <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 md:px-12 lg:px-24 border-b border-white/5 bg-[#0A0F1C]/80 backdrop-blur-md z-50">
-        <div className="text-2xl font-bold tracking-tight">
-          RAZI<span className="text-purple-500">.</span>
-        </div>
+        <a href="#home" className="group text-2xl font-bold tracking-tight cursor-pointer">
+          <span className="transition-colors duration-300 group-hover:text-purple-400">RAZI</span><span className="text-purple-500 transition-colors duration-300 group-hover:text-white">kv</span>
+        </a>
         
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
-          <a href="#home" className="relative group text-emerald-400 pb-1">
-            Home
-            <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 transition-all duration-300"></span>
-          </a>
-          <a href="#about" className="relative group hover:text-white transition-colors pb-1">
-            About
-            <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-emerald-400 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
-          </a>
-          <a href="#services" className="relative group hover:text-white transition-colors pb-1">
-            Services
-            <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-emerald-400 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
-          </a>
-          <a href="#projects" className="relative group hover:text-white transition-colors pb-1">
-            Projects
-            <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-emerald-400 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
-          </a>
-          <a href="#contact" className="relative group hover:text-white transition-colors pb-1">
-            Contact
-            <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-emerald-400 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
-          </a>
+          {[
+            { id: 'home', label: 'Home' },
+            { id: 'about', label: 'About' },
+            { id: 'services', label: 'Services' },
+            { id: 'projects', label: 'Projects' },
+            { id: 'contact', label: 'Contact' },
+          ].map(({ id, label }) => (
+            <a
+              key={id}
+              href={`#${id}`}
+              className={`relative group pb-1 transition-colors ${activeSection === id ? 'text-emerald-400' : 'hover:text-white'}`}
+            >
+              {label}
+              <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left transition-transform duration-300 ${activeSection === id ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
+            </a>
+          ))}
         </div>
 
         <div className="flex items-center space-x-6">
-          <button className="hidden md:block bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-full font-medium transition-colors">
+          <button className="btn-emerald hidden md:block bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-full font-medium transition-colors">
             WhatsApp
           </button>
           <button className="text-gray-400 hover:text-white">
@@ -165,9 +257,11 @@ export default function App() {
         variants={staggerContainer}
         className="scroll-mt-24 max-w-7xl mx-auto px-6 pt-32 pb-16 md:pt-40 md:pb-24 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10"
       >
-        
+        {/* Hero spotlight */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-radial from-purple-600/15 via-transparent to-transparent pointer-events-none blur-3xl" />
+
         {/* Left Content */}
-        <motion.div variants={fadeInUp} className="space-y-8">
+        <motion.div style={{ y: heroY, opacity: heroOpacity }} variants={fadeInLeft} className="space-y-8">
           {/* Badge */}
           <div className="inline-flex items-center space-x-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm text-gray-300">
             <MapPin size={14} className="text-emerald-500" />
@@ -177,7 +271,7 @@ export default function App() {
 
           {/* Headings */}
           <div className="space-y-4">
-            <h1 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent pb-2">
+            <h1 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent pb-2 glow-text">
               RAZI
             </h1>
             <h2 className="text-3xl md:text-4xl font-semibold text-gray-100">
@@ -208,11 +302,11 @@ export default function App() {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4 pt-2">
-            <a href="#projects" className="flex items-center space-x-2 bg-[#8B5CF6] hover:bg-purple-600 text-white px-8 py-3.5 rounded-full font-medium transition-colors">
+            <a href="#projects" className="btn-primary flex items-center space-x-2 bg-[#8B5CF6] hover:bg-purple-600 text-white px-8 py-3.5 rounded-full font-medium transition-colors">
               <span>View My Work</span>
               <ArrowDown size={18} />
             </a>
-            <button className="flex items-center space-x-2 bg-transparent border border-white/20 hover:bg-white/5 text-white px-8 py-3.5 rounded-full font-medium transition-colors">
+            <button className="btn-ghost flex items-center space-x-2 bg-transparent border border-white/20 text-white px-8 py-3.5 rounded-full font-medium">
               <Download size={18} />
               <span>View Resume</span>
             </button>
@@ -220,13 +314,13 @@ export default function App() {
 
           {/* Social Links */}
           <div className="flex items-center space-x-4 pt-4">
-            <a href="#" className="p-3.5 bg-white/5 border border-white/10 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all">
+            <a href="#" className="btn-social p-3.5 bg-white/5 border border-white/10 rounded-full text-gray-400 hover:text-white">
               <Github size={20} />
             </a>
-            <a href="#" className="p-3.5 bg-white/5 border border-white/10 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all">
+            <a href="#" className="btn-social p-3.5 bg-white/5 border border-white/10 rounded-full text-gray-400 hover:text-white">
               <Linkedin size={20} />
             </a>
-            <a href="#" className="p-3.5 bg-white/5 border border-white/10 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all">
+            <a href="#" className="btn-social p-3.5 bg-white/5 border border-white/10 rounded-full text-gray-400 hover:text-white">
               <Instagram size={20} />
             </a>
             <a href="#" className="p-3.5 bg-white/5 border border-white/10 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all">
@@ -239,26 +333,100 @@ export default function App() {
 
         {/* Right Content - Image */}
         <motion.div 
-          variants={scaleIn}
+          variants={fadeInRight}
+          style={{ y: imageY }}
           className="relative flex justify-center lg:justify-end"
         >
+          {/* Spinning ring */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-[-20px] rounded-[2.5rem] border border-dashed border-purple-500/20 pointer-events-none"
+          />
+          {/* Spinning ring 2 */}
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-[-40px] rounded-[3rem] border border-dashed border-emerald-500/10 pointer-events-none"
+          />
+
+          {/* Glow blob behind image */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-purple-600/30 via-blue-600/20 to-emerald-600/20 blur-[60px] rounded-[2rem] scale-110" />
+
           {/* Image Container */}
-          <div className="relative w-full max-w-[480px] aspect-square lg:aspect-[4/4.5] rounded-[2rem] bg-[#1A1F2E] border border-white/5 overflow-hidden shadow-2xl hover:shadow-purple-500/20 transition-shadow duration-500">
-            {/* Inner glow corners */}
-            <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/40 blur-[60px] rounded-full mix-blend-screen"></div>
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/30 blur-[60px] rounded-full mix-blend-screen"></div>
-            
+          <motion.div
+            style={{ rotate: imageRotate }}
+            className="relative w-full max-w-[480px] aspect-square lg:aspect-[4/4.5] rounded-[2rem] bg-[#1A1F2E] border border-white/10 overflow-hidden shadow-2xl hover:shadow-purple-500/30 transition-shadow duration-500 group"
+          >
+            {/* Corner glows */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/40 blur-[60px] rounded-full mix-blend-screen transition-all duration-700 group-hover:w-64 group-hover:h-64" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/30 blur-[60px] rounded-full mix-blend-screen transition-all duration-700 group-hover:w-64 group-hover:h-64" />
+
             <img 
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop" 
+              src="https://i.pinimg.com/736x/be/62/bd/be62bda2f0917f849b036b86c00da298.jpg"
               alt="RAZI" 
-              className="w-full h-full object-cover object-center filter grayscale contrast-125 brightness-90"
+              className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
             />
-            
-            {/* Overlay gradient to match the dark theme at the bottom */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1A1F2E]/80 via-transparent to-transparent"></div>
-          </div>
+
+            {/* Overlay gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0F1C]/70 via-transparent to-transparent" />
+
+            {/* Floating badge on image */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1, duration: 0.6 }}
+              className="absolute bottom-6 left-6 right-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-3 flex items-center justify-between"
+            >
+              <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                <span className="text-xs text-white font-medium">Available for work</span>
+              </div>
+              <span className="text-xs text-emerald-400 font-bold">2026</span>
+            </motion.div>
+          </motion.div>
+
+          {/* Floating skill chips */}
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -left-4 top-1/4 bg-[#1A1F2E] border border-blue-500/30 rounded-xl px-3 py-2 shadow-lg shadow-blue-500/10 hidden lg:flex items-center space-x-2"
+          >
+            <Code2 size={14} className="text-blue-400" />
+            <span className="text-xs text-white font-medium">React Dev</span>
+          </motion.div>
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            className="absolute -right-4 top-1/3 bg-[#1A1F2E] border border-emerald-500/30 rounded-xl px-3 py-2 shadow-lg shadow-emerald-500/10 hidden lg:flex items-center space-x-2"
+          >
+            <TrendingUp size={14} className="text-emerald-400" />
+            <span className="text-xs text-white font-medium">SEO Expert</span>
+          </motion.div>
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute -left-2 bottom-1/4 bg-[#1A1F2E] border border-purple-500/30 rounded-xl px-3 py-2 shadow-lg shadow-purple-500/10 hidden lg:flex items-center space-x-2"
+          >
+            <Palette size={14} className="text-purple-400" />
+            <span className="text-xs text-white font-medium">UI Designer</span>
+          </motion.div>
         </motion.div>
       </motion.main>
+
+      {/* Section Divider */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-24">
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent" />
+          <motion.div
+            whileInView={{ rotate: [0, 180, 360] }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            viewport={{ once: true }}
+            className="w-2 h-2 bg-purple-500 rounded-full"
+          />
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent" />
+        </div>
+      </div>
 
       {/* About Section */}
       <motion.section 
@@ -270,13 +438,13 @@ export default function App() {
         className="scroll-mt-24 max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10"
       >
         {/* Left Content */}
-        <motion.div variants={fadeInUp} className="space-y-8">
+        <motion.div variants={fadeInLeft} className="space-y-8">
           <h2 className="text-4xl md:text-5xl font-bold text-white">About Me</h2>
           
           <div className="space-y-6 text-gray-400 text-lg leading-relaxed relative">
             {/* Decorative Circle */}
-            <div className="absolute -left-8 top-2 w-6 h-6 rounded-full border border-blue-500 flex items-center justify-center hidden md:flex">
-              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+            <div className="absolute -left-8 top-2 w-6 h-6 rounded-full border border-white/10 flex items-center justify-center hidden md:flex">
+              <div className="w-1.5 h-1.5 bg-white/20 rounded-full"></div>
             </div>
             
             <p>
@@ -298,7 +466,7 @@ export default function App() {
                 'SEO Optimization', 'Digital Marketing', 'Mobile App Development',
                 'Graphic Design', 'Brand Strategy', 'Wikipedia Page Creation'
               ].map((skill) => (
-                <div key={skill} className="bg-[#13182B] border border-blue-500/20 hover:border-blue-500/50 transition-colors rounded-full px-5 py-2.5 text-sm font-medium text-gray-300 cursor-default">
+                <div key={skill} className="bg-[#13182B] border border-white/8 hover:border-white/20 transition-colors rounded-full px-5 py-2.5 text-sm font-medium text-gray-400 cursor-default">
                   {skill}
                 </div>
               ))}
@@ -307,37 +475,37 @@ export default function App() {
         </motion.div>
 
         {/* Right Content */}
-        <motion.div variants={scaleIn} className="relative">
+        <motion.div variants={fadeInRight} className="relative">
           {/* Circular Image with Glow */}
           <div className="relative w-full max-w-[480px] mx-auto aspect-square">
             {/* Background Glows */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-blue-600/20 via-purple-600/20 to-pink-600/20 blur-[80px] rounded-full -z-10"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-purple-900/20 via-slate-800/10 to-indigo-900/20 blur-[80px] rounded-full -z-10"></div>
             
             {/* Floating Shapes */}
             {/* Top Right Circle */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full opacity-90 shadow-lg"></div>
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-purple-900/40 rounded-full border border-purple-500/10 shadow-lg"></div>
             {/* Bottom Left Circle */}
-            <div className="absolute bottom-12 -left-8 w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full opacity-90 shadow-lg"></div>
+            <div className="absolute bottom-12 -left-8 w-16 h-16 bg-indigo-900/40 rounded-full border border-indigo-500/10 shadow-lg"></div>
             {/* Middle Left Pill */}
-            <div className="absolute top-1/3 -left-12 w-6 h-16 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-full opacity-90 shadow-lg"></div>
-            {/* Middle Right Orange Circle */}
-            <div className="absolute top-1/3 -right-8 w-12 h-12 bg-gradient-to-br from-orange-400 to-amber-500 rounded-full opacity-90 shadow-lg"></div>
+            <div className="absolute top-1/3 -left-12 w-6 h-16 bg-slate-700/50 rounded-full border border-white/5 shadow-lg"></div>
+            {/* Middle Right Circle */}
+            <div className="absolute top-1/3 -right-8 w-12 h-12 bg-slate-700/50 rounded-full border border-white/5 shadow-lg"></div>
             {/* Bottom Right Square */}
-            <div className="absolute -bottom-4 right-12 w-8 h-8 bg-purple-500 opacity-90 rotate-12 rounded-sm shadow-lg"></div>
+            <div className="absolute -bottom-4 right-12 w-8 h-8 bg-purple-900/40 opacity-80 rotate-12 rounded-sm border border-purple-500/10 shadow-lg"></div>
             {/* Top Left Hollow Square */}
-            <div className="absolute top-0 left-12 w-10 h-10 border-[3px] border-blue-400 opacity-80 rotate-12 rounded-sm"></div>
+            <div className="absolute top-0 left-12 w-10 h-10 border-[2px] border-white/10 opacity-60 rotate-12 rounded-sm"></div>
             
             {/* Main Image */}
-            <div className="w-full h-full rounded-full border border-white/10 overflow-hidden relative z-10 bg-[#1A1F2E]">
+            <div className="w-full h-full rounded-full border border-white/10 overflow-hidden relative z-10 bg-[#1A1F2E] group">
               <img 
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop" 
-                alt="RAZI Coffee" 
-                className="w-full h-full object-cover object-center filter grayscale contrast-125 brightness-90"
+                src="https://i.pinimg.com/736x/be/62/bd/be62bda2f0917f849b036b86c00da298.jpg"
+                alt="RAZI" 
+                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
               />
             </div>
 
             {/* Badge */}
-            <div className="absolute bottom-6 right-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold px-6 py-2.5 rounded-full shadow-lg z-20 border border-white/10 text-sm">
+            <div className="absolute bottom-6 right-0 bg-[#1A1F2E] border border-white/10 text-white font-bold px-6 py-2.5 rounded-full shadow-lg z-20 text-sm">
               7+ Years
             </div>
           </div>
@@ -365,8 +533,8 @@ export default function App() {
             </div>
 
             <div className="bg-[#131826] border border-white/5 rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 hover:bg-[#1A1F35] transition-colors">
-              <div className="w-12 h-12 bg-[#8B5CF6] text-white rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
-                <Coffee size={24} />
+              <div className="w-12 h-12 bg-white/5 text-white rounded-xl flex items-center justify-center">
+                <Coffee size={24} className="text-gray-400" />
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">1000+</div>
@@ -375,8 +543,8 @@ export default function App() {
             </div>
 
             <div className="bg-[#131826] border border-white/5 rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 hover:bg-[#1A1F35] transition-colors">
-              <div className="w-12 h-12 bg-[#8B5CF6] text-white rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
-                <Heart size={24} />
+              <div className="w-12 h-12 bg-white/5 text-white rounded-xl flex items-center justify-center">
+                <Heart size={24} className="text-gray-400" />
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">7+</div>
@@ -386,6 +554,16 @@ export default function App() {
           </div>
         </motion.div>
       </motion.section>
+
+      {/* Section Divider */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-24">
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
+          <motion.div whileInView={{ scale: [0, 1.5, 1] }} transition={{ duration: 0.8 }} viewport={{ once: true }}
+            className="w-2 h-2 bg-emerald-500 rounded-full" />
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
+        </div>
+      </div>
 
       {/* Services Section */}
       <motion.section 
@@ -403,17 +581,15 @@ export default function App() {
             <span>What I Offer</span>
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-bold">
-            <span className="text-emerald-400">Ser</span>
-            <span className="text-rose-400">vices & </span>
-            <span className="text-amber-400">Expertise</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white">
+            Services & Expertise
           </h2>
           
           <p className="text-gray-400 text-lg max-w-2xl">
             Comprehensive digital solutions to help your business thrive online. From concept to launch, I deliver exceptional results that exceed expectations.
           </p>
           
-          <button className="flex items-center space-x-2 bg-gradient-to-r from-emerald-500 to-rose-500 hover:opacity-90 text-white px-6 py-2.5 rounded-full font-medium transition-opacity mt-4">
+          <button className="flex items-center space-x-2 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 px-6 py-2.5 rounded-full font-medium transition-colors mt-4">
             <CodeXml size={18} />
             <span>View Technical Skills</span>
           </button>
@@ -422,33 +598,33 @@ export default function App() {
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Web Development Card (Active) */}
-          <motion.div variants={fadeInUp} className="bg-[#2A3454] border border-blue-500 rounded-2xl p-8 space-y-6 shadow-[0_0_30px_rgba(59,130,246,0.15)] relative overflow-hidden group transition-all hover:-translate-y-1">
-            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-500/10 to-transparent opacity-50"></div>
+          <motion.div variants={fadeInUp} className="card-shine bg-[#131826] border border-purple-500/20 rounded-2xl p-8 space-y-6 shadow-[0_0_20px_rgba(139,92,246,0.08)] relative overflow-hidden group transition-all hover:-translate-y-1 hover:border-purple-500/40">
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-500/5 to-transparent opacity-50"></div>
             <div className="relative z-10">
-              <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6">
-                <CodeXml size={28} className="text-blue-400" />
+              <div className="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6">
+                <CodeXml size={28} className="text-purple-400/80" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Web Development</h3>
-              <p className="text-gray-300 text-sm leading-relaxed mb-6">
+              <p className="text-gray-400 text-sm leading-relaxed mb-6">
                 Custom websites and web applications built with modern technologies and best practices.
               </p>
-              <a href="#" className="inline-flex items-center text-blue-400 text-sm font-medium hover:text-blue-300 transition-colors">
+              <a href="#" className="inline-flex items-center text-gray-400 text-sm font-medium hover:text-white transition-colors">
                 Learn more <ChevronRight size={16} className="ml-1" />
               </a>
             </div>
           </motion.div>
 
           {/* E-Commerce Solutions Card */}
-          <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1">
+          <motion.div variants={fadeInUp} className="card-shine bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1">
             <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/10 transition-colors">
-                <ShoppingCart size={28} className="text-emerald-400" />
+              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-white/8 transition-colors">
+                <ShoppingCart size={28} className="text-gray-400 group-hover:text-gray-300 transition-colors" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">E-Commerce Solutions</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">
                 Complete online stores with payment integration and inventory management systems.
               </p>
-              <a href="#" className="inline-flex items-center text-emerald-400 text-sm font-medium hover:text-emerald-300 transition-colors">
+              <a href="#" className="inline-flex items-center text-gray-500 text-sm font-medium hover:text-white transition-colors">
                 Learn more <ChevronRight size={16} className="ml-1" />
               </a>
             </div>
@@ -457,14 +633,14 @@ export default function App() {
           {/* SEO Optimization Card */}
           <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1">
             <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-500/10 transition-colors">
-                <Search size={28} className="text-orange-400" />
+              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-white/8 transition-colors">
+                <Search size={28} className="text-gray-400 group-hover:text-gray-300 transition-colors" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">SEO Optimization</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">
                 Improve your search rankings and drive organic traffic to your website effectively with proven SEO strategies.
               </p>
-              <a href="#" className="inline-flex items-center text-orange-400 text-sm font-medium hover:text-orange-300 transition-colors">
+              <a href="#" className="inline-flex items-center text-gray-500 text-sm font-medium hover:text-white transition-colors">
                 Learn more <ChevronRight size={16} className="ml-1" />
               </a>
             </div>
@@ -473,14 +649,14 @@ export default function App() {
           {/* Digital Marketing Card */}
           <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1">
             <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-rose-500/10 transition-colors">
-                <TrendingUp size={28} className="text-rose-400" />
+              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-white/8 transition-colors">
+                <TrendingUp size={28} className="text-gray-400 group-hover:text-gray-300 transition-colors" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Digital Marketing</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">
                 Strategic marketing campaigns to grow your online presence and business reach through targeted digital channels.
               </p>
-              <a href="#" className="inline-flex items-center text-rose-400 text-sm font-medium hover:text-rose-300 transition-colors">
+              <a href="#" className="inline-flex items-center text-gray-500 text-sm font-medium hover:text-white transition-colors">
                 Learn more <ChevronRight size={16} className="ml-1" />
               </a>
             </div>
@@ -489,14 +665,14 @@ export default function App() {
           {/* Graphic Design Card */}
           <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1">
             <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-purple-500/10 transition-colors">
-                <Palette size={28} className="text-purple-400" />
+              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-white/8 transition-colors">
+                <Palette size={28} className="text-gray-400 group-hover:text-gray-300 transition-colors" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Graphic Design</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">
                 Creative visual solutions including branding, logos, and marketing materials for businesses.
               </p>
-              <a href="#" className="inline-flex items-center text-purple-400 text-sm font-medium hover:text-purple-300 transition-colors">
+              <a href="#" className="inline-flex items-center text-gray-500 text-sm font-medium hover:text-white transition-colors">
                 Learn more <ChevronRight size={16} className="ml-1" />
               </a>
             </div>
@@ -505,14 +681,14 @@ export default function App() {
           {/* Server Management Card */}
           <motion.div variants={fadeInUp} className="bg-[#131826] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#1A1F35] transition-all hover:-translate-y-1">
             <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-teal-500/10 transition-colors">
-                <Server size={28} className="text-teal-400" />
+              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-white/8 transition-colors">
+                <Server size={28} className="text-gray-400 group-hover:text-gray-300 transition-colors" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Server Management</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">
                 Hosting and server management with dedicated hosting solutions for optimal performance.
               </p>
-              <a href="#" className="inline-flex items-center text-teal-400 text-sm font-medium hover:text-teal-300 transition-colors">
+              <a href="#" className="inline-flex items-center text-gray-500 text-sm font-medium hover:text-white transition-colors">
                 Learn more <ChevronRight size={16} className="ml-1" />
               </a>
             </div>
@@ -522,8 +698,8 @@ export default function App() {
         {/* Achievements & Milestones */}
         <motion.div variants={scaleIn} className="mt-24 bg-[#1A1F2E] rounded-[2rem] p-12 relative overflow-hidden">
           {/* Decorative left circle */}
-          <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-blue-500/50 flex items-center justify-center">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+          <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-white/10 flex items-center justify-center">
+            <div className="w-2 h-2 bg-white/20 rounded-full"></div>
           </div>
 
           <h3 className="text-2xl font-bold text-center text-white mb-12">Achievements & Milestones</h3>
@@ -531,8 +707,8 @@ export default function App() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {/* Projects Completed */}
             <div className="flex flex-col items-center text-center space-y-4">
-              <div className="w-16 h-16 bg-[#2A3454] rounded-full flex items-center justify-center">
-                <Trophy size={28} className="text-yellow-400" />
+              <div className="w-16 h-16 bg-[#1E2438] rounded-full flex items-center justify-center border border-white/5">
+                <Trophy size={28} className="text-gray-400" />
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">50+</div>
@@ -542,8 +718,8 @@ export default function App() {
 
             {/* Happy Clients */}
             <div className="flex flex-col items-center text-center space-y-4">
-              <div className="w-16 h-16 bg-[#2A3454] rounded-full flex items-center justify-center">
-                <Users size={28} className="text-blue-400" />
+              <div className="w-16 h-16 bg-[#1E2438] rounded-full flex items-center justify-center border border-white/5">
+                <Users size={28} className="text-gray-400" />
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">30+</div>
@@ -553,8 +729,8 @@ export default function App() {
 
             {/* Years Experience */}
             <div className="flex flex-col items-center text-center space-y-4">
-              <div className="w-16 h-16 bg-[#2A3454] rounded-full flex items-center justify-center">
-                <Zap size={28} className="text-purple-400" />
+              <div className="w-16 h-16 bg-[#1E2438] rounded-full flex items-center justify-center border border-white/5">
+                <Zap size={28} className="text-gray-400" />
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">7+</div>
@@ -564,8 +740,8 @@ export default function App() {
 
             {/* Client Satisfaction */}
             <div className="flex flex-col items-center text-center space-y-4">
-              <div className="w-16 h-16 bg-[#2A3454] rounded-full flex items-center justify-center">
-                <Monitor size={28} className="text-emerald-400" />
+              <div className="w-16 h-16 bg-[#1E2438] rounded-full flex items-center justify-center border border-white/5">
+                <Monitor size={28} className="text-gray-400" />
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">100%</div>
@@ -575,6 +751,16 @@ export default function App() {
           </div>
         </motion.div>
       </motion.section>
+
+      {/* Section Divider */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-24">
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+          <motion.div whileInView={{ scale: [0, 1.5, 1] }} transition={{ duration: 0.8 }} viewport={{ once: true }}
+            className="w-2 h-2 bg-blue-500 rounded-full" />
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+        </div>
+      </div>
 
       {/* Featured Work Section */}
       <motion.section 
@@ -665,11 +851,11 @@ export default function App() {
 
                   {/* Action Buttons */}
                   <div className="flex items-center space-x-4 pt-4">
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors">
+                    <button className="btn-primary bg-[#8B5CF6] hover:bg-purple-600 text-white px-6 py-2.5 rounded-full font-medium transition-colors">
                       View Details
                     </button>
                     {project.demo && (
-                      <button className="flex items-center space-x-2 bg-transparent border border-white/20 hover:bg-white/5 text-white px-6 py-2.5 rounded-full font-medium transition-colors">
+                      <button className="btn-ghost flex items-center space-x-2 bg-transparent border border-white/20 text-white px-6 py-2.5 rounded-full font-medium">
                         <ExternalLink size={16} />
                         <span>Live Demo</span>
                       </button>
@@ -760,15 +946,25 @@ export default function App() {
         <motion.div variants={fadeInUp} className="mt-24 flex flex-col items-center text-center space-y-6">
           <p className="text-gray-400">Interested in working together or want to see more of my work?</p>
           <div className="flex items-center space-x-4">
-            <a href="#projects" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium transition-colors">
+            <a href="#projects" className="btn-primary bg-[#8B5CF6] hover:bg-purple-600 text-white px-8 py-3 rounded-full font-medium transition-colors">
               View More Projects
             </a>
-            <a href="#contact" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full font-medium transition-colors">
+            <a href="#contact" className="btn-ghost border border-white/20 text-white px-8 py-3 rounded-full font-medium">
               Let's Talk
             </a>
           </div>
         </motion.div>
       </motion.section>
+
+      {/* Section Divider */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-24">
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-rose-500/30 to-transparent" />
+          <motion.div whileInView={{ scale: [0, 1.5, 1] }} transition={{ duration: 0.8 }} viewport={{ once: true }}
+            className="w-2 h-2 bg-rose-500 rounded-full" />
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-rose-500/30 to-transparent" />
+        </div>
+      </div>
 
       {/* Contact Section */}
       <motion.section 
@@ -841,7 +1037,7 @@ export default function App() {
                 ></textarea>
               </div>
 
-              <button type="button" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3.5 rounded-lg flex items-center justify-center space-x-2 transition-colors">
+              <button type="button" className="btn-emerald w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3.5 rounded-lg flex items-center justify-center space-x-2 transition-colors">
                 <Send size={18} />
                 <span>Send Message</span>
               </button>
@@ -960,7 +1156,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 rounded-xl flex items-center justify-center space-x-2 transition-colors shadow-lg shadow-emerald-500/20">
+                <button className="btn-emerald w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 rounded-xl flex items-center justify-center space-x-2 transition-colors shadow-lg shadow-emerald-500/20">
                   <MessageCircle size={18} />
                   <span>Start WhatsApp Chat</span>
                   <ChevronRight size={16} />
@@ -1029,7 +1225,7 @@ export default function App() {
 
             <div className="space-y-4">
               <p className="text-white/80 text-sm">Prefer a quick chat?</p>
-              <button className="bg-white/20 hover:bg-white/30 text-white border border-white/30 px-6 py-2.5 rounded-lg font-medium transition-colors flex items-center space-x-2 backdrop-blur-sm">
+              <button className="btn-ghost bg-white/10 hover:bg-white/20 text-white border border-white/30 px-6 py-2.5 rounded-lg font-medium flex items-center space-x-2 backdrop-blur-sm">
                 <Mail size={18} />
                 <span>Send Email</span>
               </button>
@@ -1039,13 +1235,17 @@ export default function App() {
       </motion.section>
 
       {/* Floating Elements */}
-      
-      {/* Scroll Indicator */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center text-gray-500 animate-bounce z-20">
+
+      {/* Scroll Indicator — only visible on home section */}
+      <motion.div
+        animate={{ opacity: activeSection === 'home' ? 1 : 0, y: activeSection === 'home' ? 0 : 10 }}
+        transition={{ duration: 0.4 }}
+        className="fixed bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center text-gray-500 animate-bounce z-20 pointer-events-none"
+      >
         <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center pt-2">
           <div className="w-1 h-2 bg-gray-600 rounded-full"></div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Chat Button */}
       <div className="fixed bottom-8 right-8 flex items-center space-x-4 z-20">
@@ -1060,6 +1260,102 @@ export default function App() {
           </span>
         </button>
       </div>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-white/5 bg-[#070B14]">
+        {/* Top section */}
+        <div className="max-w-7xl mx-auto px-6 lg:px-24 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
+          {/* Brand col */}
+          <div className="space-y-4 max-w-xs">
+            <div className="text-xl font-bold tracking-tight">
+              RAZI<span className="text-purple-500">.</span>
+              <span className="text-purple-400 ml-1 font-light text-base">KV</span>
+            </div>
+            <p className="text-gray-500 text-sm leading-relaxed">
+              Web Designer &amp; Developer in Malappuram, passionate about creating exceptional digital experiences that drive business growth and user engagement.
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div className="space-y-4">
+            <h4 className="text-white text-sm font-semibold tracking-wide">Quick Links</h4>
+            <ul className="space-y-3">
+              {[
+                { label: 'Home', href: '#home' },
+                { label: 'About', href: '#about' },
+                { label: 'Work', href: '#projects' },
+                { label: 'Services', href: '#services' },
+                { label: 'Contact', href: '#contact' },
+              ].map(({ label, href }) => (
+                <li key={label}>
+                  <a href={href} className="text-gray-500 text-sm hover:text-white transition-colors">
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Say Hello */}
+          <div className="space-y-4">
+            <h4 className="text-white text-sm font-semibold tracking-wide">Say Hello</h4>
+            <ul className="space-y-3">
+              <li>
+                <a href="mailto:hello@razi.me" className="text-gray-500 text-sm hover:text-white transition-colors">
+                  hello@razi.me
+                </a>
+              </li>
+              <li className="text-gray-500 text-sm">Kerala, India</li>
+              <li>
+                <span className="inline-flex items-center space-x-1.5 text-sm">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                  <span className="text-gray-500">Available for freelance</span>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="border-t border-white/5" />
+
+        {/* Bottom bar */}
+        <div className="max-w-7xl mx-auto px-6 lg:px-24 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          {/* Social icons */}
+          <div className="flex items-center space-x-5">
+            <a href="#" aria-label="GitHub" className="btn-social text-gray-600 hover:text-white transition-colors">
+              <Github size={18} />
+            </a>
+            <a href="#" aria-label="LinkedIn" className="btn-social text-gray-600 hover:text-white transition-colors">
+              <Linkedin size={18} />
+            </a>
+            <a href="#" aria-label="Instagram" className="btn-social text-gray-600 hover:text-white transition-colors">
+              <Instagram size={18} />
+            </a>
+            <a href="mailto:hello@razi.me" aria-label="Email" className="btn-social text-gray-600 hover:text-white transition-colors">
+              <Mail size={18} />
+            </a>
+          </div>
+
+          {/* Scroll to top */}
+          <motion.button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-10 h-10 bg-purple-600 hover:bg-purple-500 rounded-full flex items-center justify-center transition-colors shadow-lg shadow-purple-500/20"
+            aria-label="Scroll to top"
+          >
+            <ArrowDown size={16} className="rotate-180" />
+          </motion.button>
+
+          {/* Copyright */}
+          <p className="text-gray-600 text-xs flex items-center space-x-1">
+            <span>© 2025 RAZI KV. Made with</span>
+            <Heart size={11} className="text-rose-500 fill-rose-500 mx-0.5" />
+            <span>and lots of coffee.</span>
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
