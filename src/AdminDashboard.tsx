@@ -69,7 +69,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
 }
 
 export default function AdminDashboard() {
-  const [authed, setAuthed] = useState(() => sessionStorage.getItem('admin_auth') === '1');
+  const [authed, setAuthed] = useState(() => localStorage.getItem('isAdmin') === 'true');
   const [messages, setMessages] = useState<Message[]>([]);
   const [selected, setSelected] = useState<Message | null>(null);
   const [search, setSearch] = useState('');
@@ -117,8 +117,15 @@ export default function AdminDashboard() {
     return () => { supabase.removeChannel(channel); };
   }, [authed]);
 
-  const handleLogin = () => { sessionStorage.setItem('admin_auth', '1'); setAuthed(true); };
-  const handleLogout = () => { sessionStorage.removeItem('admin_auth'); setAuthed(false); setMessages([]); };
+ const handleLogin = () => {
+  localStorage.setItem('isAdmin', 'true')
+  setAuthed(true)
+}
+  const handleLogout = () => {
+  localStorage.removeItem('isAdmin')
+  setAuthed(false)
+  setMessages([])
+}
 
   const deleteMsg = async (id: string) => {
     const { error } = await supabase.from('messages').delete().eq('id', id);
