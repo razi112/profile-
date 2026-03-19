@@ -681,7 +681,7 @@ export default function App() {
             {/* Main Image */}
             <div className="w-full h-full rounded-full border border-white/10 overflow-hidden relative z-10 bg-[#1A1F2E] group">
               <img 
-                src="https://i.pinimg.com/736x/a0/10/04/a01004e01fee6fc2c3dcf76a1af31b01.jpg"
+                src="https://i.pinimg.com/736x/6f/39/9f/6f399f287cb364bea56701a654b4a193.jpg"
                 alt="RAZI" 
                 className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
               />
