@@ -141,22 +141,12 @@ a[href]:active,
   transform: scale(0.97);
 }
 
-/* ── Every clickable / interactive div lifts on active ── */
-div[onClick],
-div[class*="cursor-pointer"],
-div[class*="hover:"],
-div[class*="group"] {
-  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+/* ── Cursor-pointer divs get a subtle press feedback ── */
+div[class*="cursor-pointer"] {
+  transition: transform 0.15s ease;
 }
-div[onClick]:active,
 div[class*="cursor-pointer"]:active {
-  transform: scale(1.01) translateY(-1px);
-}
-
-/* ── Universal active press for ALL elements ── */
-*:active:not(input):not(textarea):not(select):not(nav):not(section):not(main):not(footer):not(header):not(html):not(body) {
   transform: scale(0.98);
-  transition: transform 0.12s ease;
 }
 .btn-primary:hover  { transform: scale(1.05) translateY(-2px); }
 .btn-primary:active { transform: scale(0.97); }
