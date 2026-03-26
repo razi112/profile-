@@ -155,7 +155,29 @@ div[class*="cursor-pointer"]:active {
 .btn-emerald:hover  { transform: scale(1.05) translateY(-2px); }
 .btn-emerald:active { transform: scale(0.97); }
 .btn-social:hover   { transform: scale(1.05) translateY(-3px) rotate(8deg); }
-.btn-social:active  { transform: scale(0.97); }
+.btn-social:active  { transform: scale(0.05); }
 
 /* Nav links — subtle scale only, no vertical shift */
-nav a:hover { transform: scale(1.05); }
+nav a:hover { transform: scale(0.98); }
+
+/* ── Disable hover transforms on touch devices ── */
+@media (hover: none) {
+  button:hover,
+  a[href]:hover,
+  [role="button"]:hover,
+  .btn-primary:hover,
+  .btn-ghost:hover,
+  .btn-emerald:hover,
+  .btn-social:hover,
+  nav a:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* ── Prevent horizontal overflow on mobile ── */
+@media (max-width: 640px) {
+  .glow-text {
+    text-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+  }
+}

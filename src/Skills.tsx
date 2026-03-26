@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   CodeXml, Server, Phone, Monitor, Zap, TrendingUp, Palette,
-  Star, Award, CheckCircle2, ArrowDown, Github, Linkedin, Instagram, Mail, Heart
+  Star, Award, CheckCircle2, ArrowDown, Github, Linkedin, Instagram, Mail, Heart, Menu, ChevronRight, MessageCircle
 } from 'lucide-react';
 
 const EASE = [0.22, 1, 0.36, 1] as any;
@@ -90,6 +90,8 @@ const skillBlocks = [
 ];
 
 export default function SkillsPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-[#0A0F1C] text-white font-sans relative overflow-x-hidden">
       <FloatingOrbs />
@@ -97,41 +99,68 @@ export default function SkillsPage() {
         style={{ backgroundImage: `linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)`, backgroundSize: '60px 60px' }} />
 
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 md:px-12 lg:px-24 border-b border-white/5 bg-[#0A0F1C]/80 backdrop-blur-md z-50">
-        <a href="/" className="group text-2xl font-bold tracking-tight cursor-pointer">
-          <span className="transition-colors duration-300 group-hover:text-purple-400">RAZI</span>
-          <span className="text-purple-500 transition-colors duration-300 group-hover:text-white">kv</span>
-        </a>
-        <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
-          <a href="/" className="relative group pb-1 hover:text-white transition-colors">
-            Home
-            <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+      <nav className="fixed top-0 left-0 w-full z-50 border-b border-white/5 bg-[#0A0F1C]/80 backdrop-blur-md">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 md:px-12 lg:px-24">
+          <a href="/" className="group text-2xl font-bold tracking-tight cursor-pointer">
+            <span className="transition-colors duration-300 group-hover:text-purple-400">RAZI</span>
+            <span className="text-purple-500 transition-colors duration-300 group-hover:text-white">kv</span>
           </a>
-          <a href="/#about" className="relative group pb-1 hover:text-white transition-colors">
-            About
-            <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-          </a>
-          <a href="/#services" className="relative group pb-1 hover:text-white transition-colors">
-            Services
-            <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-          </a>
-          <a href="/skills" className="relative group pb-1 text-emerald-400 transition-colors">
-            Skills
-            <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left scale-x-100 transition-transform duration-300"></span>
-          </a>
-          <a href="/projects" className="relative group pb-1 hover:text-white transition-colors">
-            Projects
-            <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-          </a>
-          <a href="/#contact" className="relative group pb-1 hover:text-white transition-colors">
-            Contact
-            <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-          </a>
+          <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
+            {[
+              { label: 'Home', href: '/', active: false },
+              { label: 'About', href: '/#about', active: false },
+              { label: 'Services', href: '/#services', active: false },
+              { label: 'Skills', href: '/skills', active: true },
+              { label: 'Projects', href: '/projects', active: false },
+              { label: 'Contact', href: '/#contact', active: false },
+            ].map(({ label, href, active }) => (
+              <a key={label} href={href} className={`relative group pb-1 transition-colors ${active ? 'text-emerald-400' : 'hover:text-white'}`}>
+                {label}
+                <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left transition-transform duration-300 ${active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
+              </a>
+            ))}
+          </div>
+          <div className="flex items-center space-x-3">
+            <a href="https://wa.me/918129489071" target="_blank" rel="noopener noreferrer"
+              className="hidden md:flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2 rounded-full font-medium transition-colors text-sm">
+              <MessageCircle size={15} /><span>WhatsApp</span>
+            </a>
+            <button onClick={() => setMobileMenuOpen(o => !o)} className="md:hidden text-gray-400 hover:text-white p-1" aria-label="Toggle menu">
+              {mobileMenuOpen
+                ? <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                : <Menu size={24} />}
+            </button>
+          </div>
         </div>
-        <a href="https://wa.me/918129489071" target="_blank" rel="noopener noreferrer"
-          className="hidden md:flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-full font-medium transition-colors text-sm">
-          <span>WhatsApp</span>
-        </a>
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="md:hidden overflow-hidden border-t border-white/5 bg-[#0A0F1C]/95 backdrop-blur-md">
+              <div className="px-4 py-6 space-y-1">
+                {[
+                  { label: 'Home', href: '/' },
+                  { label: 'About', href: '/#about' },
+                  { label: 'Services', href: '/#services' },
+                  { label: 'Skills', href: '/skills' },
+                  { label: 'Projects', href: '/projects' },
+                  { label: 'Contact', href: '/#contact' },
+                ].map(({ label, href }) => (
+                  <a key={label} href={href} onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-all text-sm font-medium">
+                    {label}<ChevronRight size={16} className="text-gray-600" />
+                  </a>
+                ))}
+                <div className="pt-4">
+                  <a href="https://wa.me/918129489071" target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-full font-medium text-sm transition-colors w-full">
+                    <MessageCircle size={16} /><span>WhatsApp</span>
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Content */}
@@ -139,7 +168,7 @@ export default function SkillsPage() {
         initial="hidden"
         animate="visible"
         variants={staggerContainer}
-        className="max-w-7xl mx-auto px-6 pt-32 pb-24 lg:px-24 relative z-10"
+        className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 sm:pt-32 pb-24 lg:px-24 relative z-10"
       >
         {/* Ambient glow */}
         <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] h-[400px] bg-purple-600/5 rounded-full blur-[130px] pointer-events-none -z-10" />

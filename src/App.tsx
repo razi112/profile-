@@ -272,6 +272,7 @@ function ContactForm() {
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 600], [0, -120]);
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
@@ -316,110 +317,118 @@ export default function App() {
       <FloatingOrbs />
       <GridBackground />
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 md:px-12 lg:px-24 border-b border-white/5 bg-[#0A0F1C]/80 backdrop-blur-md z-50">
-        <a href="#home" className="group text-2xl font-bold tracking-tight cursor-pointer">
-          <span className="transition-colors duration-300 group-hover:text-purple-400">RAZI</span><span className="text-purple-500 transition-colors duration-300 group-hover:text-white">kv</span>
-        </a>
-        
-        <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
-          {/* Home */}
-          <a
-            href="#home"
-            className={`relative group pb-1 transition-colors ${activeSection === 'home' ? 'text-emerald-400' : 'hover:text-white'}`}
-          >
-            Home
-            <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left transition-transform duration-300 ${activeSection === 'home' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
+      <nav className="fixed top-0 left-0 w-full z-50 border-b border-white/5 bg-[#0A0F1C]/80 backdrop-blur-md">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 md:px-12 lg:px-24">
+          <a href="#home" className="group text-2xl font-bold tracking-tight cursor-pointer">
+            <span className="transition-colors duration-300 group-hover:text-purple-400">RAZI</span><span className="text-purple-500 transition-colors duration-300 group-hover:text-white">kv</span>
           </a>
 
-          {/* About — with hover dropdown preview */}
-          <div className="relative group">
-            <a
-              href="#about"
-              className={`relative pb-1 transition-colors inline-block ${activeSection === 'about' ? 'text-emerald-400' : 'hover:text-white'}`}
-            >
-              About
-              <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left transition-transform duration-300 ${activeSection === 'about' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
+            <a href="#home" className={`relative group pb-1 transition-colors ${activeSection === 'home' ? 'text-emerald-400' : 'hover:text-white'}`}>
+              Home
+              <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left transition-transform duration-300 ${activeSection === 'home' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
             </a>
 
-            {/* Dropdown card */}
-            <div className="absolute top-full left-0 mt-4 w-[480px] opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out z-50 pointer-events-none group-hover:pointer-events-auto">
-              {/* Arrow */}
-              <div className="absolute -top-2 left-6 w-4 h-4 bg-[#131826] border-l border-t border-white/10 rotate-45" />
-
-              <div className="bg-[#131826] border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
-                <div className="flex gap-0">
-                  {/* Left — image */}
-                  <div className="w-52 shrink-0 relative overflow-hidden min-h-[240px]">
-                    <img
-                      src="https://i.pinimg.com/736x/be/62/bd/be62bda2f0917f849b036b86c00da298.jpg"
-                      alt="RAZI"
-                      className="w-full h-full object-cover object-top absolute inset-0"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#131826]/50" />
-                  </div>
-
-                  {/* Right — info */}
-                  <div className="flex-1 p-5 space-y-3">
-                    <div>
-                      <div className="flex items-center gap-2">
+            {/* About dropdown */}
+            <div className="relative group">
+              <a href="#about" className={`relative pb-1 transition-colors inline-block ${activeSection === 'about' ? 'text-emerald-400' : 'hover:text-white'}`}>
+                About
+                <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left transition-transform duration-300 ${activeSection === 'about' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
+              </a>
+              <div className="absolute top-full left-0 mt-4 w-[480px] opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out z-50 pointer-events-none group-hover:pointer-events-auto">
+                <div className="absolute -top-2 left-6 w-4 h-4 bg-[#131826] border-l border-t border-white/10 rotate-45" />
+                <div className="bg-[#131826] border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
+                  <div className="flex gap-0">
+                    <div className="w-52 shrink-0 relative overflow-hidden min-h-[240px]">
+                      <img src="https://i.pinimg.com/736x/be/62/bd/be62bda2f0917f849b036b86c00da298.jpg" alt="RAZI" className="w-full h-full object-cover object-top absolute inset-0" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#131826]/50" />
+                    </div>
+                    <div className="flex-1 p-5 space-y-3">
+                      <div>
                         <h3 className="text-white font-bold text-base">Hi, I'm RAZI ✦</h3>
+                        <div className="w-10 h-0.5 bg-gradient-to-r from-purple-500 to-emerald-500 rounded-full mt-1.5" />
                       </div>
-                      <div className="w-10 h-0.5 bg-gradient-to-r from-purple-500 to-emerald-500 rounded-full mt-1.5" />
-                    </div>
-
-                    <p className="text-gray-400 text-xs leading-relaxed">
-                      Web Designer & Developer with 7+ years of experience building stunning digital experiences, e-commerce platforms, and SEO strategies.
-                    </p>
-
-                    <div>
-                      <p className="text-gray-500 text-[10px] font-semibold uppercase tracking-wider mb-1.5">Core Skills</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {['Web Design', 'React', 'Next.js', 'SEO', 'E-Commerce'].map(s => (
-                          <span key={s} className="text-[10px] px-2 py-0.5 rounded-full border border-purple-500/30 text-purple-300 bg-purple-500/10">
-                            {s}
-                          </span>
-                        ))}
+                      <p className="text-gray-400 text-xs leading-relaxed">Web Designer & Developer with 7+ years of experience building stunning digital experiences, e-commerce platforms, and SEO strategies.</p>
+                      <div>
+                        <p className="text-gray-500 text-[10px] font-semibold uppercase tracking-wider mb-1.5">Core Skills</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {['Web Design', 'React', 'Next.js', 'SEO', 'E-Commerce'].map(s => (
+                            <span key={s} className="text-[10px] px-2 py-0.5 rounded-full border border-purple-500/30 text-purple-300 bg-purple-500/10">{s}</span>
+                          ))}
+                        </div>
                       </div>
+                      <a href="#about" className="inline-flex items-center gap-1.5 bg-gradient-to-r from-purple-600 to-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-full transition-all hover:opacity-90">Learn more about me →</a>
                     </div>
-
-                    <a href="#about"
-                      className="inline-flex items-center gap-1.5 bg-gradient-to-r from-purple-600 to-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-full transition-all hover:opacity-90">
-                      Learn more about me →
-                    </a>
                   </div>
                 </div>
               </div>
             </div>
+
+            {[
+              { id: 'services', label: 'Services', href: '#services' },
+              { id: 'skills', label: 'Skills', href: '/skills' },
+              { id: 'projects', label: 'Projects', href: '/projects' },
+              { id: 'contact', label: 'Contact', href: '#contact' },
+            ].map(({ id, label, href }) => (
+              <a key={id} href={href} className={`relative group pb-1 transition-colors ${activeSection === id ? 'text-emerald-400' : 'hover:text-white'}`}>
+                {label}
+                <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left transition-transform duration-300 ${activeSection === id ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
+              </a>
+            ))}
           </div>
 
-          {/* Remaining links */}
-          {[
-            { id: 'services', label: 'Services', href: '#services' },
-            { id: 'skills', label: 'Skills', href: '/skills' },
-            { id: 'projects', label: 'Projects', href: '/projects' },
-            { id: 'contact', label: 'Contact', href: '#contact' },
-          ].map(({ id, label, href }) => (
-            <a
-              key={id}
-              href={href}
-              className={`relative group pb-1 transition-colors ${activeSection === id ? 'text-emerald-400' : 'hover:text-white'}`}
-            >
-              {label}
-              <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left transition-transform duration-300 ${activeSection === id ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
+          <div className="flex items-center space-x-3">
+            <a href="https://wa.me/918129489071" target="_blank" rel="noopener noreferrer"
+              className="btn-emerald hidden md:flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2 rounded-full font-medium text-sm transition-colors">
+              <MessageCircle size={15} />
+              <span>WhatsApp</span>
             </a>
-          ))}
+            {/* Mobile hamburger */}
+            <button onClick={() => setMobileMenuOpen(o => !o)} className="md:hidden text-gray-400 hover:text-white p-1" aria-label="Toggle menu">
+              {mobileMenuOpen
+                ? <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center space-x-6">
-          <a href="https://wa.me/918129489071" target="_blank" rel="noopener noreferrer"
-            className="btn-emerald hidden md:flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-full font-medium transition-colors">
-            <MessageCircle size={16} />
-            <span>WhatsApp</span>
-          </a>
-          <button className="text-gray-400 hover:text-white">
-            <Menu size={24} />
-          </button>
-        </div>
+        {/* Mobile menu drawer */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="md:hidden overflow-hidden border-t border-white/5 bg-[#0A0F1C]/95 backdrop-blur-md"
+            >
+              <div className="px-4 py-6 space-y-1">
+                {[
+                  { label: 'Home', href: '#home' },
+                  { label: 'About', href: '#about' },
+                  { label: 'Services', href: '#services' },
+                  { label: 'Skills', href: '/skills' },
+                  { label: 'Projects', href: '/projects' },
+                  { label: 'Contact', href: '#contact' },
+                ].map(({ label, href }) => (
+                  <a key={label} href={href} onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-all text-sm font-medium">
+                    {label}
+                    <ChevronRight size={16} className="text-gray-600" />
+                  </a>
+                ))}
+                <div className="pt-4">
+                  <a href="https://wa.me/918129489071" target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-full font-medium text-sm transition-colors w-full">
+                    <MessageCircle size={16} />
+                    <span>WhatsApp</span>
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Hero Section */}
@@ -428,7 +437,7 @@ export default function App() {
         initial="hidden" 
         animate="visible" 
         variants={staggerContainer}
-        className="scroll-mt-24 max-w-7xl mx-auto px-6 pt-32 pb-16 md:pt-40 md:pb-24 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10"
+        className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 pt-28 pb-12 md:pt-40 md:pb-24 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center relative z-10"
       >
         {/* Hero spotlight */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-radial from-purple-600/15 via-transparent to-transparent pointer-events-none blur-3xl" />
@@ -444,10 +453,10 @@ export default function App() {
 
           {/* Headings */}
           <div className="space-y-4">
-            <h1 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent pb-2 glow-text">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent pb-2 glow-text">
               RAZI
             </h1>
-            <h2 className="text-3xl md:text-4xl font-semibold text-gray-100">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-100">
               Web Designer & Developer
             </h2>
           </div>
@@ -469,7 +478,7 @@ export default function App() {
           </div>
 
           {/* Description */}
-          <p className="text-gray-400 text-lg leading-relaxed max-w-xl">
+          <p className="text-gray-400 text-base sm:text-lg leading-relaxed max-w-xl">
             Expert in creating stunning digital experiences through <span className="text-blue-400 font-medium">E-Commerce solutions</span>, <span className="text-purple-400 font-medium">SEO optimization</span>, and <span className="text-emerald-400 font-medium">digital marketing strategies</span>. Transforming ideas into powerful, results-driven websites.
           </p>
 
@@ -610,7 +619,7 @@ export default function App() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={staggerContainer}
-        className="scroll-mt-24 max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10"
+        className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 lg:py-32 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center relative z-10"
       >
         {/* Section ambient glow */}
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[120px] pointer-events-none -z-10" />
@@ -619,7 +628,7 @@ export default function App() {
         {/* Left Content */}
         <motion.div variants={fadeInLeft} className="space-y-8">
           <div className="relative inline-block">
-            <h2 className="text-4xl md:text-5xl font-bold text-white">About Me</h2>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">About Me</h2>
             <div className="absolute -bottom-2 left-0 w-16 h-0.5 bg-gradient-to-r from-purple-500 to-transparent rounded-full" />
             <div className="absolute -bottom-2 left-0 w-16 h-0.5 bg-purple-500 rounded-full blur-sm opacity-70" />
           </div>
@@ -694,7 +703,7 @@ export default function App() {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-4 mt-12">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-10 md:mt-12">
             <div className="bg-[#131826] border border-white/5 hover:border-purple-500/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.12)] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300">
               <div className="w-12 h-12 bg-purple-500/10 text-white rounded-xl flex items-center justify-center shadow-[0_0_12px_rgba(139,92,246,0.2)]">
                 <Award size={24} className="text-purple-400" />
@@ -755,7 +764,7 @@ export default function App() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={staggerContainer}
-        className="scroll-mt-24 max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 relative z-10"
+        className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 lg:py-32 lg:px-24 relative z-10"
       >
         {/* Section ambient glow */}
         <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[700px] h-[400px] bg-purple-600/5 rounded-full blur-[130px] pointer-events-none -z-10" />
@@ -769,7 +778,7 @@ export default function App() {
           </div>
           
           <div className="relative pb-4">
-            <h2 className="text-4xl md:text-5xl font-bold text-white">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
               Services & Expertise
             </h2>
             <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-40 h-0.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent rounded-full" />
@@ -895,7 +904,7 @@ export default function App() {
 
           <h3 className="text-2xl font-bold text-center text-white mb-12">Achievements & Milestones</h3>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
             {/* Projects Completed */}
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="w-16 h-16 bg-[#1E2438] rounded-full flex items-center justify-center border border-white/5">
@@ -960,11 +969,11 @@ export default function App() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={staggerContainer}
-        className="scroll-mt-24 max-w-7xl mx-auto px-6 py-24 md:py-32 lg:px-24 relative z-10"
+        className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 lg:py-32 lg:px-24 relative z-10"
       >
         {/* Header */}
         <motion.div variants={fadeInUp} className="flex flex-col items-center text-center space-y-4 mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
             Let's Work Together
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl">
@@ -1164,7 +1173,7 @@ export default function App() {
         const waMessage = encodeURIComponent("Hi! I'm interested in discussing a project. Can we chat?");
         const waLink = `https://wa.me/918129489071?text=${waMessage}`;
         return (
-          <div className="fixed bottom-8 right-8 flex flex-col items-end space-y-3 z-50">
+          <div className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 flex flex-col items-end space-y-3 z-50">
             {/* Popup */}
             <AnimatePresence>
               {chatOpen && (
@@ -1173,7 +1182,7 @@ export default function App() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 20, scale: 0.95 }}
                   transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                  className="w-80 rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+                  className="w-[calc(100vw-2rem)] max-w-sm sm:w-80 rounded-2xl overflow-hidden shadow-2xl border border-white/10"
                 >
                   {/* Header */}
                   <div className="bg-emerald-500 px-4 py-4 flex items-center justify-between">
@@ -1275,7 +1284,7 @@ export default function App() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/5 bg-[#070B14]">
         {/* Top section */}
-        <div className="max-w-7xl mx-auto px-6 lg:px-24 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24 py-12 md:py-16 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {/* Brand col */}
           <div className="space-y-4 max-w-xs">
             <div className="text-xl font-bold tracking-tight">
@@ -1331,7 +1340,7 @@ export default function App() {
         <div className="border-t border-white/5" />
 
         {/* Bottom bar */}
-        <div className="max-w-7xl mx-auto px-6 lg:px-24 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Social icons */}
           <div className="flex items-center space-x-5">
             <a href="#" aria-label="GitHub" className="btn-social text-gray-600 hover:text-white transition-colors">
