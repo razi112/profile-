@@ -182,6 +182,13 @@ function ContactForm() {
 
     console.log('[ContactForm] Submitting:', form);
 
+    if (!supabase) {
+      setErrorMsg('Supabase is not configured. Check your .env file.');
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 5000);
+      return;
+    }
+
     const { error } = await supabase.from('messages').insert([{
       name: form.name,
       email: form.email,

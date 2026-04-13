@@ -78,6 +78,7 @@ export default function AdminDashboard() {
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   const fetchMessages = async () => {
+    if (!supabase) { setFetchError('Supabase not configured. Check your .env file.'); return; }
     setLoading(true);
     setFetchError(null);
     const { data, error } = await supabase
@@ -97,7 +98,7 @@ export default function AdminDashboard() {
 
   // Fetch on mount + realtime subscription
   useEffect(() => {
-    if (!authed) return;
+    if (!authed || !supabase) return;
     fetchMessages();
 
     const channel = supabase
@@ -128,6 +129,7 @@ export default function AdminDashboard() {
 }
 
   const deleteMsg = async (id: string) => {
+    if (!supabase) return;
     const { error } = await supabase.from('messages').delete().eq('id', id);
     if (error) { console.error('[Admin] Delete error:', error.message); return; }
     setMessages(prev => prev.filter(m => m.id !== id));
@@ -135,6 +137,7 @@ export default function AdminDashboard() {
   };
 
   const markRead = async (id: string) => {
+    if (!supabase) return;
     const { error } = await supabase.from('messages').update({ read: true }).eq('id', id);
     if (error) { console.error('[Admin] Mark read error:', error.message); return; }
     setMessages(prev => prev.map(m => m.id === id ? { ...m, read: true } : m));
