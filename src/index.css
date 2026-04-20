@@ -8,23 +8,25 @@ html {
   background: radial-gradient(circle, var(--tw-gradient-stops));
 }
 
-/* Glowing text effect */
+/* ── Glowing text ── */
 .glow-text {
   text-shadow: 0 0 40px rgba(139, 92, 246, 0.5), 0 0 80px rgba(139, 92, 246, 0.2);
 }
 
-/* ── Button: magnetic ripple fill (primary purple) ── */
+/* ════════════════════════════════════════
+   BUTTON: magnetic ripple fill (primary)
+   ════════════════════════════════════════ */
 .btn-primary {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  transition: color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+  transition: color 0.3s ease, box-shadow 0.35s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
 }
 .btn-primary::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.15) 0%, transparent 70%);
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.18) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.4s ease;
   z-index: 0;
@@ -32,72 +34,86 @@ html {
 }
 .btn-primary:hover::before { opacity: 1; }
 .btn-primary:hover {
-  box-shadow: 0 0 24px rgba(139, 92, 246, 0.5), 0 0 48px rgba(139, 92, 246, 0.2);
-  transform: translateY(-2px);
+  box-shadow: 0 0 28px rgba(139,92,246,0.55), 0 0 56px rgba(139,92,246,0.22), 0 8px 24px rgba(0,0,0,0.4);
+  transform: translateY(-3px) scale(1.04);
 }
-.btn-primary:active { transform: translateY(0); }
+.btn-primary:active { transform: translateY(0) scale(0.97); }
 .btn-primary > * { position: relative; z-index: 1; }
 
-/* ── Button: ghost border slide fill ── */
+/* ════════════════════════════════════════
+   BUTTON: ghost slide fill
+   ════════════════════════════════════════ */
 .btn-ghost {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  transition: color 0.35s ease, transform 0.2s ease;
+  transition: color 0.35s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
 }
 .btn-ghost::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.07);
   transform: translateX(-101%);
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
   z-index: 0;
 }
 .btn-ghost:hover::before { transform: translateX(0); }
-.btn-ghost:hover { transform: translateY(-2px); }
-.btn-ghost:active { transform: translateY(0); }
+.btn-ghost:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 8px 24px rgba(255,255,255,0.06);
+}
+.btn-ghost:active { transform: translateY(0) scale(0.97); }
 .btn-ghost > * { position: relative; z-index: 1; }
 
-/* ── Button: emerald glow pulse ── */
+/* ════════════════════════════════════════
+   BUTTON: emerald glow pulse
+   ════════════════════════════════════════ */
 .btn-emerald {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
 }
 .btn-emerald::after {
   content: '';
   position: absolute;
-  inset: -2px;
+  inset: -3px;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgba(16,185,129,0.4), rgba(5,150,105,0.2));
+  background: linear-gradient(135deg, rgba(16,185,129,0.5), rgba(5,150,105,0.25));
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.35s ease;
   z-index: -1;
-  filter: blur(8px);
+  filter: blur(10px);
 }
 .btn-emerald:hover::after { opacity: 1; }
 .btn-emerald:hover {
-  box-shadow: 0 0 20px rgba(16,185,129,0.35), 0 4px 20px rgba(0,0,0,0.3);
-  transform: translateY(-2px);
+  box-shadow: 0 0 24px rgba(16,185,129,0.45), 0 6px 24px rgba(0,0,0,0.35);
+  transform: translateY(-3px) scale(1.04);
 }
-.btn-emerald:active { transform: translateY(0); }
+.btn-emerald:active { transform: translateY(0) scale(0.97); }
 
-/* ── Social icon: spin-glow ── */
+/* ════════════════════════════════════════
+   SOCIAL ICON: bounce + glow
+   ════════════════════════════════════════ */
 .btn-social {
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
-              background 0.3s ease, 
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
+              background 0.3s ease,
               border-color 0.3s ease,
-              box-shadow 0.3s ease;
+              box-shadow 0.3s ease,
+              color 0.3s ease;
 }
 .btn-social:hover {
-  transform: translateY(-3px) rotate(8deg);
-  box-shadow: 0 8px 20px rgba(139,92,246,0.2);
-  border-color: rgba(139,92,246,0.4);
+  transform: translateY(-4px) rotate(10deg) scale(1.15);
+  box-shadow: 0 10px 24px rgba(139,92,246,0.25);
+  border-color: rgba(139,92,246,0.5) !important;
+  color: white !important;
 }
+.btn-social:active { transform: translateY(0) scale(0.95); }
 
-/* ── Card shine sweep ── */
+/* ════════════════════════════════════════
+   CARD: shine sweep on hover
+   ════════════════════════════════════════ */
 .card-shine {
   position: relative;
   overflow: hidden;
@@ -112,72 +128,287 @@ html {
   background: linear-gradient(
     to right,
     rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0.04) 50%,
+    rgba(255,255,255,0.06) 50%,
     rgba(255,255,255,0) 100%
   );
   transform: skewX(-20deg);
-  transition: left 0.7s ease;
+  transition: left 0.65s ease;
   pointer-events: none;
   z-index: 10;
 }
 .card-shine:hover::before { left: 125%; }
 
-/* ── Global button scale on hover ── */
-button,
-a[href],
-[role="button"] {
-  transition-property: transform, box-shadow, background-color, border-color, color, opacity;
-  transition-duration: 0.2s;
-  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+/* ════════════════════════════════════════
+   GENERIC CARD hover (bg-[#131826] divs)
+   ════════════════════════════════════════ */
+.hover-card {
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.3s ease,
+              border-color 0.3s ease;
 }
-button:hover,
-a[href]:hover,
-[role="button"]:hover {
-  transform: scale(1.05);
-}
-button:active,
-a[href]:active,
-[role="button"]:active {
-  transform: scale(0.97);
+.hover-card:hover {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 30px rgba(139,92,246,0.12);
 }
 
-/* ── Cursor-pointer divs get a subtle press feedback ── */
-div[class*="cursor-pointer"] {
-  transition: transform 0.15s ease;
+/* ════════════════════════════════════════
+   STAT CARDS (about section grid)
+   ════════════════════════════════════════ */
+[class*="bg-[#131826]"][class*="rounded-2xl"] {
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.3s ease,
+              border-color 0.3s ease;
 }
-div[class*="cursor-pointer"]:active {
-  transform: scale(0.98);
+[class*="bg-[#131826]"][class*="rounded-2xl"]:hover {
+  transform: translateY(-5px) scale(1.02);
 }
-.btn-primary:hover  { transform: scale(1.05) translateY(-2px); }
-.btn-primary:active { transform: scale(0.97); }
-.btn-ghost:hover    { transform: scale(1.05) translateY(-2px); }
-.btn-ghost:active   { transform: scale(0.97); }
-.btn-emerald:hover  { transform: scale(1.05) translateY(-2px); }
-.btn-emerald:active { transform: scale(0.97); }
-.btn-social:hover   { transform: scale(1.05) translateY(-3px) rotate(8deg); }
-.btn-social:active  { transform: scale(0.05); }
 
-/* Nav links — subtle scale only, no vertical shift */
-nav a:hover { transform: scale(0.98); }
+/* ════════════════════════════════════════
+   CONTACT INFO CARDS
+   ════════════════════════════════════════ */
+[class*="bg-[#1A1F2E]"][class*="rounded-xl"] {
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.3s ease,
+              background-color 0.3s ease;
+}
+[class*="bg-[#1A1F2E]"][class*="rounded-xl"]:hover {
+  transform: translateY(-3px) scale(1.015);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35), 0 0 20px rgba(16,185,129,0.1);
+}
 
-/* ── Disable hover transforms on touch devices ── */
+/* ════════════════════════════════════════
+   SKILL ITEM ROWS (skills page)
+   ════════════════════════════════════════ */
+[class*="bg-[#0A0F1C]"][class*="rounded-xl"] {
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.25s ease,
+              border-color 0.25s ease,
+              background-color 0.25s ease;
+}
+[class*="bg-[#0A0F1C]"][class*="rounded-xl"]:hover {
+  transform: translateX(4px) scale(1.02);
+  box-shadow: 0 4px 16px rgba(16,185,129,0.12);
+}
+
+/* ════════════════════════════════════════
+   PROJECT CARDS (projects page grid)
+   ════════════════════════════════════════ */
+[class*="bg-[#1A1F2E]"][class*="rounded-2xl"] {
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.35s ease,
+              border-color 0.35s ease;
+}
+[class*="bg-[#1A1F2E]"][class*="rounded-2xl"]:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 0 35px rgba(139,92,246,0.18);
+}
+
+/* ════════════════════════════════════════
+   SKILL BLOCK CARDS (skills page main)
+   ════════════════════════════════════════ */
+[class*="bg-[#0E1420]"][class*="rounded-2xl"] {
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.35s ease,
+              border-color 0.35s ease;
+}
+[class*="bg-[#0E1420]"][class*="rounded-2xl"]:hover {
+  transform: translateY(-4px) scale(1.008);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 28px rgba(139,92,246,0.1);
+}
+
+/* ════════════════════════════════════════
+   ACHIEVEMENTS BLOCK (services section)
+   ════════════════════════════════════════ */
+[class*="bg-[#1A1F2E]"][class*="rounded-\\[2rem\\]"] {
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+[class*="bg-[#1A1F2E]"][class*="rounded-\\[2rem\\]"]:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 40px rgba(139,92,246,0.1);
+}
+
+/* ════════════════════════════════════════
+   ADMIN DASHBOARD CARDS
+   ════════════════════════════════════════ */
+[class*="bg-[#131826]"][class*="rounded-xl"] {
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.25s ease,
+              border-color 0.25s ease;
+}
+[class*="bg-[#131826]"][class*="rounded-xl"]:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 16px rgba(139,92,246,0.1);
+}
+
+/* ════════════════════════════════════════
+   FILTER BUTTONS (projects page)
+   ════════════════════════════════════════ */
+button[class*="rounded-full"] {
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.25s ease,
+              background-color 0.25s ease,
+              border-color 0.25s ease;
+}
+button[class*="rounded-full"]:hover {
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 6px 18px rgba(139,92,246,0.2);
+}
+button[class*="rounded-full"]:active {
+  transform: scale(0.96);
+}
+
+/* ════════════════════════════════════════
+   SKILL TAGS (about section "What I Do")
+   ════════════════════════════════════════ */
+div[class*="rounded-full"][class*="cursor-default"] {
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.25s ease,
+              border-color 0.25s ease,
+              color 0.25s ease;
+}
+div[class*="rounded-full"][class*="cursor-default"]:hover {
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 6px 16px rgba(139,92,246,0.2);
+}
+
+/* ════════════════════════════════════════
+   NAV LINKS — subtle lift only
+   ════════════════════════════════════════ */
+nav a {
+  transition: color 0.25s ease, transform 0.2s ease;
+}
+nav a:hover {
+  transform: translateY(-1px);
+}
+nav a:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* ════════════════════════════════════════
+   MOBILE MENU ITEMS
+   ════════════════════════════════════════ */
+nav .flex.items-center.justify-between.px-4.py-3 {
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+nav .flex.items-center.justify-between.px-4.py-3:hover {
+  transform: translateX(4px);
+}
+
+/* ════════════════════════════════════════
+   FOOTER LINKS
+   ════════════════════════════════════════ */
+footer a {
+  transition: color 0.25s ease, transform 0.2s ease;
+  display: inline-block;
+}
+footer a:hover {
+  transform: translateX(3px);
+  color: white;
+}
+
+/* ════════════════════════════════════════
+   HERO IMAGE CONTAINER
+   ════════════════════════════════════════ */
+.group[class*="rounded-\\[2rem\\]"]:hover {
+  box-shadow: 0 0 60px rgba(139,92,246,0.35), 0 30px 60px rgba(0,0,0,0.5);
+}
+
+/* ════════════════════════════════════════
+   FLOATING SKILL CHIPS (hero)
+   ════════════════════════════════════════ */
+[class*="bg-[#1A1F2E]"][class*="rounded-xl"][class*="hidden lg:flex"] {
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+}
+[class*="bg-[#1A1F2E]"][class*="rounded-xl"][class*="hidden lg:flex"]:hover {
+  transform: scale(1.1) translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* ════════════════════════════════════════
+   WHATSAPP POPUP BUTTON
+   ════════════════════════════════════════ */
+button[class*="bg-emerald-500"][class*="rounded-full"] {
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.3s ease;
+}
+button[class*="bg-emerald-500"][class*="rounded-full"]:hover {
+  transform: scale(1.12) translateY(-2px);
+  box-shadow: 0 0 28px rgba(16,185,129,0.5), 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* ════════════════════════════════════════
+   SCROLL-TO-TOP BUTTON
+   ════════════════════════════════════════ */
+button[class*="bg-purple-6"][class*="rounded-full"] {
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.3s ease;
+}
+button[class*="bg-purple-6"][class*="rounded-full"]:hover {
+  transform: scale(1.15) translateY(-2px);
+  box-shadow: 0 0 24px rgba(139,92,246,0.5);
+}
+
+/* ════════════════════════════════════════
+   RESUME CARD
+   ════════════════════════════════════════ */
+[class*="bg-[#131826]"][class*="rounded-2xl"][class*="shadow-2xl"] {
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+[class*="bg-[#131826]"][class*="rounded-2xl"][class*="shadow-2xl"]:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(139,92,246,0.15);
+}
+
+/* ════════════════════════════════════════
+   GRADIENT CTA CARD (contact section)
+   ════════════════════════════════════════ */
+[class*="bg-gradient-to-br"][class*="rounded-3xl"] {
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+[class*="bg-gradient-to-br"][class*="rounded-3xl"]:hover {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 24px 60px rgba(139,92,246,0.3), 0 0 50px rgba(244,63,94,0.2);
+}
+
+/* ════════════════════════════════════════
+   ABOUT SECTION IMAGE (circular)
+   ════════════════════════════════════════ */
+.rounded-full.overflow-hidden.relative.z-10 {
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+.rounded-full.overflow-hidden.relative.z-10:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 50px rgba(139,92,246,0.35), 0 20px 50px rgba(0,0,0,0.5);
+}
+
+/* ════════════════════════════════════════
+   ADMIN MESSAGE LIST ITEMS
+   ════════════════════════════════════════ */
+[class*="bg-[#131826]"][class*="rounded-xl"][class*="cursor-pointer"] {
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.25s ease,
+              border-color 0.25s ease;
+}
+[class*="bg-[#131826]"][class*="rounded-xl"][class*="cursor-pointer"]:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.35), 0 0 20px rgba(139,92,246,0.12);
+}
+
+/* ════════════════════════════════════════
+   GLOBAL: disable all hover transforms on touch
+   ════════════════════════════════════════ */
 @media (hover: none) {
-  button:hover,
-  a[href]:hover,
-  [role="button"]:hover,
-  .btn-primary:hover,
-  .btn-ghost:hover,
-  .btn-emerald:hover,
-  .btn-social:hover,
-  nav a:hover {
-    transform: none;
-    box-shadow: none;
+  *:hover {
+    transform: none !important;
+    box-shadow: inherit !important;
   }
 }
 
-/* ── Prevent horizontal overflow on mobile ── */
+/* ════════════════════════════════════════
+   MOBILE: reduce glow text
+   ════════════════════════════════════════ */
 @media (max-width: 640px) {
   .glow-text {
-    text-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+    text-shadow: 0 0 20px rgba(139,92,246,0.4);
   }
 }

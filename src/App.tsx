@@ -163,6 +163,16 @@ const projects = [
     featured: false,
     comingSoon: true,
     overlayText: "RKD"
+  },
+  {
+    id: 6,
+    title: "Minnal AI",
+    description: "A clean, fast AI chat experience — ask anything, get instant answers, and keep your conversations organized. Minnal AI delivers intelligent and authentic responses effortlessly, with an Android app coming soon.",
+    image: "https://i.pinimg.com/736x/c7/74/cb/c774cbb0692dc052ac554d87f9c78e90.jpg",
+    tech: ['AI Chat', 'React', 'Next.js', 'OpenAI', 'Android App'],
+    featured: true,
+    comingSoon: false,
+    demo: "https://minnalai.vercel.app/"
   }
 ];
 
