@@ -4,27 +4,30 @@ import { MapPin, Mail, Phone, Globe, Download, ArrowLeft } from 'lucide-react';
 
 export default function Resume() {
   return (
-    <div className="min-h-screen bg-[#0A0F1C] text-white font-sans py-12 px-4 print:bg-white print:text-black print:py-0 print:px-0">
+    <div className="min-h-screen bg-[#0a0a0a] text-white font-sans py-12 px-4 print:bg-white print:text-black print:py-0 print:px-0">
       {/* Top bar — hidden on print */}
       <div className="max-w-3xl mx-auto mb-8 flex items-center justify-between print:hidden">
         <a href="/" className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors text-sm">
           <ArrowLeft size={16} /><span>Back to Portfolio</span>
         </a>
         <button onClick={() => window.print()}
-          className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-500 text-white px-5 py-2 rounded-full text-sm font-medium transition-colors">
+          className="flex items-center space-x-2 text-black font-bold px-5 py-2 rounded-full text-sm transition-colors"
+          style={{ background: '#a3e635' }}>
           <Download size={15} /><span>Download PDF</span>
         </button>
       </div>
 
       {/* Resume Card */}
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-        className="max-w-3xl mx-auto bg-[#131826] print:bg-white rounded-2xl shadow-2xl overflow-hidden print:shadow-none print:rounded-none">
+        className="max-w-3xl mx-auto bg-[#111111] print:bg-white rounded-2xl shadow-2xl overflow-hidden print:shadow-none print:rounded-none"
+        style={{ boxShadow: '0 0 60px rgba(163,230,53,0.08)' }}>
 
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-900/60 to-blue-900/40 print:bg-purple-700 px-10 py-10 print:px-8 print:py-8">
-          <h1 className="text-4xl font-bold text-white print:text-white">RAZI KV</h1>
-          <p className="text-purple-300 print:text-purple-200 text-lg font-medium mt-1">Web Designer & Developer</p>
-          <div className="flex flex-wrap gap-4 mt-4 text-sm text-gray-300 print:text-gray-100">
+        <div className="px-10 py-10 print:px-8 print:py-8"
+          style={{ background: 'linear-gradient(135deg, rgba(26,42,10,0.9) 0%, rgba(13,26,13,0.8) 100%)', borderBottom: '1px solid rgba(163,230,53,0.15)' }}>
+          <h1 className="text-4xl font-bold text-white print:text-black">RAZI KV</h1>
+          <p className="text-lg font-medium mt-1" style={{ color: '#a3e635' }}>Web Designer &amp; Developer</p>
+          <div className="flex flex-wrap gap-4 mt-4 text-sm text-gray-300 print:text-gray-700">
             <span className="flex items-center gap-1.5"><MapPin size={13} />Malappuram, Kerala, India</span>
             <a href="mailto:hello@razi.me" className="flex items-center gap-1.5 hover:text-white"><Mail size={13} />hello@razi.me</a>
             <a href="tel:+918129489071" className="flex items-center gap-1.5 hover:text-white"><Phone size={13} />+91 8129489071</a>
@@ -37,7 +40,7 @@ export default function Resume() {
           {/* Summary */}
           <Section title="Professional Summary">
             <p className="text-gray-300 print:text-gray-700 leading-relaxed text-sm">
-              Creative and results-driven Web Designer & Developer based in Malappuram, Kerala with hands-on experience building high-performance websites, e-commerce platforms, and digital marketing strategies. Passionate about crafting stunning digital experiences that convert visitors into customers. Skilled in modern frontend technologies, SEO, and brand strategy.
+              Creative and results-driven Web Designer &amp; Developer based in Malappuram, Kerala with hands-on experience building high-performance websites, e-commerce platforms, and digital marketing strategies. Passionate about crafting stunning digital experiences that convert visitors into customers. Skilled in modern frontend technologies, SEO, and brand strategy.
             </p>
           </Section>
 
@@ -55,7 +58,7 @@ export default function Resume() {
                 ['Other', 'Wikipedia Page Creation, AI Integration'],
               ].map(([cat, val]) => (
                 <div key={cat} className="py-1 border-b border-white/5 print:border-gray-200">
-                  <span className="text-purple-400 print:text-purple-700 font-semibold">{cat}: </span>
+                  <span className="font-semibold print:text-lime-700" style={{ color: '#a3e635' }}>{cat}: </span>
                   <span className="text-gray-300 print:text-gray-700">{val}</span>
                 </div>
               ))}
@@ -101,9 +104,9 @@ export default function Resume() {
                 { name: 'Results Management System', desc: 'Educational institution results portal built with Next.js, MongoDB, and Supabase.' },
                 { name: 'RKD Works Business Website', desc: 'Responsive business website with local SEO optimization for a UAE-based company.' },
               ].map(p => (
-                <div key={p.name} className="border-l-2 border-purple-500/40 pl-4 py-1">
+                <div key={p.name} className="pl-4 py-1" style={{ borderLeft: '2px solid rgba(163,230,53,0.4)' }}>
                   <div className="font-semibold text-white print:text-black">{p.name}
-                    {p.link && <a href={`https://${p.link}`} className="text-purple-400 print:text-purple-700 font-normal ml-2 text-xs">↗ {p.link}</a>}
+                    {p.link && <a href={`https://${p.link}`} className="font-normal ml-2 text-xs print:text-lime-700" style={{ color: '#a3e635' }}>↗ {p.link}</a>}
                   </div>
                   <p className="text-gray-400 print:text-gray-600 mt-0.5">{p.desc}</p>
                 </div>
@@ -123,9 +126,9 @@ export default function Resume() {
           {/* Languages */}
           <Section title="Languages">
             <div className="flex gap-6 text-sm text-gray-300 print:text-gray-700">
-              <span>Malayalam <span className="text-purple-400 print:text-purple-700">(Native)</span></span>
-              <span>English <span className="text-purple-400 print:text-purple-700">(Professional)</span></span>
-              <span>Arabic <span className="text-purple-400 print:text-purple-700">(Basic)</span></span>
+              <span>Malayalam <span className="print:text-lime-700" style={{ color: '#a3e635' }}>(Native)</span></span>
+              <span>English <span className="print:text-lime-700" style={{ color: '#a3e635' }}>(Professional)</span></span>
+              <span>Arabic <span className="print:text-lime-700" style={{ color: '#a3e635' }}>(Basic)</span></span>
             </div>
           </Section>
 
@@ -138,7 +141,8 @@ export default function Resume() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-xs font-bold uppercase tracking-widest text-purple-400 print:text-purple-700 mb-3 pb-1 border-b border-white/10 print:border-gray-300">
+      <h2 className="text-xs font-bold uppercase tracking-widest mb-3 pb-1 border-b border-white/10 print:border-gray-300 print:text-lime-700"
+        style={{ color: '#a3e635' }}>
         {title}
       </h2>
       {children}
@@ -154,14 +158,14 @@ function Job({ title, company, period, location, points }: {
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="font-semibold text-white print:text-black">{title}</div>
-          <div className="text-purple-400 print:text-purple-700 text-sm">{company} · {location}</div>
+          <div className="text-sm print:text-lime-700" style={{ color: '#a3e635' }}>{company} · {location}</div>
         </div>
         <span className="text-xs text-gray-500 print:text-gray-500 shrink-0 mt-0.5">{period}</span>
       </div>
       <ul className="mt-2 space-y-1">
         {points.map((p, i) => (
           <li key={i} className="text-sm text-gray-400 print:text-gray-700 flex items-start gap-2">
-            <span className="text-purple-500 mt-1 shrink-0">▸</span>{p}
+            <span className="mt-1 shrink-0" style={{ color: '#a3e635' }}>▸</span>{p}
           </li>
         ))}
       </ul>

@@ -4,13 +4,24 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ── CSS Variables — Green & Black Theme ── */
+:root {
+  --accent: #a3e635;          /* lime-400 */
+  --accent-dark: #84cc16;     /* lime-500 */
+  --accent-glow: rgba(163,230,53,0.35);
+  --bg-base: #0a0a0a;
+  --bg-card: #111111;
+  --bg-card2: #161616;
+  --border: rgba(163,230,53,0.12);
+}
+
 .bg-gradient-radial {
   background: radial-gradient(circle, var(--tw-gradient-stops));
 }
 
 /* ── Glowing text ── */
 .glow-text {
-  text-shadow: 0 0 40px rgba(139, 92, 246, 0.5), 0 0 80px rgba(139, 92, 246, 0.2);
+  text-shadow: 0 0 40px rgba(163,230,53,0.5), 0 0 80px rgba(163,230,53,0.2);
 }
 
 /* ════════════════════════════════════════
@@ -34,7 +45,7 @@ html {
 }
 .btn-primary:hover::before { opacity: 1; }
 .btn-primary:hover {
-  box-shadow: 0 0 28px rgba(139,92,246,0.55), 0 0 56px rgba(139,92,246,0.22), 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 0 28px var(--accent-glow), 0 0 56px rgba(163,230,53,0.15), 0 8px 24px rgba(0,0,0,0.5);
   transform: translateY(-3px) scale(1.04);
 }
 .btn-primary:active { transform: translateY(0) scale(0.97); }
@@ -53,7 +64,7 @@ html {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(255,255,255,0.07);
+  background: rgba(163,230,53,0.07);
   transform: translateX(-101%);
   transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
   z-index: 0;
@@ -61,13 +72,15 @@ html {
 .btn-ghost:hover::before { transform: translateX(0); }
 .btn-ghost:hover {
   transform: translateY(-3px) scale(1.04);
-  box-shadow: 0 8px 24px rgba(255,255,255,0.06);
+  box-shadow: 0 8px 24px rgba(163,230,53,0.08);
+  border-color: rgba(163,230,53,0.4) !important;
+  color: #a3e635 !important;
 }
 .btn-ghost:active { transform: translateY(0) scale(0.97); }
 .btn-ghost > * { position: relative; z-index: 1; }
 
 /* ════════════════════════════════════════
-   BUTTON: emerald glow pulse
+   BUTTON: green glow pulse
    ════════════════════════════════════════ */
 .btn-emerald {
   position: relative;
@@ -80,7 +93,7 @@ html {
   position: absolute;
   inset: -3px;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgba(16,185,129,0.5), rgba(5,150,105,0.25));
+  background: linear-gradient(135deg, rgba(163,230,53,0.5), rgba(132,204,22,0.25));
   opacity: 0;
   transition: opacity 0.35s ease;
   z-index: -1;
@@ -88,7 +101,7 @@ html {
 }
 .btn-emerald:hover::after { opacity: 1; }
 .btn-emerald:hover {
-  box-shadow: 0 0 24px rgba(16,185,129,0.45), 0 6px 24px rgba(0,0,0,0.35);
+  box-shadow: 0 0 24px var(--accent-glow), 0 6px 24px rgba(0,0,0,0.4);
   transform: translateY(-3px) scale(1.04);
 }
 .btn-emerald:active { transform: translateY(0) scale(0.97); }
@@ -105,9 +118,9 @@ html {
 }
 .btn-social:hover {
   transform: translateY(-4px) rotate(10deg) scale(1.15);
-  box-shadow: 0 10px 24px rgba(139,92,246,0.25);
-  border-color: rgba(139,92,246,0.5) !important;
-  color: white !important;
+  box-shadow: 0 10px 24px var(--accent-glow);
+  border-color: rgba(163,230,53,0.5) !important;
+  color: #a3e635 !important;
 }
 .btn-social:active { transform: translateY(0) scale(0.95); }
 
@@ -128,7 +141,7 @@ html {
   background: linear-gradient(
     to right,
     rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0.06) 50%,
+    rgba(163,230,53,0.05) 50%,
     rgba(255,255,255,0) 100%
   );
   transform: skewX(-20deg);
@@ -139,7 +152,7 @@ html {
 .card-shine:hover::before { left: 125%; }
 
 /* ════════════════════════════════════════
-   GENERIC CARD hover (bg-[#131826] divs)
+   GENERIC CARD hover
    ════════════════════════════════════════ */
 .hover-card {
   transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
@@ -148,100 +161,78 @@ html {
 }
 .hover-card:hover {
   transform: translateY(-4px) scale(1.015);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 30px rgba(139,92,246,0.12);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 30px rgba(163,230,53,0.08);
 }
 
 /* ════════════════════════════════════════
-   STAT CARDS (about section grid)
+   STAT CARDS
    ════════════════════════════════════════ */
-[class*="bg-[#131826]"][class*="rounded-2xl"] {
+[class*="bg-[#111111]"][class*="rounded-2xl"],
+[class*="bg-[#161616]"][class*="rounded-2xl"] {
   transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
               box-shadow 0.3s ease,
               border-color 0.3s ease;
 }
-[class*="bg-[#131826]"][class*="rounded-2xl"]:hover {
+[class*="bg-[#111111]"][class*="rounded-2xl"]:hover,
+[class*="bg-[#161616]"][class*="rounded-2xl"]:hover {
   transform: translateY(-5px) scale(1.02);
 }
 
 /* ════════════════════════════════════════
    CONTACT INFO CARDS
    ════════════════════════════════════════ */
-[class*="bg-[#1A1F2E]"][class*="rounded-xl"] {
+[class*="bg-[#161616]"][class*="rounded-xl"] {
   transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
               box-shadow 0.3s ease,
               background-color 0.3s ease;
 }
-[class*="bg-[#1A1F2E]"][class*="rounded-xl"]:hover {
+[class*="bg-[#161616]"][class*="rounded-xl"]:hover {
   transform: translateY(-3px) scale(1.015);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.35), 0 0 20px rgba(16,185,129,0.1);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 20px rgba(163,230,53,0.08);
 }
 
 /* ════════════════════════════════════════
-   SKILL ITEM ROWS (skills page)
+   SKILL ITEM ROWS
    ════════════════════════════════════════ */
-[class*="bg-[#0A0F1C]"][class*="rounded-xl"] {
+[class*="bg-[#0a0a0a]"][class*="rounded-xl"] {
   transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
               box-shadow 0.25s ease,
               border-color 0.25s ease,
               background-color 0.25s ease;
 }
-[class*="bg-[#0A0F1C]"][class*="rounded-xl"]:hover {
+[class*="bg-[#0a0a0a]"][class*="rounded-xl"]:hover {
   transform: translateX(4px) scale(1.02);
-  box-shadow: 0 4px 16px rgba(16,185,129,0.12);
+  box-shadow: 0 4px 16px rgba(163,230,53,0.1);
 }
 
 /* ════════════════════════════════════════
-   PROJECT CARDS (projects page grid)
+   PROJECT CARDS
    ════════════════════════════════════════ */
-[class*="bg-[#1A1F2E]"][class*="rounded-2xl"] {
+[class*="bg-[#161616]"][class*="rounded-2xl"] {
   transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
               box-shadow 0.35s ease,
               border-color 0.35s ease;
 }
-[class*="bg-[#1A1F2E]"][class*="rounded-2xl"]:hover {
+[class*="bg-[#161616]"][class*="rounded-2xl"]:hover {
   transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 0 35px rgba(139,92,246,0.18);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 35px rgba(163,230,53,0.12);
 }
 
 /* ════════════════════════════════════════
-   SKILL BLOCK CARDS (skills page main)
+   SKILL BLOCK CARDS
    ════════════════════════════════════════ */
-[class*="bg-[#0E1420]"][class*="rounded-2xl"] {
+[class*="bg-[#111111]"][class*="rounded-2xl"] {
   transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
               box-shadow 0.35s ease,
               border-color 0.35s ease;
 }
-[class*="bg-[#0E1420]"][class*="rounded-2xl"]:hover {
+[class*="bg-[#111111]"][class*="rounded-2xl"]:hover {
   transform: translateY(-4px) scale(1.008);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 28px rgba(139,92,246,0.1);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 28px rgba(163,230,53,0.08);
 }
 
 /* ════════════════════════════════════════
-   ACHIEVEMENTS BLOCK (services section)
-   ════════════════════════════════════════ */
-[class*="bg-[#1A1F2E]"][class*="rounded-\\[2rem\\]"] {
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
-}
-[class*="bg-[#1A1F2E]"][class*="rounded-\\[2rem\\]"]:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 40px rgba(139,92,246,0.1);
-}
-
-/* ════════════════════════════════════════
-   ADMIN DASHBOARD CARDS
-   ════════════════════════════════════════ */
-[class*="bg-[#131826]"][class*="rounded-xl"] {
-  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
-              box-shadow 0.25s ease,
-              border-color 0.25s ease;
-}
-[class*="bg-[#131826]"][class*="rounded-xl"]:hover {
-  transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 16px rgba(139,92,246,0.1);
-}
-
-/* ════════════════════════════════════════
-   FILTER BUTTONS (projects page)
+   FILTER BUTTONS
    ════════════════════════════════════════ */
 button[class*="rounded-full"] {
   transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
@@ -251,14 +242,14 @@ button[class*="rounded-full"] {
 }
 button[class*="rounded-full"]:hover {
   transform: translateY(-2px) scale(1.06);
-  box-shadow: 0 6px 18px rgba(139,92,246,0.2);
+  box-shadow: 0 6px 18px rgba(163,230,53,0.15);
 }
 button[class*="rounded-full"]:active {
   transform: scale(0.96);
 }
 
 /* ════════════════════════════════════════
-   SKILL TAGS (about section "What I Do")
+   SKILL TAGS
    ════════════════════════════════════════ */
 div[class*="rounded-full"][class*="cursor-default"] {
   transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
@@ -268,11 +259,11 @@ div[class*="rounded-full"][class*="cursor-default"] {
 }
 div[class*="rounded-full"][class*="cursor-default"]:hover {
   transform: translateY(-2px) scale(1.06);
-  box-shadow: 0 6px 16px rgba(139,92,246,0.2);
+  box-shadow: 0 6px 16px rgba(163,230,53,0.15);
 }
 
 /* ════════════════════════════════════════
-   NAV LINKS — subtle lift only
+   NAV LINKS
    ════════════════════════════════════════ */
 nav a {
   transition: color 0.25s ease, transform 0.2s ease;
@@ -303,71 +294,48 @@ footer a {
 }
 footer a:hover {
   transform: translateX(3px);
-  color: white;
+  color: #a3e635;
 }
 
 /* ════════════════════════════════════════
    HERO IMAGE CONTAINER
    ════════════════════════════════════════ */
-.group[class*="rounded-\\[2rem\\]"]:hover {
-  box-shadow: 0 0 60px rgba(139,92,246,0.35), 0 30px 60px rgba(0,0,0,0.5);
-}
-
-/* ════════════════════════════════════════
-   FLOATING SKILL CHIPS (hero)
-   ════════════════════════════════════════ */
-[class*="bg-[#1A1F2E]"][class*="rounded-xl"][class*="hidden lg:flex"] {
-  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
-}
-[class*="bg-[#1A1F2E]"][class*="rounded-xl"][class*="hidden lg:flex"]:hover {
-  transform: scale(1.1) translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+.group[class*="rounded-full"]:hover {
+  box-shadow: 0 0 60px var(--accent-glow), 0 30px 60px rgba(0,0,0,0.6);
 }
 
 /* ════════════════════════════════════════
    WHATSAPP POPUP BUTTON
    ════════════════════════════════════════ */
-button[class*="bg-emerald-500"][class*="rounded-full"] {
+button[class*="bg-lime"][class*="rounded-full"],
+button[class*="bg-[#a3e635]"][class*="rounded-full"] {
   transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
               box-shadow 0.3s ease;
 }
-button[class*="bg-emerald-500"][class*="rounded-full"]:hover {
+button[class*="bg-lime"][class*="rounded-full"]:hover,
+button[class*="bg-[#a3e635]"][class*="rounded-full"]:hover {
   transform: scale(1.12) translateY(-2px);
-  box-shadow: 0 0 28px rgba(16,185,129,0.5), 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 0 28px var(--accent-glow), 0 8px 24px rgba(0,0,0,0.4);
 }
 
 /* ════════════════════════════════════════
    SCROLL-TO-TOP BUTTON
    ════════════════════════════════════════ */
-button[class*="bg-purple-6"][class*="rounded-full"] {
+button[class*="bg-lime-5"][class*="rounded-full"],
+button[class*="bg-[#a3e635]"][class*="rounded-full"] {
   transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
               box-shadow 0.3s ease;
 }
-button[class*="bg-purple-6"][class*="rounded-full"]:hover {
-  transform: scale(1.15) translateY(-2px);
-  box-shadow: 0 0 24px rgba(139,92,246,0.5);
-}
 
 /* ════════════════════════════════════════
-   RESUME CARD
-   ════════════════════════════════════════ */
-[class*="bg-[#131826]"][class*="rounded-2xl"][class*="shadow-2xl"] {
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-}
-[class*="bg-[#131826]"][class*="rounded-2xl"][class*="shadow-2xl"]:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(139,92,246,0.15);
-}
-
-/* ════════════════════════════════════════
-   GRADIENT CTA CARD (contact section)
+   GRADIENT CTA CARD
    ════════════════════════════════════════ */
 [class*="bg-gradient-to-br"][class*="rounded-3xl"] {
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 [class*="bg-gradient-to-br"][class*="rounded-3xl"]:hover {
   transform: translateY(-5px) scale(1.01);
-  box-shadow: 0 24px 60px rgba(139,92,246,0.3), 0 0 50px rgba(244,63,94,0.2);
+  box-shadow: 0 24px 60px rgba(163,230,53,0.2), 0 0 50px rgba(163,230,53,0.1);
 }
 
 /* ════════════════════════════════════════
@@ -378,20 +346,20 @@ button[class*="bg-purple-6"][class*="rounded-full"]:hover {
 }
 .rounded-full.overflow-hidden.relative.z-10:hover {
   transform: scale(1.04);
-  box-shadow: 0 0 50px rgba(139,92,246,0.35), 0 20px 50px rgba(0,0,0,0.5);
+  box-shadow: 0 0 50px var(--accent-glow), 0 20px 50px rgba(0,0,0,0.6);
 }
 
 /* ════════════════════════════════════════
    ADMIN MESSAGE LIST ITEMS
    ════════════════════════════════════════ */
-[class*="bg-[#131826]"][class*="rounded-xl"][class*="cursor-pointer"] {
+[class*="bg-[#111111]"][class*="rounded-xl"][class*="cursor-pointer"] {
   transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
               box-shadow 0.25s ease,
               border-color 0.25s ease;
 }
-[class*="bg-[#131826]"][class*="rounded-xl"][class*="cursor-pointer"]:hover {
+[class*="bg-[#111111]"][class*="rounded-xl"][class*="cursor-pointer"]:hover {
   transform: translateY(-3px) scale(1.01);
-  box-shadow: 0 10px 28px rgba(0,0,0,0.35), 0 0 20px rgba(139,92,246,0.12);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.4), 0 0 20px rgba(163,230,53,0.08);
 }
 
 /* ════════════════════════════════════════
@@ -409,6 +377,6 @@ button[class*="bg-purple-6"][class*="rounded-full"]:hover {
    ════════════════════════════════════════ */
 @media (max-width: 640px) {
   .glow-text {
-    text-shadow: 0 0 20px rgba(139,92,246,0.4);
+    text-shadow: 0 0 20px rgba(163,230,53,0.4);
   }
 }

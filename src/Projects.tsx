@@ -16,9 +16,8 @@ function FloatingOrbs() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
       <motion.div animate={{ x: [0, 80, -40, 0], y: [0, -60, 40, 0] }} transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-[10%] left-[5%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px]" />
-      <motion.div animate={{ x: [0, -60, 80, 0], y: [0, 80, -40, 0] }} transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
-        className="absolute top-[40%] right-[5%] w-[600px] h-[600px] bg-blue-600/8 rounded-full blur-[140px]" />
+        className="absolute top-[10%] left-[5%] w-[500px] h-[500px] rounded-full blur-[120px]"
+        style={{ background: 'rgba(163,230,53,0.06)' }} />
     </div>
   );
 }
@@ -97,17 +96,16 @@ export default function ProjectsPage() {
   const otherProjects = filteredProjects.filter(p => !p.featured);
 
   return (
-    <div className="min-h-screen bg-[#0A0F1C] text-white font-sans relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#0a0a0a] text-white font-sans relative overflow-x-hidden">
       <FloatingOrbs />
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.03]"
-        style={{ backgroundImage: `linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)`, backgroundSize: '60px 60px' }} />
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.025]"
+        style={{ backgroundImage: `linear-gradient(rgba(163,230,53,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(163,230,53,0.8) 1px, transparent 1px)`, backgroundSize: '60px 60px' }} />
 
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 w-full z-50 border-b border-white/5 bg-[#0A0F1C]/80 backdrop-blur-md">
+      <nav className="fixed top-0 left-0 w-full z-50 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-md">
         <div className="flex items-center justify-between px-4 sm:px-6 py-4 md:px-12 lg:px-24">
           <a href="/" className="group text-2xl font-bold tracking-tight cursor-pointer">
-            <span className="transition-colors duration-300 group-hover:text-purple-400">RAZI</span>
-            <span className="text-purple-500 transition-colors duration-300 group-hover:text-white">kv</span>
+            <span className="transition-colors duration-300 group-hover:text-lime-400">RAZI</span>
+            <span className="text-lime-400 transition-colors duration-300 group-hover:text-white">kv</span>
           </a>
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
             {[
@@ -118,15 +116,15 @@ export default function ProjectsPage() {
               { label: 'Projects', href: '/projects', active: true },
               { label: 'Contact', href: '/#contact', active: false },
             ].map(({ label, href, active }) => (
-              <a key={label} href={href} className={`relative group pb-1 transition-colors ${active ? 'text-emerald-400' : 'hover:text-white'}`}>
+              <a key={label} href={href} className={`relative group pb-1 transition-colors ${active ? 'text-lime-400' : 'hover:text-white'}`}>
                 {label}
-                <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-400 origin-left transition-transform duration-300 ${active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
+                <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-lime-400 origin-left transition-transform duration-300 ${active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
               </a>
             ))}
           </div>
           <div className="flex items-center space-x-3">
             <a href="https://wa.me/918129489071" target="_blank" rel="noopener noreferrer"
-              className="hidden md:flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2 rounded-full font-medium transition-colors text-sm">
+              className="hidden md:flex items-center space-x-2 bg-lime-400 hover:bg-lime-300 text-black font-bold px-5 py-2 rounded-full transition-colors text-sm">
               <MessageCircle size={15} /><span>WhatsApp</span>
             </a>
             <button onClick={() => setMobileMenuOpen(o => !o)} className="md:hidden text-gray-400 hover:text-white p-1" aria-label="Toggle menu">
@@ -140,7 +138,7 @@ export default function ProjectsPage() {
           {mobileMenuOpen && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="md:hidden overflow-hidden border-t border-white/5 bg-[#0A0F1C]/95 backdrop-blur-md">
+              className="md:hidden overflow-hidden border-t border-white/5 bg-[#0a0a0a]/95 backdrop-blur-md">
               <div className="px-4 py-6 space-y-1">
                 {[
                   { label: 'Home', href: '/' },
@@ -151,13 +149,13 @@ export default function ProjectsPage() {
                   { label: 'Contact', href: '/#contact' },
                 ].map(({ label, href }) => (
                   <a key={label} href={href} onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-all text-sm font-medium">
+                    className="flex items-center justify-between px-4 py-3 rounded-xl text-gray-300 hover:text-lime-400 hover:bg-white/5 transition-all text-sm font-medium">
                     {label}<ChevronRight size={16} className="text-gray-600" />
                   </a>
                 ))}
                 <div className="pt-4">
                   <a href="https://wa.me/918129489071" target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-full font-medium text-sm transition-colors w-full">
+                    className="flex items-center justify-center space-x-2 bg-lime-400 hover:bg-lime-300 text-black font-bold px-6 py-3 rounded-full text-sm transition-colors w-full">
                     <MessageCircle size={16} /><span>WhatsApp</span>
                   </a>
                 </div>
@@ -178,7 +176,7 @@ export default function ProjectsPage() {
         <motion.div variants={fadeInUp} className="flex flex-col items-center text-center space-y-6 mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white relative inline-block">
             Featured Work
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-24 h-1 rounded-full" style={{ background: 'linear-gradient(to right, #a3e635, #84cc16)' }}></div>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mt-8">
             Here are some of my recent projects that showcase my skills and passion for creating exceptional digital experiences.
@@ -190,11 +188,12 @@ export default function ProjectsPage() {
               <motion.button key={filter} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveFilter(filter)}
                 className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 relative ${
-                  activeFilter === filter ? 'text-white' : 'bg-white/5 text-gray-400 border border-white/10 hover:border-purple-500/50 hover:text-white'
+                  activeFilter === filter ? 'text-black font-bold' : 'bg-white/5 text-gray-400 border border-white/10 hover:border-lime-400/40 hover:text-white'
                 }`}>
                 {activeFilter === filter && (
                   <motion.div layoutId="activeFilter"
-                    className="absolute inset-0 bg-purple-600 rounded-full shadow-lg shadow-purple-500/30 -z-10"
+                    className="absolute inset-0 rounded-full -z-10"
+                    style={{ background: '#a3e635' }}
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }} />
                 )}
                 {filter}
@@ -211,15 +210,16 @@ export default function ProjectsPage() {
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.4 }}
                 className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className={`relative rounded-2xl overflow-hidden group transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(139,92,246,0.2)] border border-transparent hover:border-purple-500/30 ${project.id % 2 === 0 ? 'lg:order-2' : ''}`}>
+                <div className={`relative rounded-2xl overflow-hidden group transition-all duration-500 hover:scale-[1.02] border border-transparent hover:border-lime-400/20 ${project.id % 2 === 0 ? 'lg:order-2' : ''}`}
+                  style={{ '--tw-shadow': '0 0 50px rgba(163,230,53,0.12)' } as React.CSSProperties}>
                   <img src={project.image} alt={project.title}
                     className={`w-full h-auto object-cover rounded-2xl transition-transform duration-700 group-hover:scale-110 ${project.comingSoon ? 'brightness-50' : ''}`} />
-                  {project.id === 1 && <div className="absolute inset-0 bg-purple-900/20 group-hover:bg-transparent transition-colors duration-500"></div>}
+                  {project.id === 1 && <div className="absolute inset-0 bg-lime-400/5 group-hover:bg-transparent transition-colors duration-500"></div>}
                   {project.comingSoon && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="flex items-center space-x-2 bg-black/60 backdrop-blur-sm border border-amber-400/30 rounded-full px-5 py-2.5">
-                        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                        <span className="text-amber-400 font-semibold tracking-wide">Coming Soon</span>
+                      <div className="flex items-center space-x-2 bg-black/60 backdrop-blur-sm border border-lime-400/30 rounded-full px-5 py-2.5">
+                        <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse"></span>
+                        <span className="text-lime-400 font-semibold tracking-wide">Coming Soon</span>
                       </div>
                     </div>
                   )}
@@ -235,13 +235,14 @@ export default function ProjectsPage() {
                   <div className="flex items-center space-x-4 pt-4">
                     {project.comingSoon ? (
                       <div className="flex items-center space-x-2 bg-white/5 border border-white/10 rounded-full px-6 py-2.5">
-                        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                        <span className="text-sm font-medium text-amber-400">Coming Soon</span>
+                        <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse"></span>
+                        <span className="text-sm font-medium text-lime-400">Coming Soon</span>
                       </div>
                     ) : (
                       <>
                         <a href={project.demo || '#'} target="_blank" rel="noopener noreferrer"
-                          className="btn-primary bg-[#8B5CF6] hover:bg-purple-600 text-white px-6 py-2.5 rounded-full font-medium transition-colors">
+                          className="btn-primary text-black font-bold px-6 py-2.5 rounded-full transition-colors"
+                          style={{ background: '#a3e635' }}>
                           View Details
                         </a>
                         {project.demo && (
@@ -266,7 +267,7 @@ export default function ProjectsPage() {
               <div className="flex flex-col items-center text-center space-y-6 mb-16">
                 <h2 className="text-3xl font-bold text-white relative inline-block">
                   Other Notable Projects
-                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-1 rounded-full" style={{ background: 'linear-gradient(to right, #a3e635, #84cc16)' }}></div>
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -274,7 +275,7 @@ export default function ProjectsPage() {
                   <motion.div key={project.id} layout
                     initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }}
-                    className="bg-[#1A1F2E] border border-white/5 rounded-2xl overflow-hidden group hover:border-purple-500/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] hover:scale-[1.03] transition-all duration-500">
+                    className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden group hover:border-lime-400/20 hover:shadow-[0_0_30px_rgba(163,230,53,0.08)] hover:scale-[1.03] transition-all duration-500">
                     <div className="h-48 overflow-hidden relative">
                       <img src={project.image} alt={project.title}
                         className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${project.comingSoon ? 'brightness-50' : ''}`} />
@@ -294,9 +295,9 @@ export default function ProjectsPage() {
                       )}
                       {project.comingSoon && (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="flex items-center space-x-2 bg-black/60 backdrop-blur-sm border border-amber-400/30 rounded-full px-4 py-2">
-                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                            <span className="text-amber-400 text-sm font-semibold tracking-wide">Coming Soon</span>
+                          <div className="flex items-center space-x-2 bg-black/60 backdrop-blur-sm border border-lime-400/30 rounded-full px-4 py-2">
+                            <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse"></span>
+                            <span className="text-lime-400 text-sm font-semibold tracking-wide">Coming Soon</span>
                           </div>
                         </div>
                       )}
@@ -312,8 +313,8 @@ export default function ProjectsPage() {
                       <div className="pt-4">
                         {project.comingSoon ? (
                           <div className="inline-flex items-center space-x-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                            <span className="text-sm font-medium text-amber-400">Coming Soon</span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse"></span>
+                            <span className="text-sm font-medium text-lime-400">Coming Soon</span>
                           </div>
                         ) : (
                           <a href="#" className="inline-flex items-center text-gray-400 text-sm font-medium hover:text-white transition-colors">
@@ -340,13 +341,12 @@ export default function ProjectsPage() {
         </motion.div>
       </motion.div>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-white/5 bg-[#070B14] mt-0">
+      <footer className="relative z-10 border-t border-white/5 bg-[#050505] mt-0">
         <div className="max-w-7xl mx-auto px-6 lg:px-24 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4 max-w-xs">
             <div className="text-xl font-bold tracking-tight">
-              RAZI<span className="text-purple-500">.</span>
-              <span className="text-purple-400 ml-1 font-light text-base">KV</span>
+              RAZI<span style={{ color: '#a3e635' }}>.</span>
+              <span className="ml-1 font-light text-base" style={{ color: '#a3e635' }}>KV</span>
             </div>
             <p className="text-gray-500 text-sm leading-relaxed">
               Web Designer &amp; Developer in Malappuram, passionate about creating exceptional digital experiences that drive business growth and user engagement.
@@ -377,7 +377,7 @@ export default function ProjectsPage() {
               <li className="text-gray-500 text-sm">Kerala, India</li>
               <li>
                 <span className="inline-flex items-center space-x-1.5 text-sm">
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#a3e635' }}></span>
                   <span className="text-gray-500">Available for freelance</span>
                 </span>
               </li>
@@ -389,24 +389,25 @@ export default function ProjectsPage() {
 
         <div className="max-w-7xl mx-auto px-6 lg:px-24 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-5">
-            <a href="#" aria-label="GitHub" className="text-gray-600 hover:text-white transition-colors"><Github size={18} /></a>
-            <a href="#" aria-label="LinkedIn" className="text-gray-600 hover:text-white transition-colors"><Linkedin size={18} /></a>
-            <a href="#" aria-label="Instagram" className="text-gray-600 hover:text-white transition-colors"><Instagram size={18} /></a>
-            <a href="mailto:hello@razi.me" aria-label="Email" className="text-gray-600 hover:text-white transition-colors"><Mail size={18} /></a>
+            <a href="#" aria-label="GitHub" className="text-gray-600 hover:text-lime-400 transition-colors"><Github size={18} /></a>
+            <a href="#" aria-label="LinkedIn" className="text-gray-600 hover:text-lime-400 transition-colors"><Linkedin size={18} /></a>
+            <a href="#" aria-label="Instagram" className="text-gray-600 hover:text-lime-400 transition-colors"><Instagram size={18} /></a>
+            <a href="mailto:hello@razi.me" aria-label="Email" className="text-gray-600 hover:text-lime-400 transition-colors"><Mail size={18} /></a>
           </div>
 
           <motion.button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}
-            className="w-10 h-10 bg-purple-600 hover:bg-purple-500 rounded-full flex items-center justify-center transition-colors shadow-lg shadow-purple-500/20"
+            className="w-10 h-10 rounded-full flex items-center justify-center transition-colors text-black"
+            style={{ background: '#a3e635', boxShadow: '0 4px 16px rgba(163,230,53,0.3)' }}
             aria-label="Scroll to top"
           >
             <ArrowDown size={16} className="rotate-180" />
           </motion.button>
 
           <p className="text-gray-600 text-xs flex items-center space-x-1">
-            <span>© 2025 RAZI KV. Made with</span>
-            <Heart size={11} className="text-rose-500 fill-rose-500 mx-0.5" />
+            <span>© 2026 RAZI KV. Made with</span>
+            <Heart size={11} className="text-lime-400 fill-lime-400 mx-0.5" />
             <span>and lots of coffee.</span>
           </p>
         </div>
