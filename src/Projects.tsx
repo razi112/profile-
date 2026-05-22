@@ -50,8 +50,8 @@ const projects = [
     image: 'https://i.pinimg.com/736x/a3/ba/f2/a3baf2b153d73a5aa358836b90397b22.jpg',
     tech: ['Conversation', 'Find', 'WordPress'],
     year: '2025',
-    demo: null,
-    comingSoon: true,
+    demo: 'https://chatsee.lovable.app/',
+    comingSoon: false,
     featured: true,
   },
   {
