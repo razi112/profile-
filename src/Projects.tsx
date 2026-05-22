@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, ChevronRight, MessageCircle, ArrowUpRight } from 'lucide-react';
+import { MessageCircle, ArrowUpRight, X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 
 const EASE = [0.22, 1, 0.36, 1] as any;
 
@@ -18,10 +18,10 @@ const projects = [
   {
     id: 1,
     num: '01',
-    title: 'AI Islam',
+    title: 'AI Islam Official',
     subtitle: 'AI-Powered Islamic Platform',
     description: 'An intelligent AI platform for the Muslim community — Quran tafsir, Hadith search, prayer guidance, and personalized spiritual assistance powered by advanced AI models.',
-    image: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://i.pinimg.com/736x/3d/7f/16/3d7f16265501f86d37936c99de57ace4.jpg',
     tech: ['React Native', 'Next.js', 'OpenAI', 'MongoDB'],
     year: '2024',
     demo: 'https://aiislamofficial.vercel.app/',
@@ -31,24 +31,24 @@ const projects = [
   {
     id: 2,
     num: '02',
-    title: 'Minnal AI',
+    title: 'AI Islam ',
     subtitle: 'AI Chat Experience',
     description: 'A clean, fast AI chat — ask anything, get instant answers, keep conversations organized. Intelligent and authentic responses effortlessly.',
-    image: 'https://i.pinimg.com/736x/c7/74/cb/c774cbb0692dc052ac554d87f9c78e90.jpg',
+    image: 'https://i.pinimg.com/736x/8d/60/cf/8d60cf9770d6693de6ee74cf691628f2.jpg',
     tech: ['React', 'Next.js', 'OpenAI', 'Android App'],
     year: '2024',
-    demo: 'https://minnalai.vercel.app/',
+    demo: 'https://aiislam.vercel.app/',
     comingSoon: false,
     featured: true,
   },
   {
     id: 3,
     num: '03',
-    title: 'PlantBox',
-    subtitle: 'E-Commerce Platform',
+    title: 'ChatSee',
+    subtitle: 'Where Conversations Come Alive',
     description: 'Complete e-commerce platform for buying and selling plants online with secure payment integration and a wide range of products.',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop',
-    tech: ['E-Commerce', 'Razorpay', 'WordPress'],
+    image: 'https://i.pinimg.com/736x/a3/ba/f2/a3baf2b153d73a5aa358836b90397b22.jpg',
+    tech: ['Conversation', 'Find', 'WordPress'],
     year: '2025',
     demo: null,
     comingSoon: true,
@@ -57,14 +57,14 @@ const projects = [
   {
     id: 4,
     num: '04',
-    title: 'Results System',
-    subtitle: 'Education Management',
-    description: 'Comprehensive results management for educational institutions — student results, grading, and reporting all in one place.',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop',
+    title: 'AL Zad Restuarent',
+    subtitle: 'Smart Hotel & Hospitality Platform',
+    description: 'A complete hotel management ecosystem built for modern hospitality businesses — manage room bookings, guest check-ins, reservations, billing, staff operations, restaurant orders, housekeeping, and analytics from one powerful dashboard. Designed to streamline hotel workflows and elevate the guest experience with speed, automation, and elegance.',
+    image: 'https://i.pinimg.com/736x/6f/99/1e/6f991edc3192a04f5f93d2af4290b674.jpg',
     tech: ['Next.js', 'MongoDB', 'Supabase'],
-    year: '2025',
-    demo: null,
-    comingSoon: true,
+    year: '2026',
+    demo: 'https://alzad.vercel.app/',
+    comingSoon: false,
     featured: false,
   },
   {
@@ -95,10 +95,135 @@ const projects = [
   },
 ];
 
+// ── Poster / Design Work ──────────────────────────────────────────────────
+const posters = [
+  { id: 1,  src: 'https://i.pinimg.com/736x/9c/0b/fc/9c0bfcdbcecc018e7382b4ebd3ba66f1.jpg', label: 'Dawa Open' },
+  { id: 2,  src: 'https://i.pinimg.com/736x/c2/f8/fc/c2f8fcb1b749282f4d2f08c17a20c4d0.jpg', label: 'Ootyk poyalo' },
+  { id: 3,  src: 'https://i.pinimg.com/736x/9e/69/b5/9e69b5b6e1c0a84b709e3b741811dd10.jpg', label: 'Wayanad' },
+  { id: 4,  src: 'https://i.pinimg.com/736x/fd/4e/af/fd4eaf32f0347c88fb7a76fdaa4b5824.jpg', label: 'Sports Day' },
+  { id: 5,  src: 'https://i.pinimg.com/736x/09/40/b7/0940b77347e979b41b29d47b099ca1dd.jpg', label: 'Keralam' },
+  { id: 6,  src: 'https://i.pinimg.com/474x/ab/96/98/ab9698ce6a3f360c10b3a529790be0a4.jpg', label: 'AKP MSU' },
+  { id: 7,  src: 'https://i.pinimg.com/736x/11/14/15/11141572318ba0624328f286c7c982da.jpg', label: 'VDS SMILE' },
+  { id: 8,  src: 'https://i.pinimg.com/736x/09/8d/3f/098d3f4ad11f60a672584ceeadb4f3af.jpg', label: 'Turtle WAX' },
+];
+
+// ── Lightbox ──────────────────────────────────────────────────────────────
+function Lightbox({ images, startIndex, onClose }: {
+  images: typeof posters;
+  startIndex: number;
+  onClose: () => void;
+}) {
+  const [current, setCurrent] = useState(startIndex);
+
+  const prev = useCallback(() => setCurrent(i => (i - 1 + images.length) % images.length), [images.length]);
+  const next = useCallback(() => setCurrent(i => (i + 1) % images.length), [images.length]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
+    };
+    window.addEventListener('keydown', handler);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', handler);
+      document.body.style.overflow = '';
+    };
+  }, [onClose, prev, next]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="fixed inset-0 z-[999] flex items-center justify-center"
+      style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(12px)' }}
+      onClick={onClose}
+    >
+      {/* Close */}
+      <button
+        onClick={onClose}
+        className="absolute top-5 right-5 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110"
+        style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}
+      >
+        <X size={18} className="text-white" />
+      </button>
+
+      {/* Counter */}
+      <div className="absolute top-5 left-1/2 -translate-x-1/2 text-xs text-gray-400 tracking-widest font-mono">
+        {current + 1} / {images.length}
+      </div>
+
+      {/* Prev */}
+      <button
+        onClick={e => { e.stopPropagation(); prev(); }}
+        className="absolute left-4 sm:left-8 z-10 w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 hover:bg-white/10"
+        style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+      >
+        <ChevronLeft size={20} className="text-white" />
+      </button>
+
+      {/* Image */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={current}
+          initial={{ opacity: 0, scale: 0.88, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.92, y: -10 }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          className="relative flex flex-col items-center"
+          onClick={e => e.stopPropagation()}
+        >
+          <img
+            src={images[current].src}
+            alt={images[current].label}
+            className="rounded-2xl shadow-2xl"
+            style={{
+              maxHeight: '80vh',
+              maxWidth: '90vw',
+              objectFit: 'contain',
+              border: '1px solid rgba(255,255,255,0.08)',
+            }}
+          />
+          <p className="mt-4 text-sm text-gray-400 tracking-wide">{images[current].label}</p>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Next */}
+      <button
+        onClick={e => { e.stopPropagation(); next(); }}
+        className="absolute right-4 sm:right-8 z-10 w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 hover:bg-white/10"
+        style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+      >
+        <ChevronRight size={20} className="text-white" />
+      </button>
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+        {images.map((_, i) => (
+          <button
+            key={i}
+            onClick={e => { e.stopPropagation(); setCurrent(i); }}
+            className="rounded-full transition-all duration-300"
+            style={{
+              width: i === current ? '20px' : '6px',
+              height: '6px',
+              background: i === current ? '#d4e635' : 'rgba(255,255,255,0.25)',
+            }}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 export default function ProjectsPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     setMousePos({ x: e.clientX, y: e.clientY });
@@ -192,7 +317,7 @@ export default function ProjectsPage() {
                 ))}
               </nav>
               <div className="mt-auto pb-10">
-                <a href="https://wa.me/918129489071" target="_blank" rel="noopener noreferrer"
+                <a href="https://wa.me/919746711804" target="_blank" rel="noopener noreferrer"
                   className="flex items-center space-x-2 font-bold text-sm text-black rounded-full px-4 py-2 w-fit hover:opacity-80 transition-opacity"
                   style={{ background: '#e0f11f' }}>
                   <MessageCircle size={14} /><span>WhatsApp</span>
@@ -401,13 +526,89 @@ export default function ProjectsPage() {
         </motion.div>
       </motion.div>
 
+      {/* ── Poster / Design Work Section ── */}
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.05 }}
+        variants={staggerContainer}
+        className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 lg:px-24 mt-24 pb-16"
+      >
+        {/* Header */}
+        <motion.div variants={fadeInUp} className="flex items-end justify-between mb-10">
+          <div>
+            <p className="text-xs tracking-[0.25em] uppercase text-gray-500 mb-3">Graphic Design</p>
+            <h2 style={{ fontFamily: '"Big Shoulders Display", sans-serif', fontWeight: 900, fontSize: 'clamp(32px, 5vw, 64px)', letterSpacing: '-0.01em', textTransform: 'uppercase', color: '#fff', lineHeight: 1 }}>
+              Design <span style={{ color: '#d4e635' }}>Work</span>
+            </h2>
+          </div>
+          <span className="text-xs text-gray-600 tracking-widest uppercase hidden sm:block">{posters.length} Posters</span>
+        </motion.div>
+
+        {/* Divider */}
+        <motion.div variants={fadeInUp} className="h-px w-full mb-10" style={{ background: 'linear-gradient(to right, rgba(163,230,53,0.3), transparent)' }} />
+
+        {/* Poster grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          {posters.map((poster, idx) => (
+            <motion.div
+              key={poster.id}
+              variants={fadeInUp}
+              className="group relative overflow-hidden rounded-xl cursor-pointer"
+              style={{ aspectRatio: '3/4', background: '#111' }}
+              onClick={() => setLightboxIndex(idx)}
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <img
+                src={poster.src}
+                alt={poster.label}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+
+              {/* Overlay on hover */}
+              <motion.div
+                className="absolute inset-0 flex flex-col items-center justify-center gap-2"
+                initial={{ opacity: 0 }}
+                whileHover={{ opacity: 1 }}
+                transition={{ duration: 0.25 }}
+                style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}
+              >
+                <div className="w-10 h-10 rounded-full flex items-center justify-center"
+                  style={{ background: '#d4e635' }}>
+                  <ZoomIn size={18} className="text-black" />
+                </div>
+                <span className="text-white text-xs font-semibold tracking-wide text-center px-3">{poster.label}</span>
+              </motion.div>
+
+              {/* Corner badge */}
+              <div className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{ background: 'rgba(212,230,53,0.9)' }}>
+                <ArrowUpRight size={12} className="text-black" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxIndex !== null && (
+          <Lightbox
+            images={posters}
+            startIndex={lightboxIndex}
+            onClose={() => setLightboxIndex(null)}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Footer marquee */}
       <footer className="relative z-10 select-none" style={{ background: '#0a0a0a', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
         <div className="marquee-wrapper w-full overflow-hidden"
           style={{ paddingTop: '20px', paddingBottom: '20px', maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)' }}>
           <div className="marquee-track">
             {['WTSP','IG','MAIL','FCB','WTSP','IG','MAIL','FCB','WTSP','IG','MAIL','FCB','WTSP','IG','MAIL','FCB'].map((item, i) => {
-              const links: Record<string,string> = { WTSP: 'https://wa.me/918129489071', IG: 'https://instagram.com', MAIL: 'mailto:razi61293697@gmail.com', FCB: 'https://facebook.com' };
+              const links: Record<string,string> = { WTSP: 'https://wa.me/919746711804', IG: 'https://instagram.com', MAIL: 'mailto:razi61293697@gmail.com', FCB: 'https://facebook.com' };
               return (
                 <a key={i} href={links[item]} target={item !== 'MAIL' ? '_blank' : undefined} rel="noopener noreferrer"
                   className="footer-social-link flex items-center shrink-0"

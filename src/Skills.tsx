@@ -135,7 +135,7 @@ export default function SkillsPage() {
                 ))}
               </nav>
               <div className="mt-auto pb-10">
-                <a href="https://wa.me/918129489071" target="_blank" rel="noopener noreferrer"
+                <a href="https://wa.me/919746711804" target="_blank" rel="noopener noreferrer"
                   className="flex items-center space-x-2 font-bold text-sm text-black rounded-full px-4 py-2 w-fit hover:opacity-80 transition-opacity"
                   style={{ background: '#e0f11f' }}>
                   <MessageCircle size={14} /><span>WhatsApp</span>
@@ -281,7 +281,7 @@ export default function SkillsPage() {
           style={{ paddingTop: '20px', paddingBottom: '20px', maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)' }}>
           <div className="marquee-track">
             {['WTSP','IG','MAIL','FCB','WTSP','IG','MAIL','FCB','WTSP','IG','MAIL','FCB','WTSP','IG','MAIL','FCB'].map((item, i) => {
-              const links: Record<string,string> = { WTSP: 'https://wa.me/918129489071', IG: 'https://instagram.com', MAIL: 'mailto:razi61293697@gmail.com', FCB: 'https://facebook.com' };
+              const links: Record<string,string> = { WTSP: 'https://wa.me/919746711804', IG: 'https://instagram.com', MAIL: 'mailto:razi61293697@gmail.com', FCB: 'https://facebook.com' };
               return (
                 <a key={i} href={links[item]} target={item !== 'MAIL' ? '_blank' : undefined} rel="noopener noreferrer"
                   className="footer-social-link flex items-center shrink-0"

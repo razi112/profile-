@@ -30,7 +30,7 @@ export default function Resume() {
           <div className="flex flex-wrap gap-4 mt-4 text-sm text-gray-300 print:text-gray-700">
             <span className="flex items-center gap-1.5"><MapPin size={13} />Malappuram, Kerala, India</span>
             <a href="mailto:hello@razi.me" className="flex items-center gap-1.5 hover:text-white"><Mail size={13} />hello@razi.me</a>
-            <a href="tel:+918129489071" className="flex items-center gap-1.5 hover:text-white"><Phone size={13} />+91 8129489071</a>
+            <a href="tel:+919746711804" className="flex items-center gap-1.5 hover:text-white"><Phone size={13} />+91 9746711804</a>
             <a href="https://aiislamofficial.vercel.app" className="flex items-center gap-1.5 hover:text-white"><Globe size={13} />Portfolio</a>
           </div>
         </div>

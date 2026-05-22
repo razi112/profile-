@@ -426,6 +426,11 @@ function MarqueeTicker() {
 }
 
 function FooterMarquee() {
+  const footerRef = React.useRef<HTMLElement>(null);
+  const trackRef = React.useRef<HTMLDivElement>(null);
+  const headingRef = React.useRef<HTMLDivElement>(null);
+  const linksRef = React.useRef<(HTMLAnchorElement | null)[]>([]);
+
   const SOCIAL_ITEMS = [
     'WTSP', 'IG', 'MAIL', 'FCB',
     'WTSP', 'IG', 'MAIL', 'FCB',
@@ -433,16 +438,80 @@ function FooterMarquee() {
     'WTSP', 'IG', 'MAIL', 'FCB',
   ];
   const socialLinks: Record<string, string> = {
-    WTSP: 'https://wa.me/918129489071',
+    WTSP: 'https://wa.me/919746711804',
     IG: 'https://instagram.com',
     MAIL: 'mailto:razi61293697@gmail.com',
     FCB: 'https://facebook.com',
   };
 
+  React.useEffect(() => {
+    let ctx: any;
+    import('gsap').then(({ gsap }) => {
+      import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
+        gsap.registerPlugin(ScrollTrigger);
+        ctx = gsap.context(() => {
+
+          // 1. Footer section slides up from below on scroll
+          gsap.fromTo(
+            footerRef.current,
+            { y: 80, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 1,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: footerRef.current,
+                start: 'top 90%',
+                toggleActions: 'play none none none',
+              },
+            }
+          );
+
+          // 2. Each social link letter-by-letter clip reveal
+          const links = linksRef.current.filter(Boolean);
+          gsap.fromTo(
+            links,
+            { clipPath: 'inset(0 100% 0 0)', opacity: 0, x: -40 },
+            {
+              clipPath: 'inset(0 0% 0 0)',
+              opacity: 1,
+              x: 0,
+              duration: 0.9,
+              ease: 'power4.out',
+              stagger: 0.08,
+              scrollTrigger: {
+                trigger: footerRef.current,
+                start: 'top 85%',
+                toggleActions: 'play none none none',
+              },
+            }
+          );
+
+          // 3. Parallax skew on scroll
+          gsap.to(trackRef.current, {
+            skewX: -3,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: footerRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1.5,
+            },
+          });
+
+        }, footerRef);
+      });
+    });
+
+    return () => ctx?.revert();
+  }, []);
+
   return (
     <footer
+      ref={footerRef}
       className="relative z-10 select-none"
-      style={{ background: '#0a0a0a', borderTop: '1px solid rgba(255,255,255,0.04)' }}
+      style={{ background: '#0a0a0a', borderTop: '1px solid rgba(255,255,255,0.04)', opacity: 0 }}
     >
       <div
         className="marquee-wrapper w-full overflow-hidden"
@@ -452,10 +521,11 @@ function FooterMarquee() {
           maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
         }}
       >
-        <div className="marquee-track">
+        <div ref={trackRef} className="marquee-track">
           {SOCIAL_ITEMS.map((item, i) => (
             <a
               key={i}
+              ref={el => { linksRef.current[i] = el; }}
               href={socialLinks[item]}
               target={item !== 'MAIL' ? '_blank' : undefined}
               rel="noopener noreferrer"
@@ -472,6 +542,8 @@ function FooterMarquee() {
                 whiteSpace: 'nowrap',
                 textDecoration: 'none',
                 transition: 'color 0.3s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
               }}
               onMouseEnter={e => (e.currentTarget.style.color = '#ffffff')}
               onMouseLeave={e => (e.currentTarget.style.color = '#d4e635')}
@@ -483,6 +555,153 @@ function FooterMarquee() {
         </div>
       </div>
     </footer>
+  );
+}
+
+function ProfilePhoto() {
+  const x = useSpring(0, { stiffness: 80, damping: 20 });
+  const y = useSpring(0, { stiffness: 80, damping: 20 });
+  const rotateX = useSpring(0, { stiffness: 80, damping: 20 });
+  const rotateY = useSpring(0, { stiffness: 80, damping: 20 });
+
+  React.useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const dx = (e.clientX - cx) / cx; // -1 to 1
+      const dy = (e.clientY - cy) / cy;
+
+      x.set(dx * 14);
+      y.set(dy * 10);
+      rotateX.set(-dy * 8);
+      rotateY.set(dx * 8);
+    };
+
+    const handleMouseLeave = () => {
+      x.set(0); y.set(0); rotateX.set(0); rotateY.set(0);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseleave', handleMouseLeave);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [x, y, rotateX, rotateY]);
+
+  return (
+    <div className="relative w-full flex justify-center" style={{ height: 0, zIndex: 30 }}>
+      <motion.div
+        style={{
+          x, y,
+          rotateX, rotateY,
+          width: 'clamp(120px, 14vw, 240px)',
+          height: 'clamp(120px, 14vw, 240px)',
+          translateY: '-50%',
+          transformStyle: 'preserve-3d',
+          perspective: 800,
+          borderRadius: '50%',
+          overflow: 'hidden',
+          position: 'relative',
+          cursor: 'none',
+        }}
+        whileHover={{ scale: 1 }}
+        transition={{ scale: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } }}
+      >
+        {/* Glow ring that follows */}
+        <motion.div
+          style={{
+            position: 'absolute', inset: '-4px', borderRadius: '50%',
+            background: 'conic-gradient(from 0deg, #d4e635, transparent, #d4e635)',
+            opacity: 0.35,
+            rotateX, rotateY,
+          }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+        />
+        <div style={{ position: 'absolute', inset: '2px', borderRadius: '50%', overflow: 'hidden', background: '#0a0a0a' }}>
+          <img
+            src="/image profile.png"
+            alt="MOHD"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
+          />
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function ServiceRow({ num, Icon, title, desc }: { num: string; Icon: React.ElementType; title: string; desc: string }) {
+  const [hovered, setHovered] = React.useState(false);
+
+  return (
+    <motion.div
+      variants={fadeInUp}
+      className="relative border-b flex items-center justify-between py-6 md:py-8 gap-6 cursor-default overflow-hidden"
+      style={{ borderColor: 'rgba(255,255,255,0.06)' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Left accent line */}
+      <motion.div
+        className="absolute left-0 top-0 bottom-0 w-0.5 rounded-full"
+        style={{ background: 'linear-gradient(to bottom, transparent, #d4e635, transparent)', originY: 0.5 }}
+        animate={{ scaleY: hovered ? 1 : 0 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      />
+
+      {/* Left content */}
+      <div className="flex items-center gap-5 md:gap-8 min-w-0">
+        <span className="text-xs font-mono text-gray-600 shrink-0 w-8">{num}</span>
+
+        <motion.div
+          className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+          animate={{
+            background: hovered ? 'rgba(212,230,53,0.15)' : 'rgba(255,255,255,0.04)',
+            scale: hovered ? 1.1 : 1,
+          }}
+          transition={{ duration: 0.3 }}
+          style={{ border: '1px solid rgba(255,255,255,0.06)' }}
+        >
+          <Icon size={18} style={{ color: hovered ? '#d4e635' : '#555', transition: 'color 0.3s ease' }} />
+        </motion.div>
+
+        <div className="min-w-0">
+          <h3 style={{
+            fontFamily: '"Big Shoulders Display", sans-serif',
+            fontWeight: 800,
+            fontSize: 'clamp(20px, 4vw, 52px)',
+            letterSpacing: '-0.01em',
+            textTransform: 'uppercase',
+            lineHeight: 1,
+            color: hovered ? '#d4e635' : 'rgba(255,255,255,0.85)',
+            transition: 'color 0.3s ease',
+          }}>
+            {title}
+          </h3>
+          <motion.p
+            className="text-gray-500 text-sm mt-1.5 leading-relaxed max-w-xl hidden md:block"
+            animate={{ opacity: hovered ? 1 : 0.5, y: hovered ? 0 : 4 }}
+            transition={{ duration: 0.3 }}
+          >
+            {desc}
+          </motion.p>
+        </div>
+      </div>
+
+      {/* Right arrow */}
+      <motion.div
+        className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+        animate={{
+          background: hovered ? '#d4e635' : 'rgba(255,255,255,0.04)',
+          rotate: hovered ? 45 : 0,
+        }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        style={{ border: '1px solid rgba(255,255,255,0.06)', flexShrink: 0 }}
+      >
+        <ChevronRight size={15} style={{ color: hovered ? '#000' : '#555', transition: 'color 0.3s ease' }} />
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -613,7 +832,7 @@ export default function App() {
               {/* WhatsApp at bottom */}
               <div className="mt-auto pb-10">
                 <a
-                  href="https://wa.me/918129489071"
+                  href="https://wa.me/919746711804"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 font-bold text-sm text-black rounded-full px-4 py-2 w-fit hover:opacity-80 transition-opacity"
@@ -716,27 +935,7 @@ export default function App() {
           </div>
 
           {/* Photo — zero-height row, centered at seam, in front of both rows */}
-          <div
-            className="relative w-full flex justify-center"
-            style={{ height: 0, zIndex: 30 }}
-          >
-            <div
-              className="relative rounded-full overflow-hidden"
-              style={{
-                width: 'clamp(120px, 14vw, 240px)',
-                height: 'clamp(120px, 14vw, 240px)',
-                transform: 'translateY(-50%)',
-                border: 'none',
-                boxShadow: 'none',
-              }}
-            >
-              <img
-                src="/image profile.png"
-                alt="MOHD"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
-              />
-            </div>
-          </div>
+          <ProfilePhoto />
 
           {/* Row 2 — KV */}
           <div className="relative z-10 w-full text-center">
@@ -870,9 +1069,9 @@ export default function App() {
             {/* Main Image */}
             <div className="w-full h-full rounded-full border border-white/10 overflow-hidden relative z-10 bg-[#111111] group">
               <img 
-                src="https://i.pinimg.com/736x/6f/39/9f/6f399f287cb364bea56701a654b4a193.jpg"
+                src="https://i.pinimg.com/736x/3d/27/42/3d27428c12b3e4febdb977202d79de22.jpg"
                 alt="RAZI" 
-                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0"
+                className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-110 group-hover:brightness-110 group-hover:saturate-110"
               />
             </div>
 
@@ -938,156 +1137,61 @@ export default function App() {
       </div>
 
       {/* Services Section */}
-      <motion.section 
+      <motion.section
         id="services"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
-        className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 lg:py-32 lg:px-24 relative z-10"
+        className="scroll-mt-24 relative z-10"
       >
-        {/* Section ambient glow */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[700px] h-[400px] rounded-full blur-[130px] pointer-events-none -z-10" style={{ background: 'rgba(163,230,53,0.04)' }} />
-
         {/* Header */}
-        <motion.div variants={fadeInUp} className="flex flex-col items-center text-center space-y-6 mb-16">
-          <div className="inline-flex items-center space-x-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm text-gray-300">
-            <Sparkles size={14} style={{ color: '#a3e635' }} />
-            <span>What I Offer</span>
-          </div>
-          
-          <div className="relative pb-4">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
-              Services & Expertise
-            </h2>
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-40 h-0.5 rounded-full" style={{ background: 'linear-gradient(to right, transparent, #a3e635, transparent)' }} />
-          </div>
-          
-          <p className="text-gray-400 text-lg max-w-2xl">
-            Comprehensive digital solutions to help your business thrive online. From concept to launch, I deliver exceptional results that exceed expectations.
-          </p>
-          
-          <button className="flex items-center space-x-2 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-lime-400/30 text-gray-300 hover:text-lime-400 px-6 py-2.5 rounded-full font-medium transition-all mt-4">
-            <CodeXml size={18} />
-            <span>View Technical Skills</span>
-          </button>
-        </motion.div>
-
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Web Development Card */}
-          <motion.div variants={fadeInUp} className="card-shine bg-[#111111] border rounded-2xl p-8 space-y-6 relative overflow-hidden group transition-all hover:-translate-y-1" style={{ borderColor: 'rgba(163,230,53,0.25)', boxShadow: '0 0 20px rgba(163,230,53,0.06)' }}>
-            <div className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none" style={{ background: 'linear-gradient(135deg, rgba(163,230,53,0.05) 0%, transparent 60%)' }}></div>
-            <div className="relative z-10">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300" style={{ background: 'rgba(163,230,53,0.1)' }}>
-                <CodeXml size={28} style={{ color: '#a3e635' }} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">Web Development</h3>
-              <p className="text-gray-400 text-sm leading-relaxed mb-6">Custom websites and web applications built with modern technologies and best practices.</p>
-              <a href="#" className="inline-flex items-center text-gray-400 text-sm font-medium hover:text-lime-400 transition-colors">
-                Learn more <ChevronRight size={16} className="ml-1" />
-              </a>
-            </div>
-          </motion.div>
-
-          {/* E-Commerce Solutions Card */}
-          <motion.div variants={fadeInUp} className="card-shine bg-[#111111] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#161616] transition-all hover:-translate-y-1 hover:border-lime-400/20">
-            <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-lime-400/10 transition-all duration-300">
-                <ShoppingCart size={28} className="text-gray-400 group-hover:text-lime-400 transition-colors" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">E-Commerce Solutions</h3>
-              <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">Complete online stores with payment integration and inventory management systems.</p>
-              <a href="#" className="inline-flex items-center text-gray-500 text-sm font-medium hover:text-lime-400 transition-colors">
-                Learn more <ChevronRight size={16} className="ml-1" />
-              </a>
-            </div>
-          </motion.div>
-
-          {/* SEO Optimization Card */}
-          <motion.div variants={fadeInUp} className="bg-[#111111] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#161616] transition-all hover:-translate-y-1 hover:border-lime-400/20">
-            <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-lime-400/10 transition-all duration-300">
-                <Search size={28} className="text-gray-400 group-hover:text-lime-400 transition-colors" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">SEO Optimization</h3>
-              <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">Improve your search rankings and drive organic traffic to your website effectively with proven SEO strategies.</p>
-              <a href="#" className="inline-flex items-center text-gray-500 text-sm font-medium hover:text-lime-400 transition-colors">
-                Learn more <ChevronRight size={16} className="ml-1" />
-              </a>
-            </div>
-          </motion.div>
-
-          {/* Digital Marketing Card */}
-          <motion.div variants={fadeInUp} className="bg-[#111111] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#161616] transition-all hover:-translate-y-1 hover:border-lime-400/20">
-            <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-lime-400/10 transition-all duration-300">
-                <TrendingUp size={28} className="text-gray-400 group-hover:text-lime-400 transition-colors" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">Digital Marketing</h3>
-              <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">Strategic marketing campaigns to grow your online presence and business reach through targeted digital channels.</p>
-              <a href="#" className="inline-flex items-center text-gray-500 text-sm font-medium hover:text-lime-400 transition-colors">
-                Learn more <ChevronRight size={16} className="ml-1" />
-              </a>
-            </div>
-          </motion.div>
-
-          {/* Graphic Design Card */}
-          <motion.div variants={fadeInUp} className="bg-[#111111] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#161616] transition-all hover:-translate-y-1 hover:border-lime-400/20">
-            <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-lime-400/10 transition-all duration-300">
-                <Palette size={28} className="text-gray-400 group-hover:text-lime-400 transition-colors" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">Graphic Design</h3>
-              <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">Creative visual solutions including branding, logos, and marketing materials for businesses.</p>
-              <a href="#" className="inline-flex items-center text-gray-500 text-sm font-medium hover:text-lime-400 transition-colors">
-                Learn more <ChevronRight size={16} className="ml-1" />
-              </a>
-            </div>
-          </motion.div>
-
-          {/* Server Management Card */}
-          <motion.div variants={fadeInUp} className="bg-[#111111] border border-white/5 rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:bg-[#161616] transition-all hover:-translate-y-1 hover:border-lime-400/20">
-            <div className="relative z-10">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-lime-400/10 transition-all duration-300">
-                <Server size={28} className="text-gray-400 group-hover:text-lime-400 transition-colors" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">Server Management</h3>
-              <p className="text-gray-400 text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">Hosting and server management with dedicated hosting solutions for optimal performance.</p>
-              <a href="#" className="inline-flex items-center text-gray-500 text-sm font-medium hover:text-lime-400 transition-colors">
-                Learn more <ChevronRight size={16} className="ml-1" />
-              </a>
-            </div>
-          </motion.div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24 pt-16 md:pt-24 pb-12">
+          <motion.p variants={fadeInUp} className="text-xs tracking-[0.25em] uppercase text-gray-500 mb-6">What I Offer</motion.p>
+          <motion.h2 variants={fadeInUp}
+            style={{ fontFamily: '"Big Shoulders Display", sans-serif', fontWeight: 900, fontSize: 'clamp(56px, 12vw, 140px)', letterSpacing: '-0.02em', lineHeight: 0.9, textTransform: 'uppercase' }}>
+            <span style={{ color: '#fff' }}>Services</span>
+            <br />
+            <span style={{ color: '#d4e635' }}>&amp; Expertise</span>
+          </motion.h2>
         </div>
 
-        {/* Achievements & Milestones */}
-        <motion.div variants={scaleIn} className="mt-24 bg-[#111111] border border-white/5 rounded-[2rem] p-12 relative overflow-hidden">
-          <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-white/10 flex items-center justify-center">
-            <div className="w-2 h-2 bg-white/20 rounded-full"></div>
-          </div>
-          <h3 className="text-2xl font-bold text-center text-white mb-12">Achievements & Milestones</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+        {/* Divider */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24">
+          <div className="h-px w-full" style={{ background: 'linear-gradient(to right, rgba(163,230,53,0.3), transparent)' }} />
+        </div>
+
+        {/* Services accordion rows */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24">
+          {[
+            { num: '01', icon: CodeXml,      title: 'Web Development',   desc: 'Custom websites and web apps built with React, Next.js, and modern technologies. Fast, responsive, and built to convert.' },
+            { num: '02', icon: ShoppingCart, title: 'E-Commerce',         desc: 'Complete online stores with payment integration, inventory management, and seamless shopping experiences.' },
+            { num: '03', icon: Search,       title: 'SEO Optimization',   desc: 'Proven SEO strategies to improve search rankings, drive organic traffic, and grow your online visibility.' },
+            { num: '04', icon: TrendingUp,   title: 'Digital Marketing',  desc: 'Strategic campaigns across social media, email, and content to grow your brand and reach your audience.' },
+            { num: '05', icon: Palette,      title: 'Graphic Design',     desc: 'Creative visual solutions — branding, logos, social media design, and print materials that make an impact.' },
+            { num: '06', icon: Server,       title: 'Server Management',  desc: 'Reliable hosting, SSL setup, domain management, and server optimization for peak performance.' },
+          ].map(({ num, icon: Icon, title, desc }) => (
+            <ServiceRow key={num} num={num} Icon={Icon} title={title} desc={desc} />
+          ))}
+        </div>
+
+        {/* Stats strip */}
+        <motion.div variants={fadeInUp}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24 mt-16 mb-0">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px" style={{ background: 'rgba(255,255,255,0.05)' }}>
             {[
-              { icon: Trophy, label: 'Projects Completed', value: '20+' },
-              { icon: Users, label: 'Happy Clients', value: '30+' },
-              { icon: Zap, label: 'Years Experience', value: '1+' },
-              { icon: Monitor, label: 'Client Satisfaction', value: '100%' },
-            ].map(({ icon: Icon, label, value }) => (
-              <div key={label} className="flex flex-col items-center text-center space-y-4">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center border" style={{ background: 'rgba(163,230,53,0.08)', borderColor: 'rgba(163,230,53,0.15)' }}>
-                  <Icon size={28} style={{ color: '#a3e635' }} />
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-white">{value}</div>
-                  <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider">{label}</div>
-                </div>
+              { value: '20+', label: 'Projects' },
+              { value: '30+', label: 'Clients' },
+              { value: '1+',  label: 'Years Exp' },
+              { value: '100%', label: 'Satisfaction' },
+            ].map(({ value, label }) => (
+              <div key={label} className="flex flex-col items-center justify-center py-10 gap-2" style={{ background: '#0a0a0a' }}>
+                <span style={{ fontFamily: '"Big Shoulders Display", sans-serif', fontWeight: 900, fontSize: 'clamp(36px, 5vw, 64px)', letterSpacing: '-0.02em', color: '#d4e635', lineHeight: 1 }}>{value}</span>
+                <span className="text-xs uppercase tracking-widest text-gray-500">{label}</span>
               </div>
             ))}
           </div>
         </motion.div>
-
-        {/* Tools marquee — below Achievements */}
 
       </motion.section>
 
@@ -1304,29 +1408,59 @@ export default function App() {
           </motion.div>
         </div>
 
-        {/* Bottom CTA Card */}
-        <motion.div variants={scaleIn} className="mt-16 rounded-3xl p-8 md:p-12 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1a2a0a 0%, #0d1a0d 50%, #111111 100%)', border: '1px solid rgba(163,230,53,0.2)' }}>
-          <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" style={{ background: 'rgba(163,230,53,0.08)' }}></div>
-          <div className="absolute bottom-0 right-1/4 w-48 h-48 rounded-full blur-2xl translate-y-1/2" style={{ background: 'rgba(163,230,53,0.05)' }}></div>
-          
-          <div className="relative z-10 max-w-2xl">
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">Say hi!</h3>
-            <p className="text-gray-300 text-lg mb-6 leading-relaxed">
-              Want to promote your service or product? Or, you have any query? Drop an email.
-            </p>
-            
-            <a href="mailto:hello@razi.me" className="inline-flex items-center space-x-2 font-medium mb-8 transition-colors hover:opacity-80" style={{ color: '#a3e635' }}>
-              <Mail size={18} />
-              <span>hello@razi.me</span>
-            </a>
+        {/* Bottom CTA */}
+        <motion.div variants={fadeInUp} className="mt-16 relative overflow-hidden rounded-3xl"
+          style={{ background: '#0e0e0e', border: '1px solid rgba(255,255,255,0.06)' }}>
 
-            <div className="space-y-4">
-              <p className="text-gray-400 text-sm">Prefer a quick chat?</p>
-              <button className="btn-ghost bg-white/5 text-white border border-white/20 px-6 py-2.5 rounded-lg font-medium flex items-center space-x-2">
-                <Mail size={18} />
-                <span>Send Email</span>
-              </button>
+          {/* Glow blobs */}
+          <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-3xl pointer-events-none" style={{ background: 'rgba(212,230,53,0.07)' }} />
+          <div className="absolute -bottom-16 left-10 w-48 h-48 rounded-full blur-2xl pointer-events-none" style={{ background: 'rgba(212,230,53,0.04)' }} />
+
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 p-8 md:p-12">
+
+            {/* Left */}
+            <div className="space-y-4 max-w-lg">
+              <p className="text-xs tracking-[0.25em] uppercase text-gray-500">Get in touch</p>
+              <h3 style={{ fontFamily: '"Big Shoulders Display", sans-serif', fontWeight: 900, fontSize: 'clamp(36px, 6vw, 80px)', letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 0.95, color: '#fff' }}>
+                Say <span style={{ color: '#d4e635' }}>Hi!</span>
+              </h3>
+              <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+                Want to promote your service or product? Have a query? Just drop an email — I'll get back to you fast.
+              </p>
             </div>
+
+            {/* Right — actions */}
+            <div className="flex flex-col gap-3 shrink-0">
+              <a href="mailto:razi61293697@gmail.com"
+                className="group flex items-center gap-3 px-6 py-4 rounded-2xl transition-all duration-300 hover:scale-105"
+                style={{ background: '#d4e635', color: '#000' }}>
+                <Mail size={18} />
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-widest">Email Me</div>
+                  <div className="text-[11px] opacity-70">razi61293697@gmail.com</div>
+                </div>
+              </a>
+
+              <a href="https://wa.me/919746711804" target="_blank" rel="noopener noreferrer"
+                className="group flex items-center gap-3 px-6 py-4 rounded-2xl transition-all duration-300 hover:scale-105"
+                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
+                <MessageCircle size={18} style={{ color: '#d4e635' }} />
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-widest">WhatsApp</div>
+                  <div className="text-[11px] text-gray-500">Quick chat</div>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          {/* Bottom strip */}
+          <div className="relative z-10 border-t px-8 md:px-12 py-4 flex items-center justify-between"
+            style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#d4e635' }} />
+              <span className="text-xs text-gray-500">Available for new projects — 2026</span>
+            </div>
+            <span className="text-xs text-gray-600 font-mono">Kerala, India</span>
           </div>
         </motion.div>
       </motion.section>
