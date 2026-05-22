@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   Award, Users, Coffee, Heart, ArrowLeft, MapPin,
-  Code2, Palette, TrendingUp, CheckCircle2, ExternalLink, ShoppingCart, ChevronRight
+  Code2, Palette, TrendingUp, CheckCircle2, ExternalLink, ShoppingCart, ChevronRight, Download
 } from 'lucide-react';
 
 const EASE = [0.22, 1, 0.36, 1] as any;
@@ -252,6 +252,7 @@ export default function About() {
               style={{ borderColor: 'rgba(255,255,255,0.15)' }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(163,230,53,0.4)'; e.currentTarget.style.color = '#a3e635'; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = '#fff'; }}>
+              <Download size={14} />
               View Resume
             </a>
           </div>

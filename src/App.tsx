@@ -704,9 +704,10 @@ function ServiceRow({ num, Icon, title, desc }: { num: string; Icon: React.Eleme
 export default function App() {
   const [activeSection, setActiveSection] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
   const heroY = useTransform(scrollY, [0, 600], [0, -80]);
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
 
   useEffect(() => {
     const sections = ['home', 'services', 'contact'];
@@ -745,6 +746,22 @@ export default function App() {
     <div className="min-h-screen bg-[#0a0a0a] text-white font-sans selection:bg-lime-400/20 relative overflow-x-hidden">
       <FloatingOrbs />
       <GridBackground />
+
+      {/* ── Scroll progress bar ── */}
+      <motion.div
+        style={{
+          scaleX,
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '2px',
+          background: 'linear-gradient(to right, #a3e635, #d4e635)',
+          transformOrigin: '0%',
+          zIndex: 9999,
+          boxShadow: '0 0 8px rgba(163,230,53,0.6), 0 0 20px rgba(163,230,53,0.3)',
+        }}
+      />
 
       {/* Side panel menu — slides from left, hero visible behind */}
       <AnimatePresence>
@@ -1222,7 +1239,7 @@ export default function App() {
 
       </motion.section>
 
-      {/* Tools marquee — full width */}
+      {/* Tools marquee — full width, two rows */}
       {(() => {
         const tools = ['PHOTOSHOP', 'ILLUSTRATOR', 'INDESIGN', 'CAPCUT', 'PHOTOSHOP', 'ILLUSTRATOR', 'INDESIGN', 'CAPCUT', 'PHOTOSHOP', 'ILLUSTRATOR', 'INDESIGN', 'CAPCUT', 'PHOTOSHOP', 'ILLUSTRATOR', 'INDESIGN', 'CAPCUT'];
         const toolStyle: React.CSSProperties = {
@@ -1238,7 +1255,7 @@ export default function App() {
         };
         return (
           <div
-            className="relative z-10 w-full overflow-hidden py-5"
+            className="relative z-10 w-full overflow-hidden"
             style={{
               background: '#111208',
               borderTop: '1px solid rgba(212,230,53,0.08)',
@@ -1246,18 +1263,37 @@ export default function App() {
               maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
             }}
           >
-            <motion.div
-              className="flex shrink-0 items-center"
-              animate={{ x: ['0%', '-50%'] }}
-              transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-            >
-              {tools.map((item, i) => (
-                <span key={i} className="flex items-center shrink-0" style={toolStyle}>
-                  {item}
-                  <span style={{ color: 'rgba(212,230,53,0.4)', margin: '0 6px', fontSize: '0.3em', verticalAlign: 'middle' }}>✦</span>
-                </span>
-              ))}
-            </motion.div>
+            {/* Row 1 — scrolls left */}
+            <div className="overflow-hidden py-4 border-b" style={{ borderColor: 'rgba(212,230,53,0.06)' }}>
+              <motion.div
+                className="flex shrink-0 items-center"
+                animate={{ x: ['0%', '-50%'] }}
+                transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+              >
+                {tools.map((item, i) => (
+                  <span key={i} className="flex items-center shrink-0" style={toolStyle}>
+                    {item}
+                    <span style={{ color: 'rgba(212,230,53,0.4)', margin: '0 6px', fontSize: '0.3em', verticalAlign: 'middle' }}>✦</span>
+                  </span>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* Row 2 — scrolls right, same style */}
+            <div className="overflow-hidden py-4">
+              <motion.div
+                className="flex shrink-0 items-center"
+                animate={{ x: ['-50%', '0%'] }}
+                transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+              >
+                {tools.map((item, i) => (
+                  <span key={i} className="flex items-center shrink-0" style={toolStyle}>
+                    {item}
+                    <span style={{ color: 'rgba(212,230,53,0.4)', margin: '0 6px', fontSize: '0.3em', verticalAlign: 'middle' }}>✦</span>
+                  </span>
+                ))}
+              </motion.div>
+            </div>
           </div>
         );
       })()}
