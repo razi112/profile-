@@ -4,6 +4,12 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ── Cursor blink for typing animation ── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
 /* ── CSS Variables — Green & Black Theme ── */
 :root {
   --accent: #a3e635;          /* lime-400 */
@@ -286,15 +292,23 @@ nav .flex.items-center.justify-between.px-4.py-3:hover {
 }
 
 /* ════════════════════════════════════════
-   FOOTER LINKS
+   FOOTER SOCIAL MARQUEE
    ════════════════════════════════════════ */
-footer a {
-  transition: color 0.25s ease, transform 0.2s ease;
-  display: inline-block;
+@keyframes marquee-scroll {
+  from { transform: translateX(0%); }
+  to   { transform: translateX(-50%); }
 }
-footer a:hover {
-  transform: translateX(3px);
-  color: #a3e635;
+
+.marquee-track {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  width: max-content;
+  animation: marquee-scroll 80s linear infinite;
+}
+
+.marquee-wrapper:hover .marquee-track {
+  animation-play-state: paused;
 }
 
 /* ════════════════════════════════════════

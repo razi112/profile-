@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView, useAnimation } from 'framer-motion';
 import { supabase } from './supabase';
 import {
   Menu,
@@ -285,6 +285,207 @@ function ContactForm() {
   );
 }
 
+// ── Typing role animation ──────────────────────────────────────────────────
+const ROLES = [
+  'Web Designer & Developer',
+  'SEO Specialist',
+  'E-Commerce Expert',
+  'Digital Marketer',
+  'UI/UX Enthusiast',
+];
+
+function TypingRole() {
+  const [roleIdx, setRoleIdx] = React.useState(0);
+  const [displayed, setDisplayed] = React.useState('');
+  const [deleting, setDeleting] = React.useState(false);
+  const [paused, setPaused] = React.useState(false);
+
+  React.useEffect(() => {
+    const current = ROLES[roleIdx];
+    if (paused) {
+      const t = setTimeout(() => { setDeleting(true); setPaused(false); }, 1800);
+      return () => clearTimeout(t);
+    }
+    if (!deleting) {
+      if (displayed.length < current.length) {
+        const t = setTimeout(() => setDisplayed(current.slice(0, displayed.length + 1)), 55);
+        return () => clearTimeout(t);
+      } else {
+        setPaused(true);
+      }
+    } else {
+      if (displayed.length > 0) {
+        const t = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 30);
+        return () => clearTimeout(t);
+      } else {
+        setDeleting(false);
+        setRoleIdx(i => (i + 1) % ROLES.length);
+      }
+    }
+  }, [displayed, deleting, paused, roleIdx]);
+
+  return (
+    <span>
+      <span style={{ color: '#e0f11f', fontWeight: 600 }}>{displayed}</span>
+      <span
+        style={{
+          display: 'inline-block',
+          width: '2px',
+          height: '1em',
+          background: '#e0f11f',
+          marginLeft: '2px',
+          verticalAlign: 'text-bottom',
+          animation: 'blink 0.75s step-end infinite',
+        }}
+      />
+    </span>
+  );
+}
+
+// ── Marquee ticker ─────────────────────────────────────────────────────────
+const TICKER_ITEMS = [
+  'PHOTOSHOP', 'ILLUSTRATOR', 'INDESIGN', 'CAPCUT',
+];
+
+function MarqueeTicker() {
+  // Repeat enough times to fill any screen width seamlessly
+  const repeated = [
+    ...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS,
+    ...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS,
+  ];
+
+  const itemStyle: React.CSSProperties = {
+    fontFamily: '"Big Shoulders Display", Impact, sans-serif',
+    fontWeight: 900,
+    fontSize: 'clamp(28px, 4.5vw, 56px)',
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    color: '#d4e635',
+    padding: '0 24px',
+    whiteSpace: 'nowrap',
+    lineHeight: 1,
+  };
+
+  const diamondStyle: React.CSSProperties = {
+    color: 'rgba(212,230,53,0.55)',
+    margin: '0 4px',
+    fontSize: '0.45em',
+    verticalAlign: 'middle',
+  };
+
+  return (
+    <div
+      className="relative z-10 overflow-hidden select-none"
+      style={{
+        background: '#111208',
+        borderTop: '1px solid rgba(212,230,53,0.08)',
+        borderBottom: '1px solid rgba(212,230,53,0.08)',
+        paddingTop: '14px',
+        paddingBottom: '14px',
+      }}
+    >
+      {/* Row 1 — scrolls left */}
+      <div
+        className="flex overflow-hidden mb-1"
+        style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)' }}
+      >
+        <motion.div
+          className="flex shrink-0"
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+        >
+          {repeated.map((item, i) => (
+            <span key={i} className="flex items-center shrink-0" style={itemStyle}>
+              {item}
+              <span style={diamondStyle}>✦</span>
+            </span>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Row 2 — scrolls right (opposite direction), slightly dimmer */}
+      <div
+        className="flex overflow-hidden"
+        style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)' }}
+      >
+        <motion.div
+          className="flex shrink-0"
+          animate={{ x: ['-50%', '0%'] }}
+          transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+        >
+          {repeated.map((item, i) => (
+            <span key={i} className="flex items-center shrink-0" style={{ ...itemStyle, opacity: 0.72 }}>
+              {item}
+              <span style={{ ...diamondStyle, color: 'rgba(212,230,53,0.4)' }}>✦</span>
+            </span>
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+function FooterMarquee() {
+  const SOCIAL_ITEMS = [
+    'WTSP', 'IG', 'MAIL', 'FCB',
+    'WTSP', 'IG', 'MAIL', 'FCB',
+    'WTSP', 'IG', 'MAIL', 'FCB',
+    'WTSP', 'IG', 'MAIL', 'FCB',
+  ];
+  const socialLinks: Record<string, string> = {
+    WTSP: 'https://wa.me/918129489071',
+    IG: 'https://instagram.com',
+    MAIL: 'mailto:razi61293697@gmail.com',
+    FCB: 'https://facebook.com',
+  };
+
+  return (
+    <footer
+      className="relative z-10 select-none"
+      style={{ background: '#0a0a0a', borderTop: '1px solid rgba(255,255,255,0.04)' }}
+    >
+      <div
+        className="marquee-wrapper w-full overflow-hidden"
+        style={{
+          paddingTop: '24px',
+          paddingBottom: '24px',
+          maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
+        }}
+      >
+        <div className="marquee-track">
+          {SOCIAL_ITEMS.map((item, i) => (
+            <a
+              key={i}
+              href={socialLinks[item]}
+              target={item !== 'MAIL' ? '_blank' : undefined}
+              rel="noopener noreferrer"
+              className="footer-social-link flex items-center shrink-0"
+              style={{
+                fontFamily: '"Big Shoulders Display", sans-serif',
+                fontWeight: 900,
+                fontSize: 'clamp(88px, 22vw, 240px)',
+                letterSpacing: '-0.02em',
+                textTransform: 'uppercase',
+                color: '#d4e635',
+                padding: '0 40px',
+                lineHeight: 1,
+                whiteSpace: 'nowrap',
+                textDecoration: 'none',
+                transition: 'color 0.3s ease',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#ffffff')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#d4e635')}
+            >
+              {item}
+              <span style={{ color: 'rgba(212,230,53,0.4)', margin: '0 10px', fontSize: '0.2em', verticalAlign: 'middle' }}>✦</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 export default function App() {
   const [activeSection, setActiveSection] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -350,7 +551,7 @@ export default function App() {
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
               className="fixed top-0 left-0 h-full z-[100] flex flex-col"
               style={{
                 width: 'clamp(200px, 28vw, 300px)',
@@ -416,7 +617,7 @@ export default function App() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 font-bold text-sm text-black rounded-full px-4 py-2 w-fit hover:opacity-80 transition-opacity"
-                  style={{ background: '#e0f11f' }}
+                  style={{ background: '#25D366' }}
                 >
                   <MessageCircle size={14} />
                   <span>WhatsApp</span>
@@ -442,16 +643,25 @@ export default function App() {
             <span className="block h-[2px] rounded-full bg-white transition-all duration-300 group-hover:bg-[#e0f11f]" style={{ width: '24px' }} />
           </button>
 
-          {/* WhatsApp — right */}
+          {/* Signature — right */}
           <a
-            href="https://wa.me/918129489071"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:flex items-center space-x-2 font-bold text-sm text-black rounded-full px-5 py-2 hover:opacity-80 transition-opacity"
-            style={{ background: '#e0f11f' }}
+            href="#contact"
+            className="hidden md:flex items-center hover:opacity-60 transition-opacity"
+            aria-label="Contact"
           >
-            <MessageCircle size={15} />
-            <span>WhatsApp</span>
+            <span
+              style={{
+                fontFamily: '"Ms Madi", cursive',
+                fontSize: 'clamp(32px, 3.5vw, 48px)',
+                fontWeight: 400,
+                color: '#ffffff',
+                letterSpacing: '0.02em',
+                lineHeight: 1,
+                textShadow: '0 0 20px rgba(255,255,255,0.15)',
+              }}
+            >
+              Me
+            </span>
           </a>
         </div>
       </nav>
@@ -501,7 +711,7 @@ export default function App() {
                 display: 'block',
               }}
             >
-              RAZI
+              MOHD
             </span>
           </div>
 
@@ -522,7 +732,7 @@ export default function App() {
             >
               <img
                 src="/image profile.png"
-                alt="RAZI"
+                alt="MOHD"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
               />
             </div>
@@ -542,7 +752,7 @@ export default function App() {
                 display: 'block',
               }}
             >
-              KV
+              RAZI
             </span>
           </div>
         </motion.div>
@@ -554,21 +764,13 @@ export default function App() {
           </svg>
         </motion.div>
 
-        {/* Tagline — matches reference style exactly */}
-        <motion.p
-          variants={fadeInUp}
-          className="text-center px-6 max-w-md"
-          style={{
-            color: 'rgba(255,255,255,0.75)',
-            fontSize: 'clamp(14px, 1.6vw, 18px)',
-            lineHeight: '1.6',
-            fontWeight: 400,
-          }}
-        >
-          I'm <strong style={{ color: '#fff', fontWeight: 600 }}>RAZI KV</strong> — a Web Designer &amp; Developer
-          passionately crafting digital experiences and
-          results-driven websites.
-        </motion.p>
+        {/* Tagline with typing animation */}
+        <motion.div variants={fadeInUp} className="text-center px-6 max-w-md">
+          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 'clamp(14px, 1.6vw, 18px)', lineHeight: '1.6', fontWeight: 400 }}>
+            I'm <strong style={{ color: '#fff', fontWeight: 600 }}>RAZI KV</strong> —{' '}
+            <TypingRole />
+          </p>
+        </motion.div>
 
         {/* Scroll indicator */}
         <motion.div
@@ -601,7 +803,7 @@ export default function App() {
         id="about"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
         className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 lg:py-32 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center relative z-10"
       >
@@ -740,7 +942,7 @@ export default function App() {
         id="services"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
         className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 lg:py-32 lg:px-24 relative z-10"
       >
@@ -884,7 +1086,50 @@ export default function App() {
             ))}
           </div>
         </motion.div>
+
+        {/* Tools marquee — below Achievements */}
+
       </motion.section>
+
+      {/* Tools marquee — full width */}
+      {(() => {
+        const tools = ['PHOTOSHOP', 'ILLUSTRATOR', 'INDESIGN', 'CAPCUT', 'PHOTOSHOP', 'ILLUSTRATOR', 'INDESIGN', 'CAPCUT', 'PHOTOSHOP', 'ILLUSTRATOR', 'INDESIGN', 'CAPCUT', 'PHOTOSHOP', 'ILLUSTRATOR', 'INDESIGN', 'CAPCUT'];
+        const toolStyle: React.CSSProperties = {
+          fontFamily: '"Big Shoulders Display", sans-serif',
+          fontWeight: 900,
+          fontSize: 'clamp(40px, 7vw, 90px)',
+          letterSpacing: '-0.01em',
+          textTransform: 'uppercase',
+          color: '#d4e635',
+          padding: '0 28px',
+          lineHeight: 1,
+          whiteSpace: 'nowrap',
+        };
+        return (
+          <div
+            className="relative z-10 w-full overflow-hidden py-5"
+            style={{
+              background: '#111208',
+              borderTop: '1px solid rgba(212,230,53,0.08)',
+              borderBottom: '1px solid rgba(212,230,53,0.08)',
+              maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
+            }}
+          >
+            <motion.div
+              className="flex shrink-0 items-center"
+              animate={{ x: ['0%', '-50%'] }}
+              transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+            >
+              {tools.map((item, i) => (
+                <span key={i} className="flex items-center shrink-0" style={toolStyle}>
+                  {item}
+                  <span style={{ color: 'rgba(212,230,53,0.4)', margin: '0 6px', fontSize: '0.3em', verticalAlign: 'middle' }}>✦</span>
+                </span>
+              ))}
+            </motion.div>
+          </div>
+        );
+      })()}
 
       {/* Section Divider */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-24">
@@ -901,7 +1146,7 @@ export default function App() {
         id="contact"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
         className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 lg:py-32 lg:px-24 relative z-10"
       >
@@ -931,7 +1176,7 @@ export default function App() {
                 </div>
                 <div>
                   <div className="text-xs text-gray-400 mb-0.5">Email</div>
-                  <div className="text-sm font-medium text-white">hello@razi.me</div>
+                  <div className="text-sm font-medium text-white">razi61293697@gmail.com</div>
                 </div>
               </div>
 
@@ -941,7 +1186,7 @@ export default function App() {
                 </div>
                 <div>
                   <div className="text-xs text-gray-400 mb-0.5">Phone</div>
-                  <div className="text-sm font-medium text-white">+91 8129489071</div>
+                  <div className="text-sm font-medium text-white">+91 9746711804</div>
                 </div>
               </div>
 
@@ -1099,195 +1344,10 @@ export default function App() {
         </div>
       </motion.div>
 
-      {/* Chat Button + WhatsApp Popup */}
-      {(() => {
-        const [chatOpen, setChatOpen] = React.useState(false);
-        const waMessage = encodeURIComponent("Hi! I'm interested in discussing a project. Can we chat?");
-        const waLink = `https://wa.me/918129489071?text=${waMessage}`;
-        return (
-          <div className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 flex flex-col items-end space-y-3 z-50">
-            {/* Popup */}
-            <AnimatePresence>
-              {chatOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                  className="w-[calc(100vw-2rem)] max-w-sm sm:w-80 rounded-2xl overflow-hidden shadow-2xl border border-white/10"
-                >
-                  {/* Header */}
-                  <div className="px-4 py-4 flex items-center justify-between" style={{ background: '#a3e635' }}>
-                    <div className="flex items-center space-x-3">
-                      <div className="relative">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.2)' }}>
-                          <MessageCircle size={20} className="text-black" />
-                        </div>
-                        <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-white rounded-full border-2" style={{ borderColor: '#a3e635' }}></span>
-                      </div>
-                      <div>
-                        <div className="text-black font-bold text-sm">RAZI KV</div>
-                        <div className="flex items-center space-x-1 text-black/70 text-xs">
-                          <span className="w-1.5 h-1.5 bg-black/50 rounded-full"></span>
-                          <span>Online now</span>
-                        </div>
-                      </div>
-                    </div>
-                    <button onClick={() => setChatOpen(false)} className="text-black/70 hover:text-black transition-colors">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                    </button>
-                  </div>
 
-                  {/* Body */}
-                  <div className="bg-[#0a0a0a] px-4 py-5 space-y-4">
-                    {/* Incoming message */}
-                    <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: '#a3e635' }}>
-                        <MessageCircle size={14} className="text-black" />
-                      </div>
-                      <div className="bg-[#161616] rounded-2xl rounded-tl-none px-4 py-3 max-w-[220px]">
-                        <p className="text-white text-sm leading-relaxed">Hi there! 👋 Thanks for your interest. How can I help you today?</p>
-                        <div className="flex items-center space-x-1 mt-1.5 text-gray-500 text-[10px]">
-                          <Clock size={10} />
-                          <span>Just now</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Outgoing message */}
-                    <div className="bg-[#161616] rounded-2xl px-4 py-3">
-                      <p className="text-gray-300 text-sm leading-relaxed">Hi! I'm interested in discussing a project. Can we chat?</p>
-                    </div>
-                  </div>
-
-                  {/* Footer */}
-                  <div className="bg-[#0a0a0a] px-4 pb-4 space-y-3 border-t border-white/5 pt-3">
-                    <a
-                      href={waLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-emerald w-full font-semibold py-3 rounded-xl flex items-center justify-center space-x-2 transition-colors text-black"
-                      style={{ background: '#a3e635' }}
-                    >
-                      <Send size={16} />
-                      <span>Send via WhatsApp</span>
-                    </a>
-                    <p className="text-center text-gray-600 text-xs">We'll reply as soon as possible</p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Trigger button row */}
-            <div className="flex items-center space-x-3">
-              {!chatOpen && (
-                <motion.div
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="hidden md:flex bg-[#111111] text-gray-300 px-4 py-2.5 rounded-full text-sm border border-white/10 shadow-lg items-center"
-                >
-                  <MessageCircle size={16} className="mr-2 text-gray-400" />
-                  Need help? Let's Discuss!
-                </motion.div>
-              )}
-              <button
-                onClick={() => setChatOpen(o => !o)}
-                className="relative text-black p-4 rounded-full shadow-lg transition-transform hover:scale-105"
-                style={{ background: '#a3e635', boxShadow: '0 4px 20px rgba(163,230,53,0.4)' }}
-              >
-                <AnimatePresence mode="wait">
-                  {chatOpen ? (
-                    <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                    </motion.div>
-                  ) : (
-                    <motion.div key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                      <MessageCircle size={24} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                {!chatOpen && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#0a0a0a]">1</span>
-                )}
-              </button>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-white/5 bg-[#050505]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24 py-12 md:py-16 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-          <div className="space-y-4 max-w-xs">
-            <div className="text-xl font-bold tracking-tight">
-              RAZI<span style={{ color: '#a3e635' }}>.</span>
-              <span className="ml-1 font-light text-base" style={{ color: '#a3e635' }}>KV</span>
-            </div>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              Web Designer &amp; Developer in Malappuram, passionate about creating exceptional digital experiences that drive business growth and user engagement.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-white text-sm font-semibold tracking-wide">Quick Links</h4>
-            <ul className="space-y-3">
-              {[
-                { label: 'Home', href: '#home' },
-                { label: 'About', href: '#about' },
-                { label: 'Work', href: '/projects' },
-                { label: 'Services', href: '#services' },
-                { label: 'Contact', href: '#contact' },
-              ].map(({ label, href }) => (
-                <li key={label}>
-                  <a href={href} className="text-gray-500 text-sm hover:text-white transition-colors">{label}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-white text-sm font-semibold tracking-wide">Say Hello</h4>
-            <ul className="space-y-3">
-              <li><a href="mailto:hello@razi.me" className="text-gray-500 text-sm hover:text-white transition-colors">hello@razi.me</a></li>
-              <li className="text-gray-500 text-sm">Kerala, India</li>
-              <li>
-                <span className="inline-flex items-center space-x-1.5 text-sm">
-                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#a3e635' }}></span>
-                  <span className="text-gray-500">Available for freelance</span>
-                </span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="border-t border-white/5" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-5">
-            <a href="#" aria-label="GitHub" className="btn-social text-gray-600 hover:text-lime-400 transition-colors"><Github size={18} /></a>
-            <a href="#" aria-label="LinkedIn" className="btn-social text-gray-600 hover:text-lime-400 transition-colors"><Linkedin size={18} /></a>
-            <a href="#" aria-label="Instagram" className="btn-social text-gray-600 hover:text-lime-400 transition-colors"><Instagram size={18} /></a>
-            <a href="mailto:hello@razi.me" aria-label="Email" className="btn-social text-gray-600 hover:text-lime-400 transition-colors"><Mail size={18} /></a>
-          </div>
-
-          <motion.button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-lg text-black"
-            style={{ background: '#a3e635', boxShadow: '0 4px 16px rgba(163,230,53,0.3)' }}
-            aria-label="Scroll to top"
-          >
-            <ArrowDown size={16} className="rotate-180" />
-          </motion.button>
-
-          <p className="text-gray-600 text-xs flex items-center space-x-1">
-            <span>© 2026 RAZI KV. Made with</span>
-            <Heart size={11} className="text-lime-400 fill-lime-400 mx-0.5" />
-            <span>and lots of coffee.</span>
-          </p>
-        </div>
-      </footer>
+      {/* Footer — social marquee */}
+      <FooterMarquee />
     </div>
   );
 }
+
