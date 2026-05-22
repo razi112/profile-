@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -152,6 +152,110 @@ function WhatIDoRow({ num, Icon, title, desc }: { num: string; Icon: React.Eleme
         <ChevronRight size={15} style={{ color: hovered ? '#000' : '#555', transition: 'color 0.3s ease' }} />
       </motion.div>
     </motion.div>
+  );
+}
+
+/* ── About Footer Marquee ─────────────────────────────────────────── */
+function AboutFooterMarquee() {
+  const footerRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const linksRef = useRef<(HTMLAnchorElement | null)[]>([]);
+
+  const SOCIAL_ITEMS = [
+    'WTSP', 'IG', 'MAIL', 'FCB',
+    'WTSP', 'IG', 'MAIL', 'FCB',
+    'WTSP', 'IG', 'MAIL', 'FCB',
+    'WTSP', 'IG', 'MAIL', 'FCB',
+  ];
+  const socialLinks: Record<string, string> = {
+    WTSP: 'https://wa.me/919746711804',
+    IG: 'https://instagram.com/nte_vibes',
+    MAIL: 'mailto:razi61293697@gmail.com',
+    FCB: 'https://facebook.com',
+  };
+
+  useEffect(() => {
+    let ctx: any;
+    import('gsap').then(({ gsap }) => {
+      import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
+        gsap.registerPlugin(ScrollTrigger);
+        ctx = gsap.context(() => {
+          gsap.fromTo(
+            footerRef.current,
+            { y: 80, opacity: 0 },
+            {
+              y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+              scrollTrigger: { trigger: footerRef.current, start: 'top 90%', toggleActions: 'play none none none' },
+            }
+          );
+          const links = linksRef.current.filter(Boolean);
+          gsap.fromTo(
+            links,
+            { clipPath: 'inset(0 100% 0 0)', opacity: 0, x: -40 },
+            {
+              clipPath: 'inset(0 0% 0 0)', opacity: 1, x: 0,
+              duration: 0.9, ease: 'power4.out', stagger: 0.08,
+              scrollTrigger: { trigger: footerRef.current, start: 'top 85%', toggleActions: 'play none none none' },
+            }
+          );
+          gsap.to(trackRef.current, {
+            skewX: -3, ease: 'none',
+            scrollTrigger: { trigger: footerRef.current, start: 'top bottom', end: 'bottom top', scrub: 1.5 },
+          });
+        }, footerRef);
+      });
+    });
+    return () => ctx?.revert();
+  }, []);
+
+  return (
+    <footer
+      ref={footerRef}
+      className="relative z-10 select-none"
+      style={{ background: '#0a0a0a', borderTop: '1px solid rgba(255,255,255,0.04)', opacity: 0 }}
+    >
+      <div
+        className="marquee-wrapper w-full overflow-hidden"
+        style={{
+          paddingTop: '24px',
+          paddingBottom: '24px',
+          maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
+        }}
+      >
+        <div ref={trackRef} className="marquee-track">
+          {SOCIAL_ITEMS.map((item, i) => (
+            <a
+              key={i}
+              ref={el => { linksRef.current[i] = el; }}
+              href={socialLinks[item]}
+              target={item !== 'MAIL' ? '_blank' : undefined}
+              rel="noopener noreferrer"
+              className="footer-social-link flex items-center shrink-0"
+              style={{
+                fontFamily: '"Big Shoulders Display", sans-serif',
+                fontWeight: 900,
+                fontSize: 'clamp(88px, 22vw, 240px)',
+                letterSpacing: '-0.02em',
+                textTransform: 'uppercase',
+                color: '#d4e635',
+                padding: '0 40px',
+                lineHeight: 1,
+                whiteSpace: 'nowrap',
+                textDecoration: 'none',
+                transition: 'color 0.3s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#ffffff')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#d4e635')}
+            >
+              {item}
+              <span style={{ color: 'rgba(212,230,53,0.4)', margin: '0 10px', fontSize: '0.2em', verticalAlign: 'middle' }}>✦</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </footer>
   );
 }
 
@@ -373,12 +477,10 @@ export default function About() {
 
       </motion.div>
 
-      {/* ── Footer strip ── */}
-      <div className="relative z-10 border-t border-white/5 px-6 sm:px-10 lg:px-16 py-6 flex items-center justify-between"
-        style={{ background: 'rgba(10,10,10,0.8)' }}>
-        <span className="text-gray-600 text-xs">© 2026 RAZI. All rights reserved.</span>
-        <a href="/" className="text-xs text-gray-500 hover:text-white transition-colors">← Back to Home</a>
-      </div>
+      {/* ── Social Links — marquee footer ── */}
+      <AboutFooterMarquee />
+
+
     </div>
   );
 }
