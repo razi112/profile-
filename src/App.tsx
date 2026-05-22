@@ -13,10 +13,6 @@ import {
   Linkedin,
   Instagram,
   MessageCircle,
-  Award,
-  Users,
-  Coffee,
-  Heart,
   Sparkles,
   CodeXml,
   ShoppingCart,
@@ -713,7 +709,7 @@ export default function App() {
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
 
   useEffect(() => {
-    const sections = ['home', 'about', 'services', 'contact'];
+    const sections = ['home', 'services', 'contact'];
     const observers: IntersectionObserver[] = [];
 
     sections.forEach((id) => {
@@ -795,7 +791,7 @@ export default function App() {
               <nav className="flex flex-col gap-0">
                 {[
                   { label: 'Home',     href: '#home',     id: 'home' },
-                  { label: 'About',    href: '#about',    id: 'about' },
+                  { label: 'About',    href: '/about',    id: 'about' },
                   { label: 'Projects', href: '/projects', id: 'projects' },
                   { label: 'Services', href: '#services', id: 'services' },
                   { label: 'Skills',   href: '/skills',   id: 'skills' },
@@ -907,7 +903,7 @@ export default function App() {
             fontWeight: 400,
           }}
         >
-          Crafting Digital Experiences &nbsp;—&nbsp; Since 2023
+          Crafting Digital Experiences &nbsp;—&nbsp; Since 2026
         </motion.p>
 
         {/* Giant name block */}
@@ -983,158 +979,189 @@ export default function App() {
         </motion.div>
       </motion.main>
 
-      {/* Section Divider */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-24">
-        <div className="flex items-center gap-4">
-          <div className="flex-1 h-px" style={{ background: 'linear-gradient(to right, transparent, rgba(163,230,53,0.3), transparent)' }} />
-          <motion.div
-            whileInView={{ rotate: [0, 180, 360] }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
-            viewport={{ once: true }}
-            className="w-2 h-2 rounded-full" style={{ background: '#a3e635' }}
-          />
-          <div className="flex-1 h-px" style={{ background: 'linear-gradient(to right, transparent, rgba(163,230,53,0.3), transparent)' }} />
-        </div>
-      </div>
-
-      {/* About Section */}
-      <motion.section 
-        id="about"
+      {/* ── About Preview Section ── */}
+      <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
-        className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 lg:py-32 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center relative z-10"
+        className="relative z-10 py-24 md:py-36 overflow-hidden"
       >
-        {/* Section ambient glow */}
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none -z-10" style={{ background: 'rgba(163,230,53,0.04)' }} />
-        <div className="absolute right-0 top-1/3 w-[400px] h-[400px] rounded-full blur-[100px] pointer-events-none -z-10" style={{ background: 'rgba(163,230,53,0.03)' }} />
+        {/* Ambient glow */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/4 w-[600px] h-[600px] rounded-full blur-[140px] -translate-y-1/2"
+            style={{ background: 'rgba(163,230,53,0.04)' }} />
+        </div>
 
-        {/* Left Content */}
-        <motion.div variants={fadeInLeft} className="space-y-8">
-          <div className="relative inline-block">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">About Me</h2>
-            <div className="absolute -bottom-2 left-0 w-16 h-0.5 rounded-full" style={{ background: '#a3e635' }} />
-            <div className="absolute -bottom-2 left-0 w-16 h-0.5 rounded-full blur-sm opacity-70" style={{ background: '#a3e635' }} />
-          </div>
-          
-          <div className="space-y-6 text-gray-400 text-lg leading-relaxed relative">
-            {/* Decorative Circle */}
-            <div className="absolute -left-8 top-2 w-6 h-6 rounded-full border flex items-center justify-center hidden md:flex" style={{ borderColor: 'rgba(163,230,53,0.3)', boxShadow: '0 0 8px rgba(163,230,53,0.2)' }}>
-              <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'rgba(163,230,53,0.6)' }}></div>
-            </div>
-            
-            <p>
-              I'm RAZI, expert Web Designer & Developer in Malappuram, Kerala with over 1 years of experience in creating digital experiences that drive business results. My expertise spans across E-Commerce development, SEO optimization, digital marketing, and graphic design.
-            </p>
-            <p>
-              I believe in creating websites that not only look stunning but also convert visitors into customers. Every project I undertake is designed with user experience, search engine optimization, and business growth in mind.
-            </p>
-            <p>
-              When I'm not coding or designing, you can find me exploring the latest web technologies, studying market trends, or helping businesses establish their digital presence through strategic marketing initiatives.
-            </p>
-          </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24">
 
-          <div className="space-y-6 pt-4">
-            <h3 className="text-2xl font-bold text-white">What I Do</h3>
-            <div className="flex flex-wrap gap-3">
-              {[
-                'Web Design', 'Web Development', 'E-Commerce Development',
-                'SEO Optimization', 'Digital Marketing', 'Mobile App Development',
-                'Graphic Design', 'Brand Strategy', 'Wikipedia Page Creation'
-              ].map((skill) => (
-                <div key={skill} className="bg-[#111111] border border-white/8 hover:border-lime-400/40 hover:text-lime-400 hover:shadow-[0_0_12px_rgba(163,230,53,0.15)] transition-all duration-300 rounded-full px-5 py-2.5 text-sm font-medium text-gray-400 cursor-default">
-                  {skill}
-                </div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Right Content */}
-        <motion.div variants={fadeInRight} className="relative">
-          {/* Circular Image with Glow */}
-          <div className="relative w-full max-w-[480px] mx-auto aspect-square">
-            {/* Background Glows */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] blur-[80px] rounded-full -z-10" style={{ background: 'radial-gradient(circle, rgba(163,230,53,0.08) 0%, transparent 70%)' }}></div>
-            
-            {/* Floating Shapes */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full border shadow-lg" style={{ background: 'rgba(163,230,53,0.05)', borderColor: 'rgba(163,230,53,0.1)' }}></div>
-            <div className="absolute bottom-12 -left-8 w-16 h-16 rounded-full border shadow-lg" style={{ background: 'rgba(163,230,53,0.04)', borderColor: 'rgba(163,230,53,0.08)' }}></div>
-            <div className="absolute top-1/3 -left-12 w-6 h-16 bg-white/5 rounded-full border border-white/5 shadow-lg"></div>
-            <div className="absolute top-1/3 -right-8 w-12 h-12 bg-white/5 rounded-full border border-white/5 shadow-lg"></div>
-            <div className="absolute -bottom-4 right-12 w-8 h-8 opacity-80 rotate-12 rounded-sm border shadow-lg" style={{ background: 'rgba(163,230,53,0.05)', borderColor: 'rgba(163,230,53,0.1)' }}></div>
-            <div className="absolute top-0 left-12 w-10 h-10 border-[2px] border-white/10 opacity-60 rotate-12 rounded-sm"></div>
-            
-            {/* Main Image */}
-            <div className="w-full h-full rounded-full border border-white/10 overflow-hidden relative z-10 bg-[#111111] group">
-              <img 
-                src="https://i.pinimg.com/736x/3d/27/42/3d27428c12b3e4febdb977202d79de22.jpg"
-                alt="RAZI" 
-                className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-110 group-hover:brightness-110 group-hover:saturate-110"
+          {/* ── Header row: ABOUT ————— → ── */}
+          <motion.a href="/about" variants={fadeInUp}
+            className="group flex items-center gap-5 mb-16 md:mb-20"
+            style={{ textDecoration: 'none' }}>
+            <span style={{
+              fontFamily: '"Big Shoulders Display", sans-serif',
+              fontWeight: 900,
+              fontSize: 'clamp(13px, 1.4vw, 18px)',
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              color: '#a3e635',
+              whiteSpace: 'nowrap',
+              transition: 'letter-spacing 0.5s ease',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.letterSpacing = '0.32em')}
+            onMouseLeave={e => (e.currentTarget.style.letterSpacing = '0.22em')}>
+              About
+            </span>
+            {/* Animated line */}
+            <div className="relative flex-1 h-px overflow-hidden" style={{ background: 'rgba(163,230,53,0.12)' }}>
+              <motion.div className="absolute inset-y-0 left-0 w-full"
+                style={{ background: 'linear-gradient(to right, #a3e635, transparent)', originX: 0 }}
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
               />
             </div>
+            {/* Arrow group */}
+            <motion.div className="flex items-center gap-2 shrink-0"
+              whileHover={{ x: 8 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}>
+              <motion.div className="h-px bg-[#a3e635]"
+                initial={{ width: 24 }}
+                whileHover={{ width: 44 }}
+                transition={{ duration: 0.3 }}
+                style={{ width: 24 }} />
+              <motion.svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="#a3e635" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                whileHover={{ scale: 1.3 }} transition={{ duration: 0.25 }}>
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </motion.svg>
+            </motion.div>
+          </motion.a>
 
-            {/* Badge */}
-            <div className="absolute bottom-6 right-0 bg-[#111111] border border-lime-400/30 text-lime-400 font-bold px-6 py-2.5 rounded-full shadow-lg z-20 text-sm">
-              1 Year
-            </div>
+          {/* ── Giant heading ── */}
+          <motion.div variants={fadeInUp} className="mb-16 md:mb-20">
+            <h2 style={{
+              fontFamily: '"Big Shoulders Display", sans-serif',
+              fontWeight: 900,
+              fontSize: 'clamp(64px, 14vw, 180px)',
+              letterSpacing: '-0.03em',
+              lineHeight: 0.88,
+              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.06)',
+              userSelect: 'none',
+              position: 'relative',
+            }}>
+              {/* Outlined stroke text behind */}
+              <span style={{
+                WebkitTextStroke: '1px rgba(163,230,53,0.15)',
+                color: 'transparent',
+                display: 'block',
+              }}>WHO</span>
+              <span style={{
+                color: '#fff',
+                display: 'block',
+                marginTop: '-0.05em',
+              }}>AM I<span style={{ color: '#a3e635' }}>.</span></span>
+            </h2>
+          </motion.div>
+
+          {/* ── Main grid ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-6 items-start">
+
+            {/* Left col — bio text */}
+            <motion.div variants={fadeInLeft} className="lg:col-span-5 space-y-8">
+              <p className="text-gray-400 text-lg leading-relaxed">
+                My passion lies in the intersection of design and technology — creating fast, visually compelling websites that elevate brands and drive real business results.
+              </p>
+              <p className="text-white font-medium text-base leading-relaxed">
+                I'm a Web Designer &amp; Developer based in Malappuram, Kerala with 1+ year of experience. Proficient in React, Next.js, and modern web tools — delivering on time, every time.
+              </p>
+
+              {/* Stat row */}
+              <div className="grid grid-cols-3 gap-4 pt-4">
+                {[
+                  { value: '20+', label: 'Projects' },
+                  { value: '30+', label: 'Clients' },
+                  { value: '1+',  label: 'Yrs Exp' },
+                ].map(({ value, label }) => (
+                  <motion.div key={label}
+                    className="flex flex-col gap-1 border-l pl-4"
+                    style={{ borderColor: 'rgba(163,230,53,0.2)' }}
+                    whileHover={{ borderColor: 'rgba(163,230,53,0.8)', x: 4 }}
+                    transition={{ duration: 0.25 }}>
+                    <span style={{
+                      fontFamily: '"Big Shoulders Display", sans-serif',
+                      fontWeight: 900,
+                      fontSize: 'clamp(28px, 4vw, 42px)',
+                      color: '#a3e635',
+                      lineHeight: 1,
+                      letterSpacing: '-0.02em',
+                    }}>{value}</span>
+                    <span className="text-[11px] uppercase tracking-widest text-gray-600">{label}</span>
+                  </motion.div>
+                ))}
+              </div>
+
+            </motion.div>
+
+            {/* Middle — spacer on desktop */}
+            <div className="hidden lg:block lg:col-span-1" />
+
+            {/* Right col — skill cards */}
+            <motion.div variants={fadeInRight} className="lg:col-span-6 space-y-3">
+              {[
+                { name: 'Photoshop',   desc: 'Professional Graphic Designing tool',          pct: '95%' },
+                { name: 'Illustrator', desc: 'Professional Vector Designing tool',            pct: '90%' },
+                { name: 'CapCut',      desc: 'Professional video editing & smooth transitions', pct: '93%' },
+              ].map(({ name, desc, pct }, i) => (
+                <motion.div key={name}
+                  className="relative flex items-center justify-between rounded-2xl px-7 py-6 cursor-default overflow-hidden"
+                  style={{ background: '#d4e635' }}
+                  initial={{ opacity: 0, x: 40 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ scale: 1.03, y: -4, boxShadow: '0 20px 60px rgba(212,230,53,0.35)' }}>
+                  {/* Shine sweep */}
+                  <motion.div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.25) 50%, transparent 60%)',
+                      x: '-100%',
+                    }}
+                    whileHover={{ x: '200%' }}
+                    transition={{ duration: 0.55, ease: 'easeInOut' }}
+                  />
+                  <div className="relative z-10">
+                    <p className="font-black text-black text-lg leading-tight"
+                      style={{ fontFamily: '"Big Shoulders Display", sans-serif', letterSpacing: '-0.01em' }}>
+                      {name}
+                    </p>
+                    <p className="text-sm mt-0.5 font-medium" style={{ color: 'rgba(0,0,0,0.5)' }}>{desc}</p>
+                  </div>
+                  <motion.span
+                    className="relative z-10 shrink-0"
+                    style={{
+                      fontFamily: '"Big Shoulders Display", sans-serif',
+                      fontWeight: 900,
+                      fontSize: 'clamp(32px, 5vw, 52px)',
+                      color: 'rgba(0,0,0,0.18)',
+                      letterSpacing: '-0.03em',
+                      lineHeight: 1,
+                    }}
+                    whileHover={{ color: 'rgba(0,0,0,0.5)', scale: 1.12 }}
+                    transition={{ duration: 0.2 }}>
+                    {pct}
+                  </motion.span>
+                </motion.div>
+              ))}
+            </motion.div>
+
           </div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-10 md:mt-12">
-            <div className="bg-[#111111] border border-white/5 hover:border-lime-400/30 hover:shadow-[0_0_20px_rgba(163,230,53,0.08)] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(163,230,53,0.1)', boxShadow: '0 0 12px rgba(163,230,53,0.15)' }}>
-                <Award size={24} style={{ color: '#a3e635' }} />
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-white">20+</div>
-                <div className="text-sm text-gray-400 mt-1">Projects Completed</div>
-              </div>
-            </div>
-            
-            <div className="bg-[#111111] border border-white/5 hover:border-lime-400/30 hover:shadow-[0_0_20px_rgba(163,230,53,0.08)] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(163,230,53,0.1)', boxShadow: '0 0 12px rgba(163,230,53,0.15)' }}>
-                <Users size={24} style={{ color: '#a3e635' }} />
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-white">30+</div>
-                <div className="text-sm text-gray-400 mt-1">Happy Clients</div>
-              </div>
-            </div>
-
-            <div className="bg-[#111111] border border-white/5 hover:border-lime-400/30 hover:shadow-[0_0_20px_rgba(163,230,53,0.08)] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(163,230,53,0.1)', boxShadow: '0 0 12px rgba(163,230,53,0.15)' }}>
-                <Coffee size={24} style={{ color: '#a3e635' }} />
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-white">1000+</div>
-                <div className="text-sm text-gray-400 mt-1">Cups of Coffee</div>
-              </div>
-            </div>
-
-            <div className="bg-[#111111] border border-white/5 hover:border-lime-400/30 hover:shadow-[0_0_20px_rgba(163,230,53,0.08)] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(163,230,53,0.1)', boxShadow: '0 0 12px rgba(163,230,53,0.15)' }}>
-                <Heart size={24} style={{ color: '#a3e635' }} />
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-white">1</div>
-                <div className="text-sm text-gray-400 mt-1">Year of Experience</div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </motion.section>
-
-      {/* Section Divider */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-24">
-        <div className="flex items-center gap-4">
-          <div className="flex-1 h-px" style={{ background: 'linear-gradient(to right, transparent, rgba(163,230,53,0.3), transparent)' }} />
-          <motion.div whileInView={{ scale: [0, 1.5, 1] }} transition={{ duration: 0.8 }} viewport={{ once: true }}
-            className="w-2 h-2 rounded-full" style={{ background: '#a3e635' }} />
-          <div className="flex-1 h-px" style={{ background: 'linear-gradient(to right, transparent, rgba(163,230,53,0.3), transparent)' }} />
         </div>
-      </div>
+      </motion.section>
 
       {/* Services Section */}
       <motion.section

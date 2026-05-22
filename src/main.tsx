@@ -6,6 +6,7 @@ import AdminDashboard from './AdminDashboard.tsx';
 import Resume from './Resume.tsx';
 import SkillsPage from './Skills.tsx';
 import ProjectsPage from './Projects.tsx';
+import About from './About.tsx';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/about" element={<About />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/resume" element={<Resume />} />
         <Route path="/skills" element={<SkillsPage />} />
