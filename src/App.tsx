@@ -344,7 +344,7 @@ function TypingRole() {
 
 // ── Marquee ticker ─────────────────────────────────────────────────────────
 const TICKER_ITEMS = [
-  'PHOTOSHOP', 'ILLUSTRATOR', 'INDESIGN', 'CAPCUT',
+  'PHOTOSHOP', 'ILLUSTRATOR', 'REACT', 'CAPCUT',
 ];
 
 function MarqueeTicker() {
@@ -1245,224 +1245,121 @@ export default function App() {
         </div>
       </div>
 
-      {/* Contact Section */}
-      <motion.section 
+      {/* Contact Section — Split Hero */}
+      <motion.section
         id="contact"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.1 }}
+        viewport={{ once: true, amount: 0.08 }}
         variants={staggerContainer}
-        className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 lg:py-32 lg:px-24 relative z-10"
+        className="scroll-mt-24 relative z-10"
       >
-        {/* Header */}
-        <motion.div variants={fadeInUp} className="flex flex-col items-center text-center space-y-4 mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
-            Let's Work Together
-          </h2>
-          <p className="text-gray-400 text-lg max-w-2xl">
-            Have a project in mind or just want to chat? I'd love to hear from you. Drop me a message and let's create something amazing together.
-          </p>
-        </motion.div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-16 md:py-24 lg:py-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[680px] gap-0 rounded-3xl overflow-hidden"
+            style={{ border: '1px solid rgba(255,255,255,0.06)', background: '#0d0d0d' }}>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Left Column - Form */}
-          <ContactForm />
+            {/* ── LEFT — Bold CTA ── */}
+            <motion.div
+              variants={fadeInLeft}
+              className="relative flex flex-col justify-between p-8 md:p-12 lg:p-14 overflow-hidden"
+              style={{ borderRight: '1px solid rgba(255,255,255,0.05)' }}
+            >
+              {/* Background glow */}
+              <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full blur-[100px] pointer-events-none"
+                style={{ background: 'rgba(212,230,53,0.08)' }} />
+              <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full blur-[80px] pointer-events-none"
+                style={{ background: 'rgba(212,230,53,0.04)' }} />
 
-          {/* Right Column - Contact Info */}
-          <motion.div variants={fadeInUp} className="space-y-6">
-            <h3 className="text-2xl font-bold text-white">Get in touch</h3>
-
-            {/* Contact Cards */}
-            <div className="space-y-4">
-              <div className="bg-[#161616] border border-white/5 rounded-xl p-4 flex items-center space-x-4 hover:bg-[#1a1a1a] hover:border-lime-400/20 transition-all cursor-pointer">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(163,230,53,0.1)' }}>
-                  <Mail size={20} style={{ color: '#a3e635' }} />
-                </div>
-                <div>
-                  <div className="text-xs text-gray-400 mb-0.5">Email</div>
-                  <div className="text-sm font-medium text-white">razi61293697@gmail.com</div>
-                </div>
-              </div>
-
-              <div className="bg-[#161616] border border-white/5 rounded-xl p-4 flex items-center space-x-4 hover:bg-[#1a1a1a] hover:border-lime-400/20 transition-all cursor-pointer">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(163,230,53,0.1)' }}>
-                  <Phone size={20} style={{ color: '#a3e635' }} />
-                </div>
-                <div>
-                  <div className="text-xs text-gray-400 mb-0.5">Phone</div>
-                  <div className="text-sm font-medium text-white">+91 9746711804</div>
-                </div>
-              </div>
-
-              <div className="bg-[#161616] border border-white/5 rounded-xl p-4 flex items-center space-x-4 hover:bg-[#1a1a1a] hover:border-lime-400/20 transition-all cursor-pointer">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(163,230,53,0.1)' }}>
-                  <MapPin size={20} style={{ color: '#a3e635' }} />
-                </div>
-                <div>
-                  <div className="text-xs text-gray-400 mb-0.5">Location</div>
-                  <div className="text-sm font-medium text-white">Kerala, India</div>
-                </div>
-              </div>
-            </div>
-
-            {/* WhatsApp Widget */}
-            <div className="bg-[#0d1a0d] border rounded-2xl p-6 relative overflow-hidden" style={{ borderColor: 'rgba(163,230,53,0.2)' }}>
-              <div className="absolute top-0 right-0 w-32 h-32 blur-[40px] rounded-full" style={{ background: 'rgba(163,230,53,0.08)' }}></div>
-              
+              {/* Top — label + headline */}
               <div className="relative z-10 space-y-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" style={{ background: '#a3e635', boxShadow: '0 4px 20px rgba(163,230,53,0.3)' }}>
-                      <MessageCircle size={24} className="text-black" />
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-bold text-white">WhatsApp Chat</h4>
-                      <div className="flex items-center space-x-1.5 text-xs font-medium" style={{ color: '#a3e635' }}>
-                        <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#a3e635' }}></span>
-                        <span>Online now</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-white/5 text-gray-300 text-[10px] font-bold px-2 py-1 rounded flex items-center space-x-1 border border-white/10">
-                    <Star size={10} className="fill-white" />
-                    <span>Premium</span>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#d4e635' }} />
+                  <span className="text-xs tracking-[0.25em] uppercase text-gray-500">Available for work — 2026</span>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-gray-400 border-y border-white/5 py-3">
-                  <div className="flex items-center space-x-1.5">
-                    <Zap size={12} style={{ color: '#a3e635' }} />
-                    <span>Instant Response</span>
-                  </div>
-                  <div className="flex items-center space-x-1.5">
-                    <CheckCircle2 size={12} style={{ color: '#a3e635' }} />
-                    <span>Secure Chat</span>
-                  </div>
-                  <div className="flex items-center space-x-1.5">
-                    <Clock size={12} style={{ color: '#a3e635' }} />
-                    <span>24/7 Available</span>
-                  </div>
-                </div>
+                <h2 style={{
+                  fontFamily: '"Big Shoulders Display", sans-serif',
+                  fontWeight: 900,
+                  fontSize: 'clamp(52px, 7vw, 100px)',
+                  letterSpacing: '-0.03em',
+                  textTransform: 'uppercase',
+                  lineHeight: 0.9,
+                  color: '#fff',
+                }}>
+                  Let's<br />
+                  <span style={{ color: '#d4e635' }}>Work</span><br />
+                  Together
+                </h2>
 
-                <div className="bg-[#111111] rounded-xl p-4 border border-white/5">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: '#a3e635' }}>
-                      <span className="text-[10px] font-bold text-black">R</span>
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-300 leading-relaxed">
-                        <span className="font-bold" style={{ color: '#a3e635' }}>RAZI:</span> Hi! 👋 Thanks for reaching out. I'm excited to hear about your project and how I can help bring your ideas to life!
-                      </div>
-                      <div className="text-[10px] text-gray-500 mt-1">Usually replies instantly</div>
-                    </div>
-                  </div>
-                </div>
+                <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+                  Have a project in mind? Want to grow your business online? Drop a message — I'll get back to you within 24 hours.
+                </p>
+              </div>
 
-                <button className="btn-emerald w-full text-black font-bold py-3 rounded-xl flex items-center justify-center space-x-2 transition-colors shadow-lg" style={{ background: '#a3e635', boxShadow: '0 4px 20px rgba(163,230,53,0.25)' }}>
-                  <MessageCircle size={18} />
-                  <span>Start WhatsApp Chat</span>
-                  <ChevronRight size={16} />
-                </button>
+              {/* Middle — stats row */}
+              <div className="relative z-10 grid grid-cols-3 gap-4 my-10">
+                {[
+                  { value: '20+', label: 'Projects' },
+                  { value: '5★', label: 'Rating' },
+                  { value: '24h', label: 'Response' },
+                ].map(({ value, label }) => (
+                  <div key={label} className="flex flex-col">
+                    <span className="text-2xl font-black" style={{ color: '#d4e635', fontFamily: '"Big Shoulders Display", sans-serif' }}>{value}</span>
+                    <span className="text-[10px] uppercase tracking-widest text-gray-500 mt-0.5">{label}</span>
+                  </div>
+                ))}
+              </div>
 
-                <div className="flex items-center justify-center space-x-2 text-[10px] text-gray-500">
-                  <div className="flex items-center space-x-1">
-                    <MessageSquare size={10} />
-                    <span>Get instant replies</span>
+              {/* Bottom — contact links */}
+              <div className="relative z-10 space-y-3">
+                <a href="mailto:razi61293697@gmail.com"
+                  className="flex items-center gap-4 group transition-all duration-300">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110"
+                    style={{ background: 'rgba(212,230,53,0.1)', border: '1px solid rgba(212,230,53,0.15)' }}>
+                    <Mail size={16} style={{ color: '#d4e635' }} />
                   </div>
-                  <span>•</span>
-                  <div className="flex items-center space-x-1">
-                    <Zap size={10} />
-                    <span>Quick project quotes</span>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-gray-500">Email</div>
+                    <div className="text-sm font-medium text-white group-hover:text-lime-400 transition-colors">razi61293697@gmail.com</div>
                   </div>
-                  <span>•</span>
-                  <div className="flex items-center space-x-1">
-                    <Star size={10} />
-                    <span>Free consultation</span>
+                </a>
+
+                <a href="https://wa.me/919746711804" target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-4 group transition-all duration-300">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110"
+                    style={{ background: 'rgba(212,230,53,0.1)', border: '1px solid rgba(212,230,53,0.15)' }}>
+                    <MessageCircle size={16} style={{ color: '#d4e635' }} />
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-gray-500">WhatsApp</div>
+                    <div className="text-sm font-medium text-white group-hover:text-lime-400 transition-colors">+91 9746711804</div>
+                  </div>
+                </a>
+
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                    style={{ background: 'rgba(212,230,53,0.1)', border: '1px solid rgba(212,230,53,0.15)' }}>
+                    <MapPin size={16} style={{ color: '#d4e635' }} />
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-gray-500">Location</div>
+                    <div className="text-sm font-medium text-white">Kerala, India</div>
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Small Stats */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-[#111111] border border-white/5 rounded-xl p-4 flex flex-col items-center justify-center text-center">
-                <div className="flex items-center space-x-1 font-bold mb-1" style={{ color: '#a3e635' }}>
-                  <span className="text-lg">5</span>
-                  <Star size={14} style={{ fill: '#a3e635', color: '#a3e635' }} />
-                </div>
-                <div className="text-[10px] text-gray-500 uppercase tracking-wider">Rating</div>
-              </div>
-              <div className="bg-[#111111] border border-white/5 rounded-xl p-4 flex flex-col items-center justify-center text-center">
-                <div className="text-lg font-bold mb-1" style={{ color: '#a3e635' }}>24h</div>
-                <div className="text-[10px] text-gray-500 uppercase tracking-wider">Response</div>
-              </div>
-            </div>
+            {/* ── RIGHT — Form ── */}
+            <motion.div
+              variants={fadeInRight}
+              className="flex flex-col justify-center p-8 md:p-12 lg:p-14"
+              style={{ background: '#0a0a0a' }}
+            >
+              <ContactForm />
+            </motion.div>
 
-            <div className="bg-[#111111] border border-white/5 rounded-xl p-4 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#a3e635' }}></div>
-                <span className="text-xs text-gray-400">Available for new projects</span>
-              </div>
-              <span className="text-xs font-bold" style={{ color: '#a3e635' }}>2026</span>
-            </div>
-          </motion.div>
+          </div>
         </div>
-
-        {/* Bottom CTA */}
-        <motion.div variants={fadeInUp} className="mt-16 relative overflow-hidden rounded-3xl"
-          style={{ background: '#0e0e0e', border: '1px solid rgba(255,255,255,0.06)' }}>
-
-          {/* Glow blobs */}
-          <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-3xl pointer-events-none" style={{ background: 'rgba(212,230,53,0.07)' }} />
-          <div className="absolute -bottom-16 left-10 w-48 h-48 rounded-full blur-2xl pointer-events-none" style={{ background: 'rgba(212,230,53,0.04)' }} />
-
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 p-8 md:p-12">
-
-            {/* Left */}
-            <div className="space-y-4 max-w-lg">
-              <p className="text-xs tracking-[0.25em] uppercase text-gray-500">Get in touch</p>
-              <h3 style={{ fontFamily: '"Big Shoulders Display", sans-serif', fontWeight: 900, fontSize: 'clamp(36px, 6vw, 80px)', letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 0.95, color: '#fff' }}>
-                Say <span style={{ color: '#d4e635' }}>Hi!</span>
-              </h3>
-              <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
-                Want to promote your service or product? Have a query? Just drop an email — I'll get back to you fast.
-              </p>
-            </div>
-
-            {/* Right — actions */}
-            <div className="flex flex-col gap-3 shrink-0">
-              <a href="mailto:razi61293697@gmail.com"
-                className="group flex items-center gap-3 px-6 py-4 rounded-2xl transition-all duration-300 hover:scale-105"
-                style={{ background: '#d4e635', color: '#000' }}>
-                <Mail size={18} />
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-widest">Email Me</div>
-                  <div className="text-[11px] opacity-70">razi61293697@gmail.com</div>
-                </div>
-              </a>
-
-              <a href="https://wa.me/919746711804" target="_blank" rel="noopener noreferrer"
-                className="group flex items-center gap-3 px-6 py-4 rounded-2xl transition-all duration-300 hover:scale-105"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
-                <MessageCircle size={18} style={{ color: '#d4e635' }} />
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-widest">WhatsApp</div>
-                  <div className="text-[11px] text-gray-500">Quick chat</div>
-                </div>
-              </a>
-            </div>
-          </div>
-
-          {/* Bottom strip */}
-          <div className="relative z-10 border-t px-8 md:px-12 py-4 flex items-center justify-between"
-            style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#d4e635' }} />
-              <span className="text-xs text-gray-500">Available for new projects — 2026</span>
-            </div>
-            <span className="text-xs text-gray-600 font-mono">Kerala, India</span>
-          </div>
-        </motion.div>
       </motion.section>
 
       {/* Floating Elements */}
