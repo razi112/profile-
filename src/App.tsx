@@ -184,32 +184,41 @@ function ContactForm() {
     setStatus('sending');
     setErrorMsg('');
 
-    console.log('[ContactForm] Submitting:', form);
-
-    if (!supabase) {
-      setErrorMsg('Supabase is not configured. Check your .env file.');
+    // ── 1. Send email via EmailJS ──────────────────────────────────
+    try {
+      const emailjs = await import('@emailjs/browser');
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          from_name:    form.name,
+          from_email:   form.email,
+          subject:      form.subject || '(No subject)',
+          message:      form.message,
+          reply_to:     form.email,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      );
+    } catch (emailErr: any) {
+      console.error('[ContactForm] EmailJS error:', emailErr);
+      setErrorMsg('Failed to send email. Please try again.');
       setStatus('error');
       setTimeout(() => setStatus('idle'), 5000);
       return;
     }
 
-    const { error } = await supabase.from('messages').insert([{
-      name: form.name,
-      email: form.email,
-      subject: form.subject,
-      message: form.message,
-      read: false,
-    }]);
-
-    if (error) {
-      console.error('[ContactForm] Insert error:', error.message);
-      setErrorMsg(error.message);
-      setStatus('error');
-      setTimeout(() => setStatus('idle'), 5000);
-      return;
+    // ── 2. Also save to Supabase if configured ─────────────────────
+    if (supabase) {
+      const { error } = await supabase.from('messages').insert([{
+        name: form.name,
+        email: form.email,
+        subject: form.subject,
+        message: form.message,
+        read: false,
+      }]);
+      if (error) console.warn('[ContactForm] Supabase insert warning:', error.message);
     }
 
-    console.log('[ContactForm] Message saved successfully');
     setStatus('success');
     setForm({ name: '', email: '', subject: '', message: '' });
     setTimeout(() => setStatus('idle'), 4000);
@@ -435,7 +444,7 @@ function FooterMarquee() {
   ];
   const socialLinks: Record<string, string> = {
     WTSP: 'https://wa.me/919746711804',
-    IG: 'https://instagram.com',
+    IG: 'https://instagram.com/nte_vibes',
     MAIL: 'mailto:razi61293697@gmail.com',
     FCB: 'https://facebook.com',
   };
@@ -877,7 +886,9 @@ export default function App() {
 
           {/* Signature — right */}
           <a
-            href="#contact"
+            href="https://wa.me/919746711804"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden md:flex items-center hover:opacity-60 transition-opacity"
             aria-label="Contact"
           >
@@ -886,7 +897,7 @@ export default function App() {
                 fontFamily: '"Ms Madi", cursive',
                 fontSize: 'clamp(32px, 3.5vw, 48px)',
                 fontWeight: 400,
-                color: '#ffffff',
+                color: '#e0f11f',
                 letterSpacing: '0.02em',
                 lineHeight: 1,
                 textShadow: '0 0 20px rgba(255,255,255,0.15)',
@@ -979,7 +990,7 @@ export default function App() {
         {/* Tagline with typing animation */}
         <motion.div variants={fadeInUp} className="text-center px-6 max-w-md">
           <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 'clamp(14px, 1.6vw, 18px)', lineHeight: '1.6', fontWeight: 400 }}>
-            I'm <strong style={{ color: '#fff', fontWeight: 600 }}>RAZI KV</strong> —{' '}
+            I'm <strong style={{ color: '#fff', fontWeight: 600 }}>MUHAMMED RAZI KV</strong> —{' '}
             <TypingRole />
           </p>
         </motion.div>
@@ -1016,20 +1027,26 @@ export default function App() {
           <motion.a href="/about" variants={fadeInUp}
             className="group flex items-center gap-5 mb-16 md:mb-20"
             style={{ textDecoration: 'none' }}>
-            <span style={{
-              fontFamily: '"Big Shoulders Display", sans-serif',
-              fontWeight: 900,
-              fontSize: 'clamp(13px, 1.4vw, 18px)',
-              letterSpacing: '0.22em',
-              textTransform: 'uppercase',
-              color: '#a3e635',
-              whiteSpace: 'nowrap',
-              transition: 'letter-spacing 0.5s ease',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.letterSpacing = '0.32em')}
-            onMouseLeave={e => (e.currentTarget.style.letterSpacing = '0.22em')}>
+            <motion.span
+              style={{
+                fontFamily: '"Big Shoulders Display", sans-serif',
+                fontWeight: 900,
+                fontSize: 'clamp(13px, 1.4vw, 18px)',
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                color: '#a3e635',
+                whiteSpace: 'nowrap',
+                display: 'inline-block',
+              }}
+              whileHover={{
+                letterSpacing: '0.38em',
+                textShadow: '0 0 20px rgba(163,230,53,0.7)',
+                scale: 1.05,
+              }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            >
               About
-            </span>
+            </motion.span>
             {/* Animated line */}
             <div className="relative flex-1 h-px overflow-hidden" style={{ background: 'rgba(163,230,53,0.12)' }}>
               <motion.div className="absolute inset-y-0 left-0 w-full"
@@ -1039,21 +1056,41 @@ export default function App() {
                 viewport={{ once: true }}
                 transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
               />
+              {/* Shimmer on group hover */}
+              <motion.div
+                className="absolute inset-y-0 w-24 pointer-events-none"
+                style={{ background: 'linear-gradient(to right, transparent, rgba(163,230,53,0.6), transparent)' }}
+                initial={{ x: '-100%' }}
+                whileHover={{ x: '600%' }}
+                transition={{ duration: 0.8, ease: 'easeInOut' }}
+              />
             </div>
             {/* Arrow group */}
-            <motion.div className="flex items-center gap-2 shrink-0"
-              whileHover={{ x: 8 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}>
-              <motion.div className="h-px bg-[#a3e635]"
-                initial={{ width: 24 }}
-                whileHover={{ width: 44 }}
+            <motion.div
+              className="flex items-center gap-2 shrink-0"
+              whileHover={{ x: 10, scale: 1.1 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <motion.div
+                className="h-px bg-[#a3e635]"
+                style={{ width: 24 }}
+                whileHover={{ width: 48, boxShadow: '0 0 8px rgba(163,230,53,0.8)' }}
                 transition={{ duration: 0.3 }}
-                style={{ width: 24 }} />
-              <motion.svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="#a3e635" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                whileHover={{ scale: 1.3 }} transition={{ duration: 0.25 }}>
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </motion.svg>
+              />
+              <motion.div
+                className="w-8 h-8 rounded-full flex items-center justify-center"
+                style={{ background: 'rgba(163,230,53,0.1)', border: '1px solid rgba(163,230,53,0.3)' }}
+                whileHover={{ background: '#a3e635', scale: 1.2, boxShadow: '0 0 20px rgba(163,230,53,0.5)' }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                  style={{ color: '#a3e635' }}
+                  whileHover={{ color: '#000', rotate: -45 }}
+                  transition={{ duration: 0.25 }}>
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </motion.svg>
+              </motion.div>
             </motion.div>
           </motion.a>
 
@@ -1129,47 +1166,74 @@ export default function App() {
             {/* Right col — skill cards */}
             <motion.div variants={fadeInRight} className="lg:col-span-6 space-y-3">
               {[
-                { name: 'Photoshop',   desc: 'Professional Graphic Designing tool',          pct: '95%' },
-                { name: 'Illustrator', desc: 'Professional Vector Designing tool',            pct: '90%' },
-                { name: 'CapCut',      desc: 'Professional video editing & smooth transitions', pct: '93%' },
-              ].map(({ name, desc, pct }, i) => (
+                { name: 'Photoshop',   desc: 'Professional Graphic Designing tool',             pct: '95%', num: 95 },
+                { name: 'Illustrator', desc: 'Professional Vector Designing tool',               pct: '90%', num: 90 },
+                { name: 'CapCut',      desc: 'Professional video editing & smooth transitions',  pct: '93%', num: 93 },
+              ].map(({ name, desc, pct, num }, i) => (
                 <motion.div key={name}
-                  className="relative flex items-center justify-between rounded-2xl px-7 py-6 cursor-default overflow-hidden"
+                  className="relative flex items-center justify-between rounded-2xl px-7 py-6 cursor-default overflow-hidden group"
                   style={{ background: '#d4e635' }}
                   initial={{ opacity: 0, x: 40 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ scale: 1.03, y: -4, boxShadow: '0 20px 60px rgba(212,230,53,0.35)' }}>
+                  transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] as any }}
+                  whileHover={{ scale: 1.03, y: -6, boxShadow: '0 28px 70px rgba(212,230,53,0.45), 0 0 0 2px rgba(0,0,0,0.15)' }}
+                >
+                  {/* Dark overlay that slides up on hover */}
+                  <motion.div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.18) 0%, transparent 60%)', originY: 1 }}
+                    initial={{ scaleY: 0 }}
+                    whileHover={{ scaleY: 1 }}
+                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  />
+
                   {/* Shine sweep */}
                   <motion.div
                     className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.25) 50%, transparent 60%)',
-                      x: '-100%',
-                    }}
-                    whileHover={{ x: '200%' }}
-                    transition={{ duration: 0.55, ease: 'easeInOut' }}
+                    style={{ background: 'linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%)' }}
+                    initial={{ x: '-120%' }}
+                    whileHover={{ x: '220%' }}
+                    transition={{ duration: 0.6, ease: 'easeInOut' }}
                   />
+
+                  {/* Progress bar at bottom */}
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-black/10 rounded-b-2xl overflow-hidden">
+                    <motion.div
+                      className="h-full rounded-full"
+                      style={{ background: 'rgba(0,0,0,0.35)', width: '0%' }}
+                      whileHover={{ width: `${num}%` }}
+                      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+                    />
+                  </div>
+
+                  {/* Left text */}
                   <div className="relative z-10">
-                    <p className="font-black text-black text-lg leading-tight"
-                      style={{ fontFamily: '"Big Shoulders Display", sans-serif', letterSpacing: '-0.01em' }}>
+                    <motion.p
+                      className="font-black text-black leading-tight"
+                      style={{ fontFamily: '"Big Shoulders Display", sans-serif', letterSpacing: '-0.01em', fontSize: 'clamp(18px, 2.5vw, 22px)' }}
+                      whileHover={{ letterSpacing: '0.04em' }}
+                      transition={{ duration: 0.35 }}
+                    >
                       {name}
-                    </p>
+                    </motion.p>
                     <p className="text-sm mt-0.5 font-medium" style={{ color: 'rgba(0,0,0,0.5)' }}>{desc}</p>
                   </div>
+
+                  {/* Right percentage */}
                   <motion.span
                     className="relative z-10 shrink-0"
                     style={{
                       fontFamily: '"Big Shoulders Display", sans-serif',
                       fontWeight: 900,
-                      fontSize: 'clamp(32px, 5vw, 52px)',
+                      fontSize: 'clamp(32px, 5vw, 56px)',
                       color: 'rgba(0,0,0,0.18)',
                       letterSpacing: '-0.03em',
                       lineHeight: 1,
                     }}
-                    whileHover={{ color: 'rgba(0,0,0,0.5)', scale: 1.12 }}
-                    transition={{ duration: 0.2 }}>
+                    whileHover={{ color: 'rgba(0,0,0,0.7)', scale: 1.18, textShadow: '0 4px 20px rgba(0,0,0,0.2)' }}
+                    transition={{ duration: 0.25 }}
+                  >
                     {pct}
                   </motion.span>
                 </motion.div>
@@ -1396,6 +1460,30 @@ export default function App() {
                   <div>
                     <div className="text-[10px] uppercase tracking-widest text-gray-500">WhatsApp</div>
                     <div className="text-sm font-medium text-white group-hover:text-lime-400 transition-colors">+91 9746711804</div>
+                  </div>
+                </a>
+
+                <a href="https://instagram.com/nte_vibes" target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-4 group transition-all duration-300">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110"
+                    style={{ background: 'rgba(212,230,53,0.1)', border: '1px solid rgba(212,230,53,0.15)' }}>
+                    <Instagram size={16} style={{ color: '#d4e635' }} />
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-gray-500">Instagram</div>
+                    <div className="text-sm font-medium text-white group-hover:text-lime-400 transition-colors">@nte_vibes</div>
+                  </div>
+                </a>
+
+                <a href="https://instagram.com/ra_zzz_ii" target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-4 group transition-all duration-300">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110"
+                    style={{ background: 'rgba(212,230,53,0.1)', border: '1px solid rgba(212,230,53,0.15)' }}>
+                    <Instagram size={16} style={{ color: '#d4e635' }} />
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-gray-500">Instagram</div>
+                    <div className="text-sm font-medium text-white group-hover:text-lime-400 transition-colors">@ra_zzz_ii</div>
                   </div>
                 </a>
 

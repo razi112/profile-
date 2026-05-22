@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   CodeXml, Server, Phone, Monitor, Zap, TrendingUp, Palette,
@@ -6,6 +6,40 @@ import {
 } from 'lucide-react';
 
 const EASE = [0.22, 1, 0.36, 1] as any;
+
+/* ── Word popup animation ────────────────────────────────────────── */
+const wordBounce = {
+  hidden: { opacity: 0, y: -80, scaleY: 1.3 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0, scaleY: 1,
+    transition: { delay: i * 0.15, type: 'spring' as const, stiffness: 400, damping: 18, mass: 0.8 }
+  }),
+};
+
+function PopWord({ children, i, style }: { children: React.ReactNode; i: number; style?: React.CSSProperties }) {
+  return (
+    <motion.span
+      custom={i}
+      variants={wordBounce}
+      initial="hidden"
+      animate="visible"
+      style={{ display: 'inline-block', transformOrigin: 'top center', ...style }}
+    >
+      {children}
+    </motion.span>
+  );
+}
+
+/* ── Skills bounce heading ───────────────────────────────────────── */
+function SkillsTypewriterHeading() {
+  return (
+    <>
+      <PopWord i={0} style={{ color: '#d4e635' }}>Skills</PopWord>
+     <br/>
+      <PopWord i={2} style={{ color: '#ffffff' }}>Expertise</PopWord>
+    </>
+  );
+}
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 60 },
@@ -46,7 +80,7 @@ const skillBlocks = [
   {
     num: '06', icon: TrendingUp, title: 'Digital Marketing',
     skills: ['SEO', 'Social Media', 'Content Strategy', 'Google Analytics', 'Email Marketing', 'WhatsApp Marketing'],
-    level: 88, comingSoon: false,
+    level: 88, comingSoon: true,
   },
   {
     num: '07', icon: Palette, title: 'Graphic Design',
@@ -54,9 +88,9 @@ const skillBlocks = [
     level: 82, comingSoon: false,
   },
   {
-    num: '08', icon: Star, title: 'Media Production',
-    skills: ['Premiere Pro', 'After Effects', 'Drone Photography', 'Color Grading', 'Live Streaming', 'CapCut'],
-    level: 72, comingSoon: true,
+    num: '08', icon: Star, title: 'Video Editing',
+    skills: ['Premiere Pro', 'After Effects', 'CapCut', 'Color Grading', 'Motion Graphics', 'Drone Footage'],
+    level: 93, comingSoon: false,
   },
   {
     num: '09', icon: Server, title: 'Hosting & Servers',
@@ -66,7 +100,7 @@ const skillBlocks = [
   {
     num: '10', icon: Award, title: 'Library & Digitalization',
     skills: ['Library Digitalization', 'Koha LMS', 'Digital Archives', 'Cataloging', 'Metadata', 'User Access'],
-    level: 68, comingSoon: true,
+    level: 68, comingSoon: false,
   },
 ];
 
@@ -95,7 +129,7 @@ export default function SkillsPage() {
             <span className="block h-[2px] rounded-full bg-white transition-all duration-300 group-hover:bg-[#e0f11f]" style={{ width: '20px' }} />
             <span className="block h-[2px] rounded-full bg-white transition-all duration-300 group-hover:bg-[#e0f11f]" style={{ width: '24px' }} />
           </button>
-          <a href="/#contact" className="hidden md:flex items-center hover:opacity-60 transition-opacity">
+          <a href="https://wa.me/919746711804" target="_blank" rel="noopener noreferrer" className="hidden md:flex items-center hover:opacity-60 transition-opacity">
             <span style={{ fontFamily: '"Ms Madi", cursive', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: '#ffffff', lineHeight: 1 }}>Me</span>
           </a>
         </div>
@@ -157,11 +191,7 @@ export default function SkillsPage() {
         <motion.h1 variants={fadeInUp}
           style={{ fontFamily: '"Big Shoulders Display", sans-serif', fontWeight: 900, fontSize: 'clamp(64px, 14vw, 160px)', letterSpacing: '-0.02em', lineHeight: 0.9, textTransform: 'uppercase' }}
           className="mb-8">
-          <span style={{ color: '#d4e635' }}>Skills</span>
-          <br />
-          <span style={{ color: 'rgba(255,255,255,0.15)', WebkitTextStroke: '1px rgba(255,255,255,0.2)' }}>&</span>
-          <br />
-          <span style={{ color: '#ffffff' }}>Expertise</span>
+          <SkillsTypewriterHeading />
         </motion.h1>
 
         <motion.p variants={fadeInUp} className="text-gray-400 text-lg max-w-xl leading-relaxed">

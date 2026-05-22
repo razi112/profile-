@@ -4,6 +4,29 @@ import { MessageCircle, ArrowUpRight, X, ChevronLeft, ChevronRight, ZoomIn } fro
 
 const EASE = [0.22, 1, 0.36, 1] as any;
 
+/* ── Word bounce animation ───────────────────────────────────────── */
+const wordBounce = {
+  hidden: { opacity: 0, y: -80, scaleY: 1.3 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0, scaleY: 1,
+    transition: { delay: i * 0.15, type: 'spring' as const, stiffness: 400, damping: 18, mass: 0.8 }
+  }),
+};
+
+function PopWord({ children, i, style }: { children: React.ReactNode; i: number; style?: React.CSSProperties }) {
+  return (
+    <motion.span
+      custom={i}
+      variants={wordBounce}
+      initial="hidden"
+      animate="visible"
+      style={{ display: 'inline-block', transformOrigin: 'top center', ...style }}
+    >
+      {children}
+    </motion.span>
+  );
+}
+
 const fadeInUp = {
   hidden: { opacity: 0, y: 60 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } }
@@ -57,7 +80,7 @@ const projects = [
   {
     id: 4,
     num: '04',
-    title: 'AL Zad Restuarent',
+    title: 'AL Zad Restaurant',
     subtitle: 'Smart Hotel & Hospitality Platform',
     description: 'A complete hotel management ecosystem built for modern hospitality businesses — manage room bookings, guest check-ins, reservations, billing, staff operations, restaurant orders, housekeeping, and analytics from one powerful dashboard. Designed to streamline hotel workflows and elevate the guest experience with speed, automation, and elegance.',
     image: 'https://i.pinimg.com/736x/6f/99/1e/6f991edc3192a04f5f93d2af4290b674.jpg',
@@ -65,11 +88,24 @@ const projects = [
     year: '2026',
     demo: 'https://alzad.vercel.app/',
     comingSoon: false,
-    featured: false,
+    featured: true,
   },
   {
     id: 5,
     num: '05',
+    title: 'Hikma Class Union',
+    subtitle: 'Educational Union Website',
+    description: 'Official website for Hikma Class Union — a platform for students to stay connected, access resources, announcements, and union activities with a clean and modern design.',
+    image: 'https://i.pinimg.com/736x/a3/10/06/a31006d191792818d3ce459459c9d4bd.jpg',
+    tech: ['WordPress', 'Responsive', 'SEO'],
+    year: '2025',
+    demo: 'https://hikmaclass.vercel.app/',
+    comingSoon: false,
+    featured: true,
+  },
+  {
+    id: 6,
+    num: '06',
     title: 'Dubai Business',
     subtitle: 'Corporate Website',
     description: 'Creative website for a Dubai-based business showcasing services and portfolio with modern design and professional presentation.',
@@ -81,14 +117,27 @@ const projects = [
     featured: false,
   },
   {
-    id: 6,
-    num: '06',
+    id: 7,
+    num: '07',
     title: 'RKD Works',
     subtitle: 'Business Website',
     description: 'Business website for RKD Works with responsive design and local SEO optimization features for maximum visibility.',
     image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop',
     tech: ['Business Website', 'SEO', 'Responsive'],
     year: '2024',
+    demo: null,
+    comingSoon: true,
+    featured: false,
+  },
+  {
+    id: 8,
+    num: '08',
+    title: 'EDUside',
+    subtitle: 'English Studying Website',
+    description: 'An interactive English learning platform designed to help students improve their language skills through structured lessons, vocabulary building, grammar exercises, and engaging study tools.',
+    image: 'https://i.pinimg.com/736x/da/f7/7c/daf77cdc9571d117e0983b720926a056.jpg',
+    tech: ['React', 'Education', 'Responsive'],
+    year: '2025',
     demo: null,
     comingSoon: true,
     featured: false,
@@ -219,6 +268,17 @@ function Lightbox({ images, startIndex, onClose }: {
   );
 }
 
+/* ── Projects popup heading ──────────────────────────────────────── */
+function ProjectsTypewriterHeading() {
+  return (
+    <>
+      <PopWord i={0} style={{ color: '#ffffff' }}>MY</PopWord>
+      <br />
+      <PopWord i={1} style={{ color: '#d4e635' }}>Projects</PopWord>
+    </>
+  );
+}
+
 export default function ProjectsPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
@@ -277,7 +337,7 @@ export default function ProjectsPage() {
             <span className="block h-[2px] rounded-full bg-white transition-all duration-300 group-hover:bg-[#e0f11f]" style={{ width: '20px' }} />
             <span className="block h-[2px] rounded-full bg-white transition-all duration-300 group-hover:bg-[#e0f11f]" style={{ width: '24px' }} />
           </button>
-          <a href="/#contact" className="hidden md:flex items-center hover:opacity-60 transition-opacity">
+          <a href="https://wa.me/919746711804" target="_blank" rel="noopener noreferrer" className="hidden md:flex items-center hover:opacity-60 transition-opacity">
             <span style={{ fontFamily: '"Ms Madi", cursive', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: '#ffffff', lineHeight: 1 }}>Me</span>
           </a>
         </div>
@@ -339,9 +399,7 @@ export default function ProjectsPage() {
         <motion.h1 variants={fadeInUp}
           style={{ fontFamily: '"Big Shoulders Display", sans-serif', fontWeight: 900, fontSize: 'clamp(64px, 14vw, 160px)', letterSpacing: '-0.02em', lineHeight: 0.9, textTransform: 'uppercase' }}
           className="mb-10">
-          <span style={{ color: '#ffffff' }}>Featured</span>
-          <br />
-          <span style={{ color: '#d4e635' }}>Projects</span>
+          <ProjectsTypewriterHeading />
         </motion.h1>
 
         <motion.div variants={fadeInUp} className="flex items-center justify-between">
@@ -441,7 +499,7 @@ export default function ProjectsPage() {
 
         <motion.div variants={fadeInUp} className="flex items-end justify-between mb-10">
           <h2 style={{ fontFamily: '"Big Shoulders Display", sans-serif', fontWeight: 900, fontSize: 'clamp(32px, 5vw, 64px)', letterSpacing: '-0.01em', textTransform: 'uppercase', color: '#fff' }}>
-            More Work
+            Featured Work
           </h2>
           <span className="text-xs text-gray-600 tracking-widest uppercase hidden sm:block">{otherProjects.length} Projects</span>
         </motion.div>

@@ -6,6 +6,40 @@ import {
   Code2, Palette, TrendingUp, CheckCircle2, ExternalLink, ShoppingCart, ChevronRight, Download
 } from 'lucide-react';
 
+/* ── Word popup animation ────────────────────────────────────────── */
+const wordBounce = {
+  hidden: { opacity: 0, y: -80, scaleY: 1.3 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0, scaleY: 1,
+    transition: { delay: i * 0.15, type: 'spring' as const, stiffness: 400, damping: 18, mass: 0.8 }
+  }),
+};
+
+function PopWord({ children, i, style }: { children: React.ReactNode; i: number; style?: React.CSSProperties }) {
+  return (
+    <motion.span
+      custom={i}
+      variants={wordBounce}
+      initial="hidden"
+      animate="visible"
+      style={{ display: 'inline-block', transformOrigin: 'top center', ...style }}
+    >
+      {children}
+    </motion.span>
+  );
+}
+
+/* ── About bounce heading ────────────────────────────────────────── */
+function AboutTypewriterHeading() {
+  return (
+    <>
+      <PopWord i={0} style={{ color: '#ffffff' }}>About</PopWord>
+      <br />
+      <PopWord i={1} style={{ color: '#a3e635' }}>Me.</PopWord>
+    </>
+  );
+}
+
 const EASE = [0.22, 1, 0.36, 1] as any;
 
 const fadeInUp = {
@@ -298,8 +332,7 @@ export default function About() {
         <motion.h1 variants={fadeInUp}
           className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase leading-none tracking-tight text-white mb-6"
           style={{ fontFamily: '"Big Shoulders Display", sans-serif' }}>
-          About<br />
-          <span style={{ color: '#a3e635' }}>Me.</span>
+          <AboutTypewriterHeading />
         </motion.h1>
         <motion.div variants={fadeInUp} className="flex items-center gap-2 text-gray-500 text-sm">
           <MapPin size={14} style={{ color: '#a3e635' }} />
