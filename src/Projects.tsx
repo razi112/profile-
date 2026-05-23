@@ -154,6 +154,17 @@ const posters = [
   { id: 6,  src: 'https://i.pinimg.com/474x/ab/96/98/ab9698ce6a3f360c10b3a529790be0a4.jpg', label: 'AKP MSU' },
   { id: 7,  src: 'https://i.pinimg.com/736x/11/14/15/11141572318ba0624328f286c7c982da.jpg', label: 'VDS SMILE' },
   { id: 8,  src: 'https://i.pinimg.com/736x/09/8d/3f/098d3f4ad11f60a672584ceeadb4f3af.jpg', label: 'Turtle WAX' },
+  { id: 9,  src: 'https://i.pinimg.com/736x/ce/af/aa/ceafaa9fa28f8eccc7472e065d927023.jpg', label: 'DEFENDER LAND ROVER' },
+  { id: 10, src: 'https://i.pinimg.com/736x/c6/77/de/c677de7533f22b19aa0291c13da587f4.jpg', label: 'MUSTANG CLASSIC' },
+  { id: 11, src: 'https://i.pinimg.com/736x/92/9e/23/929e23b935c34f099c0d58a91bbcb775.jpg', label: 'M3' },
+  { id: 12, src: 'https://i.pinimg.com/736x/1e/64/9e/1e649e56b4eac37f85c0ad59bb434215.jpg', label: 'ROLLS ROYCE GHOST' },
+  { id: 13, src: 'https://i.pinimg.com/736x/7a/2d/72/7a2d728345c23c9bd64ca86d678dddbe.jpg', label: 'BMW' },
+  { id: 14, src: 'https://i.pinimg.com/736x/45/fa/6f/45fa6f445d65217ce4a8fa34959ead4b.jpg', label: 'Bullet' },
+  { id: 15, src: 'https://i.pinimg.com/736x/46/48/31/46483194f7b1938806f459c1a2cada20.jpg', label: 'HONDA CITY' },
+  { id: 16, src: 'https://i.pinimg.com/736x/b8/76/2d/b8762dc6e2a277068242f5e61d2ef7de.jpg', label: 'DODGE' },
+  { id: 17, src: 'https://i.pinimg.com/736x/f6/b0/f4/f6b0f459a0c8574f2c1cc96f52a047b4.jpg', label: 'RANGE ROVER' },
+  { id: 18, src: 'https://i.pinimg.com/736x/57/83/81/578381d4ba54437839cd36ad3ca8db89.jpg', label: 'BOLERO 4X4' },
+  { id: 19, src: 'https://i.pinimg.com/736x/e3/49/90/e34990647d85d616f0d6d638ce9aea86.jpg', label: 'FORD RAPTOR' },
 ];
 
 // ── Lightbox ──────────────────────────────────────────────────────────────
