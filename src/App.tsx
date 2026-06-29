@@ -710,7 +710,251 @@ function ServiceRow({ num, Icon, title, desc }: { num: string; Icon: React.Eleme
   );
 }
 
+// ── Welcome / Intro Screen ─────────────────────────────────────────────────
+function WelcomeScreen({ onDone }: { onDone: () => void }) {
+  const [phase, setPhase] = React.useState<'in' | 'hold' | 'out'>('in');
+  const [count, setCount] = React.useState(0);
+
+  React.useEffect(() => {
+    const t1 = setTimeout(() => setPhase('hold'), 300);
+    const t2 = setTimeout(() => setPhase('out'),  3200);
+    const t3 = setTimeout(() => onDone(),          4000);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, [onDone]);
+
+  // counter 0 → 100 over ~2.8s
+  React.useEffect(() => {
+    if (phase === 'out') { setCount(100); return; }
+    if (phase !== 'hold') return;
+    let n = 0;
+    const step = () => {
+      n += Math.ceil(Math.random() * 4 + 1);
+      if (n >= 100) { setCount(100); return; }
+      setCount(n);
+      setTimeout(step, 28);
+    };
+    step();
+  }, [phase]);
+
+  const nameChars = 'MUHAMMED RAZI'.split('');
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[9999] overflow-hidden select-none"
+      style={{ background: '#030303' }}
+      animate={phase === 'out' ? { clipPath: 'inset(0 0 100% 0)' } : { clipPath: 'inset(0 0 0% 0)' }}
+      initial={{ clipPath: 'inset(0 0 0% 0)' }}
+      transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
+    >
+      {/* ── noise texture overlay ── */}
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '128px 128px',
+        }}
+      />
+
+      {/* ── deep green glow — top left ── */}
+      <motion.div
+        className="absolute -top-40 -left-40 rounded-full pointer-events-none"
+        style={{ width: 700, height: 700, background: 'radial-gradient(circle, rgba(163,230,53,0.13) 0%, transparent 65%)' }}
+        animate={{ scale: [1, 1.18, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      {/* ── glow — bottom right ── */}
+      <motion.div
+        className="absolute -bottom-60 -right-40 rounded-full pointer-events-none"
+        style={{ width: 600, height: 600, background: 'radial-gradient(circle, rgba(212,230,53,0.09) 0%, transparent 65%)' }}
+        animate={{ scale: [1, 1.25, 1], opacity: [0.4, 0.8, 0.4] }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
+      />
+
+      {/* ── fine dot-grid ── */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.07]"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(163,230,53,0.9) 1px, transparent 1px)',
+          backgroundSize: '32px 32px',
+        }}
+      />
+
+      {/* ── horizontal scan line ── */}
+      <motion.div
+        className="absolute left-0 right-0 h-px pointer-events-none"
+        style={{ background: 'linear-gradient(to right, transparent 0%, #d4e635 40%, #a3e635 60%, transparent 100%)', opacity: 0.25 }}
+        animate={{ top: ['0%', '100%'] }}
+        transition={{ duration: 3.5, ease: 'linear', repeat: Infinity }}
+      />
+
+      {/* ── left vertical accent bar ── */}
+      <motion.div
+        className="absolute top-0 left-10 bottom-0 w-px"
+        style={{ background: 'linear-gradient(to bottom, transparent, rgba(163,230,53,0.35), transparent)' }}
+        initial={{ scaleY: 0, originY: 0 }}
+        animate={{ scaleY: phase !== 'in' ? 1 : 0 }}
+        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+      />
+      {/* ── right vertical accent bar ── */}
+      <motion.div
+        className="absolute top-0 right-10 bottom-0 w-px"
+        style={{ background: 'linear-gradient(to bottom, transparent, rgba(163,230,53,0.35), transparent)' }}
+        initial={{ scaleY: 0, originY: 1 }}
+        animate={{ scaleY: phase !== 'in' ? 1 : 0 }}
+        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+      />
+
+      {/* ── corner brackets ── */}
+      {([
+        { top: 20, left: 20, rot: 0 },
+        { top: 20, right: 20, rot: 90 },
+        { bottom: 20, right: 20, rot: 180 },
+        { bottom: 20, left: 20, rot: 270 },
+      ] as any[]).map((c, i) => (
+        <motion.svg key={i} width="28" height="28" viewBox="0 0 28 28" fill="none"
+          className="absolute" style={{ ...c }}
+          initial={{ opacity: 0, scale: 0.4 }}
+          animate={{ opacity: phase !== 'in' ? 1 : 0, scale: phase !== 'in' ? 1 : 0.4 }}
+          transition={{ duration: 0.5, delay: 0.25 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <path d={`M2 14 L2 2 L14 2`} stroke="#d4e635" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"
+            transform={`rotate(${c.rot} 14 14)`} />
+        </motion.svg>
+      ))}
+
+      {/* ── top label ── */}
+      <motion.div
+        className="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-3"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: phase !== 'in' ? 1 : 0, y: phase !== 'in' ? 0 : -10 }}
+        transition={{ duration: 0.55, delay: 0.2 }}
+      >
+        <div className="h-px w-12" style={{ background: 'rgba(163,230,53,0.4)' }} />
+        <span style={{ fontFamily: '"Big Shoulders Display",sans-serif', fontSize: 10, letterSpacing: '0.35em', textTransform: 'uppercase', color: 'rgba(163,230,53,0.55)', fontWeight: 600 }}>
+          Welcome
+        </span>
+        <div className="h-px w-12" style={{ background: 'rgba(163,230,53,0.4)' }} />
+      </motion.div>
+
+      {/* ── Main name — char-by-char stagger ── */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+
+        {/* Char row */}
+        <div className="flex items-end gap-[2px] overflow-hidden">
+          {nameChars.map((ch, i) => (
+            <motion.span
+              key={i}
+              initial={{ y: '110%', opacity: 0 }}
+              animate={phase !== 'in' ? { y: '0%', opacity: 1 } : { y: '110%', opacity: 0 }}
+              transition={{ duration: 0.65, delay: 0.08 + i * 0.045, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                fontFamily: '"Big Shoulders Display",sans-serif',
+                fontWeight: 900,
+                fontSize: 'clamp(44px, 10vw, 110px)',
+                letterSpacing: '-0.025em',
+                lineHeight: 0.92,
+                textTransform: 'uppercase',
+                color: ch === ' ' ? 'transparent' : (i >= 8 ? '#d4e635' : '#ffffff'),
+                display: 'inline-block',
+                width: ch === ' ' ? 'clamp(14px, 2.5vw, 28px)' : 'auto',
+              }}
+            >
+              {ch === ' ' ? '\u00A0' : ch}
+            </motion.span>
+          ))}
+        </div>
+
+        {/* Sub-label */}
+        <motion.div
+          className="flex items-center gap-4 mt-2"
+          initial={{ opacity: 0, y: 16 }}
+          animate={phase !== 'in' ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+          transition={{ duration: 0.6, delay: 0.72, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="h-px flex-1 w-16" style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.15))' }} />
+          <span style={{ fontFamily: '"Big Shoulders Display",sans-serif', fontSize: 'clamp(11px, 1.4vw, 14px)', letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontWeight: 500 }}>
+            Portfolio
+          </span>
+          <div className="h-px flex-1 w-16" style={{ background: 'linear-gradient(to left, transparent, rgba(255,255,255,0.15))' }} />
+        </motion.div>
+
+        {/* Tag pills */}
+        <motion.div
+          className="flex items-center gap-3 mt-4 flex-wrap justify-center"
+          initial={{ opacity: 0, y: 12 }}
+          animate={phase !== 'in' ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+          transition={{ duration: 0.55, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {['Web Designer', 'Developer', 'SEO Specialist'].map((tag, i) => (
+            <span key={tag} style={{
+              fontFamily: '"Big Shoulders Display",sans-serif',
+              fontSize: 'clamp(9px, 1vw, 11px)',
+              fontWeight: 600,
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: i === 1 ? '#d4e635' : 'rgba(255,255,255,0.35)',
+              padding: '4px 14px',
+              borderRadius: 999,
+              border: `1px solid ${i === 1 ? 'rgba(212,230,53,0.35)' : 'rgba(255,255,255,0.08)'}`,
+              background: i === 1 ? 'rgba(212,230,53,0.06)' : 'transparent',
+            }}>
+              {tag}
+            </span>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* ── Bottom strip ── */}
+      <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between px-10 pb-8">
+
+        {/* Year tag */}
+        <motion.span
+          initial={{ opacity: 0, x: -12 }}
+          animate={{ opacity: phase !== 'in' ? 0.4 : 0, x: phase !== 'in' ? 0 : -12 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.15em', color: 'rgba(163,230,53,0.6)', textTransform: 'uppercase' }}
+        >
+          © 2026
+        </motion.span>
+
+        {/* Progress bar + counter */}
+        <motion.div
+          className="flex flex-col items-center gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: phase !== 'in' ? 1 : 0 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+        >
+          <span style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: '0.12em', color: 'rgba(163,230,53,0.45)' }}>
+            {String(count).padStart(3, '0')}
+          </span>
+          <div className="w-32 h-[2px] rounded-full overflow-hidden" style={{ background: 'rgba(163,230,53,0.12)' }}>
+            <motion.div
+              className="h-full rounded-full"
+              style={{ background: 'linear-gradient(to right,#a3e635,#d4e635)', boxShadow: '0 0 8px rgba(163,230,53,0.6)' }}
+              animate={{ width: `${count}%` }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+            />
+          </div>
+        </motion.div>
+
+        {/* Location */}
+        <motion.div
+          className="flex items-center gap-1.5"
+          initial={{ opacity: 0, x: 12 }}
+          animate={{ opacity: phase !== 'in' ? 0.4 : 0, x: phase !== 'in' ? 0 : 12 }}
+          transition={{ duration: 0.5, delay: 0.65 }}
+        >
+          <MapPin size={10} style={{ color: 'rgba(163,230,53,0.6)' }} />
+          <span style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: '0.12em', color: 'rgba(163,230,53,0.5)', textTransform: 'uppercase' }}>
+            Kerala, IN
+          </span>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function App() {
+  const [showWelcome, setShowWelcome] = useState(true);
   const [activeSection, setActiveSection] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollY, scrollYProgress } = useScroll();
@@ -753,6 +997,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white font-sans selection:bg-lime-400/20 relative overflow-x-hidden">
+      <AnimatePresence>
+        {showWelcome && <WelcomeScreen onDone={() => setShowWelcome(false)} />}
+      </AnimatePresence>
       <FloatingOrbs />
       <GridBackground />
 
