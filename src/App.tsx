@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView, useAnimation } from 'framer-motion';
 import { supabase } from './supabase';
+import { isBirthdayEnabled } from './AdminDashboard';
 import {
   Menu,
   MapPin,
@@ -712,7 +713,7 @@ function ServiceRow({ num, Icon, title, desc }: { num: string; Icon: React.Eleme
 
 // ── Welcome / Intro Screen ─────────────────────────────────────────────────
 // Sequence: "Editor" → "Designer" → "Developer" → exit
-const INTRO_WORDS = ['Editor', 'Designer', 'Developer'] as const;
+const INTRO_WORDS = ['Think', 'Build', 'Inspire'] as const;
 
 function WelcomeScreen({ onDone }: { onDone: () => void }) {
   // wordIdx: which word is currently shown (0,1,2), -1 = none yet, 3 = all done → exit
@@ -766,8 +767,203 @@ function WelcomeScreen({ onDone }: { onDone: () => void }) {
     </motion.div>
   );
 }
+// ── Birthday Celebration ───────────────────────────────────────────────────
+function BirthdayCelebration({ onClose }: { onClose: () => void }) {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const [step, setStep] = React.useState<0|1|2>(0);
+
+  // stagger reveal steps
+  React.useEffect(() => {
+    const t1 = setTimeout(() => setStep(1), 600);
+    const t2 = setTimeout(() => setStep(2), 1200);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+
+  // ── canvas confetti ──
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const COLORS = ['#d4e635','#a3e635','#f0ff80','#ffffff','#e8ff60','#b8f000'];
+    type P = { x:number;y:number;vx:number;vy:number;size:number;color:string;rot:number;vrot:number;shape:0|1|2;opacity:number; };
+    const pts: P[] = Array.from({ length: 220 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: -30 - Math.random() * window.innerHeight * 0.6,
+      vx: (Math.random() - 0.5) * 2.5,
+      vy: 1.2 + Math.random() * 3,
+      size: 5 + Math.random() * 9,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      rot: Math.random() * Math.PI * 2,
+      vrot: (Math.random() - 0.5) * 0.12,
+      shape: Math.floor(Math.random() * 3) as 0|1|2,
+      opacity: 0.5 + Math.random() * 0.5,
+    }));
+
+    let raf: number;
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pts.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.035; p.rot += p.vrot; p.vx *= 0.997;
+        ctx.save(); ctx.globalAlpha = p.opacity; ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        ctx.fillStyle = p.color; ctx.strokeStyle = p.color;
+        if (p.shape === 0) { ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2); }
+        else if (p.shape === 1) { ctx.beginPath(); ctx.arc(0,0,p.size/3,0,Math.PI*2); ctx.fill(); }
+        else { ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(-p.size/2,0); ctx.lineTo(p.size/2,0); ctx.stroke(); }
+        ctx.restore();
+      });
+      raf = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
+  }, []);
+
+  const nameChars = 'Muhammed Razi'.split('');
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[9998] flex items-center justify-center overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.5 } }}
+      transition={{ duration: 0.5 }}
+      style={{ background: 'rgba(2,2,2,0.92)', backdropFilter: 'blur(8px)' }}
+    >
+      {/* canvas confetti */}
+      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0" />
+
+      {/* ── ambient lime glow centre ── */}
+      <motion.div className="absolute pointer-events-none"
+        style={{ width: '80vmax', height: '80vmax', borderRadius: '50%', background: 'radial-gradient(circle, rgba(163,230,53,0.07) 0%, transparent 65%)', left:'50%', top:'50%', translate:'-50% -50%' }}
+        animate={{ scale:[1,1.12,1] }} transition={{ duration:4, repeat:Infinity, ease:'easeInOut' }}
+      />
+
+      {/* ── top corners brackets ── */}
+      {([{top:24,left:24,r:0},{top:24,right:24,r:90},{bottom:24,right:24,r:180},{bottom:24,left:24,r:270}] as any[]).map((c,i)=>(
+        <motion.svg key={i} width="32" height="32" viewBox="0 0 32 32" fill="none"
+          className="absolute z-10" style={{...c}}
+          initial={{opacity:0,scale:0.3}} animate={{opacity:step>=1?0.5:0,scale:step>=1?1:0.3}}
+          transition={{duration:0.5,delay:0.1+i*0.06}}>
+          <path d="M2 16 L2 2 L16 2" stroke="#d4e635" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+            transform={`rotate(${c.r} 16 16)`}/>
+        </motion.svg>
+      ))}
+
+      {/* ── top label ── */}
+      <motion.div className="absolute top-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-3"
+        initial={{opacity:0,y:-10}} animate={{opacity:step>=1?1:0,y:step>=1?0:-10}} transition={{duration:0.5,delay:0.2}}>
+        <motion.div style={{height:1,background:'rgba(212,230,53,0.4)',transformOrigin:'right'}}
+          animate={{width:step>=1?40:0}} transition={{duration:0.6,delay:0.3}}/>
+        <span style={{fontFamily:'monospace',fontSize:9,letterSpacing:'0.38em',textTransform:'uppercase',color:'rgba(212,230,53,0.5)'}}>
+          September · 01
+        </span>
+        <motion.div style={{height:1,background:'rgba(212,230,53,0.4)',transformOrigin:'left'}}
+          animate={{width:step>=1?40:0}} transition={{duration:0.6,delay:0.3}}/>
+      </motion.div>
+
+      {/* ── MAIN CARD ── */}
+      <motion.div
+        className="relative z-10 flex flex-col items-center text-center mx-4"
+        initial={{scale:0.9,opacity:0,y:30}}
+        animate={{scale:1,opacity:1,y:0}}
+        exit={{scale:0.92,opacity:0,y:16}}
+        transition={{duration:0.75,ease:[0.22,1,0.36,1],delay:0.1}}
+        style={{maxWidth:520,width:'100%'}}
+      >
+        {/* "Happy Birthday" — Cormorant italic */}
+        <div style={{overflow:'hidden',marginBottom:4}}>
+          <motion.p
+            initial={{y:'100%'}} animate={{y:step>=1?'0%':'100%'}}
+            transition={{duration:0.65,ease:[0.22,1,0.36,1],delay:0.15}}
+            style={{fontFamily:'"Cormorant Garamond",serif',fontWeight:300,fontStyle:'italic',
+              fontSize:'clamp(18px,3vw,24px)',letterSpacing:'0.12em',color:'rgba(255,255,255,0.45)'}}
+          >
+            Happy Birthday
+          </motion.p>
+        </div>
+
+        {/* NAME — char by char */}
+        <div className="flex flex-wrap justify-center" style={{marginBottom:24}}>
+          {nameChars.map((ch,i)=>(
+            <div key={i} style={{overflow:'hidden'}}>
+              <motion.span
+                initial={{y:'110%'}}
+                animate={{y:step>=1?'0%':'110%'}}
+                transition={{duration:0.6,ease:[0.22,1,0.36,1],delay:0.25+i*0.04}}
+                style={{
+                  display:'inline-block',
+                  fontFamily:'"Big Shoulders Display",sans-serif',
+                  fontWeight:900,
+                  fontSize:'clamp(52px,11vw,120px)',
+                  letterSpacing:'-0.03em',
+                  lineHeight:0.9,
+                  textTransform:'uppercase',
+                  color: ch===' ' ? 'transparent' : '#d4e635',
+                  width: ch===' ' ? 'clamp(12px,2vw,22px)' : 'auto',
+                }}
+              >{ch===' '?'\u00A0':ch}</motion.span>
+            </div>
+          ))}
+        </div>
+
+        {/* horizontal rule */}
+        <motion.div style={{height:1,background:'linear-gradient(to right,transparent,rgba(212,230,53,0.4),transparent)',transformOrigin:'center',width:'70%',marginBottom:24}}
+          initial={{scaleX:0}} animate={{scaleX:step>=2?1:0}} transition={{duration:0.7,ease:[0.22,1,0.36,1],delay:0.1}}/>
+
+        {/* message */}
+        <motion.p
+          initial={{opacity:0,y:10}} animate={{opacity:step>=2?1:0,y:step>=2?0:10}}
+          transition={{duration:0.55,ease:[0.22,1,0.36,1],delay:0.2}}
+          style={{color:'rgba(255,255,255,0.35)',fontSize:'clamp(13px,1.4vw,15px)',lineHeight:1.8,maxWidth:380,marginBottom:36}}
+        >
+          Another year of thinking boldly, building beautifully &amp; inspiring endlessly.<br/>
+          <span style={{color:'rgba(212,230,53,0.55)'}}>May this be your greatest year yet.</span>
+        </motion.p>
+
+        {/* CTA button */}
+        <motion.div
+          initial={{opacity:0,y:12}} animate={{opacity:step>=2?1:0,y:step>=2?0:12}}
+          transition={{duration:0.5,delay:0.35}}
+        >
+          <motion.button
+            onClick={onClose}
+            whileHover={{scale:1.05,boxShadow:'0 0 40px rgba(212,230,53,0.4)'}}
+            whileTap={{scale:0.97}}
+            transition={{duration:0.2}}
+            style={{
+              fontFamily:'"Big Shoulders Display",sans-serif',fontWeight:700,
+              fontSize:12,letterSpacing:'0.25em',textTransform:'uppercase',
+              color:'#0a0a0a',background:'#d4e635',border:'none',
+              borderRadius:999,padding:'14px 48px',cursor:'pointer',
+            }}
+          >
+            Let's Go 🎉
+          </motion.button>
+        </motion.div>
+      </motion.div>
+
+      {/* ── bottom monospace strip ── */}
+      <motion.div className="absolute bottom-7 left-1/2 -translate-x-1/2 z-10 flex items-center gap-4"
+        initial={{opacity:0}} animate={{opacity:step>=2?1:0}} transition={{duration:0.5,delay:0.5}}>
+        {['Think','Build','Inspire'].map((w,i)=>(
+          <React.Fragment key={w}>
+            {i>0 && <span style={{color:'rgba(212,230,53,0.2)',fontSize:8}}>✦</span>}
+            <span style={{fontFamily:'monospace',fontSize:9,letterSpacing:'0.28em',textTransform:'uppercase',color:'rgba(212,230,53,0.35)'}}>{w}</span>
+          </React.Fragment>
+        ))}
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(true);
+
+  // Show birthday overlay based on admin toggle (auto-on Sept 1)
+  const [showBirthday, setShowBirthday] = useState(() => isBirthdayEnabled());
   const [activeSection, setActiveSection] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollY, scrollYProgress } = useScroll();
@@ -812,6 +1008,11 @@ export default function App() {
     <div className="min-h-screen bg-[#0a0a0a] text-white font-sans selection:bg-lime-400/20 relative overflow-x-hidden">
       <AnimatePresence>
         {showWelcome && <WelcomeScreen onDone={() => setShowWelcome(false)} />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {!showWelcome && showBirthday && (
+          <BirthdayCelebration onClose={() => setShowBirthday(false)} />
+        )}
       </AnimatePresence>
       <FloatingOrbs />
       <GridBackground />

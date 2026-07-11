@@ -2,10 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mail, Trash2, LogOut, Eye, Clock, User, MessageSquare,
-  Search, Shield, Lock, RefreshCw, Menu, X, ChevronRight
+  Search, Shield, Lock, RefreshCw, Menu, X, ChevronRight,
+  Gift, ToggleLeft, ToggleRight
 } from 'lucide-react';
 import { supabase } from './supabase';
 import type { Message } from './supabase';
+
+export type { Message };
+
+// ── Birthday setting helpers ──────────────────────────────────────────
+export const BIRTHDAY_KEY = 'birthday_enabled';
+export function isBirthdayEnabled(): boolean {
+  const stored = localStorage.getItem(BIRTHDAY_KEY);
+  // auto-on if September 1, unless explicitly turned off
+  const isSept1 = new Date().getMonth() === 8 && new Date().getDate() === 1;
+  if (stored === null) return isSept1;
+  return stored === 'true';
+}
+export function setBirthdayEnabled(val: boolean) {
+  localStorage.setItem(BIRTHDAY_KEY, String(val));
+}
 
 export type { Message };
 
@@ -131,6 +147,7 @@ export default function AdminDashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [activeNav, setActiveNav] = useState<'inbox' | 'unread'>('inbox');
+  const [birthdayOn, setBirthdayOn] = useState(isBirthdayEnabled);
 
   const fetchMessages = async () => {
     if (!supabase) { setFetchError('Supabase not configured.'); return; }
@@ -260,8 +277,46 @@ export default function AdminDashboard() {
         )}
       </nav>
 
-      {/* Bottom: auto-refresh + logout */}
+      {/* Bottom: birthday toggle + auto-refresh + logout */}
       <div className="p-3 border-t border-white/5 space-y-2">
+        {/* Birthday toggle */}
+        {(!sidebarCollapsed || mobile) ? (
+          <button
+            onClick={() => {
+              const next = !birthdayOn;
+              setBirthdayOn(next);
+              setBirthdayEnabled(next);
+            }}
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all"
+            style={{
+              background: birthdayOn ? 'rgba(212,230,53,0.08)' : 'rgba(255,255,255,0.03)',
+              border: birthdayOn ? '1px solid rgba(212,230,53,0.25)' : '1px solid rgba(255,255,255,0.06)',
+              color: birthdayOn ? '#d4e635' : '#6b7280',
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <Gift size={12} />
+              <span>Birthday Mode</span>
+            </div>
+            <motion.div animate={{ scale: birthdayOn ? 1.1 : 1 }} transition={{ duration: 0.2 }}>
+              {birthdayOn
+                ? <ToggleRight size={16} style={{ color: '#d4e635' }} />
+                : <ToggleLeft size={16} style={{ color: '#4b5563' }} />
+              }
+            </motion.div>
+          </button>
+        ) : (
+          <button
+            onClick={() => { const next = !birthdayOn; setBirthdayOn(next); setBirthdayEnabled(next); }}
+            className="w-full flex justify-center py-2 rounded-xl transition-all"
+            style={{ color: birthdayOn ? '#d4e635' : '#6b7280' }}
+            title={`Birthday Mode: ${birthdayOn ? 'ON' : 'OFF'}`}
+          >
+            <Gift size={14} />
+          </button>
+        )}
+
+        {/* Auto-refresh + logout */}
         {(!sidebarCollapsed || mobile) ? (
           <>
             <button onClick={() => { setAutoRefresh(v => !v); setCountdown(AUTO_REFRESH_INTERVAL); }}
