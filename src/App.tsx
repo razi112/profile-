@@ -192,11 +192,11 @@ function ContactForm() {
         import.meta.env.VITE_EMAILJS_SERVICE_ID,
         import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
         {
-          from_name:    form.name,
-          from_email:   form.email,
-          subject:      form.subject || '(No subject)',
-          message:      form.message,
-          reply_to:     form.email,
+          from_name: form.name,
+          from_email: form.email,
+          subject: form.subject || '(No subject)',
+          message: form.message,
+          reply_to: form.email,
         },
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
       );
@@ -280,7 +280,7 @@ function ContactForm() {
         <h4 className="text-lg font-bold text-white">Let's create something amazing together!</h4>
         <p className="text-gray-400 text-sm leading-relaxed">Whether you have a specific project in mind or just want to explore possibilities, I'd love to hear from you.</p>
         <ul className="space-y-2 pt-2">
-          {['Usually responds within 24 hours','Available for remote collaboration','Open to freelance and full-time opportunities','Building high-performing websites & SEO strategies'].map((item, i) => (
+          {['Usually responds within 24 hours', 'Available for remote collaboration', 'Open to freelance and full-time opportunities', 'Building high-performing websites & SEO strategies'].map((item, i) => (
             <li key={i} className="flex items-start space-x-2 text-sm text-gray-300">
               <CheckCircle2 size={16} className="text-lime-400 mt-0.5 shrink-0" /><span>{item}</span>
             </li>
@@ -722,9 +722,9 @@ function WelcomeScreen({ onDone }: { onDone: () => void }) {
 
   React.useEffect(() => {
     // stagger each word: ~2s each
-    const t0 = setTimeout(() => setWordIdx(0),  400);
-    const t1 = setTimeout(() => setWordIdx(1),  2400);
-    const t2 = setTimeout(() => setWordIdx(2),  4400);
+    const t0 = setTimeout(() => setWordIdx(0), 400);
+    const t1 = setTimeout(() => setWordIdx(1), 2400);
+    const t2 = setTimeout(() => setWordIdx(2), 4400);
     // start exit at 6400ms
     const t3 = setTimeout(() => setExiting(true), 6400);
     const t4 = setTimeout(() => onDone(), 7300);
@@ -770,7 +770,7 @@ function WelcomeScreen({ onDone }: { onDone: () => void }) {
 // ── Birthday Celebration ───────────────────────────────────────────────────
 function BirthdayCelebration({ onClose }: { onClose: () => void }) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const [step, setStep] = React.useState<0|1|2>(0);
+  const [step, setStep] = React.useState<0 | 1 | 2>(0);
 
   // stagger reveal steps
   React.useEffect(() => {
@@ -788,8 +788,8 @@ function BirthdayCelebration({ onClose }: { onClose: () => void }) {
     resize();
     window.addEventListener('resize', resize);
 
-    const COLORS = ['#d4e635','#a3e635','#f0ff80','#ffffff','#e8ff60','#b8f000'];
-    type P = { x:number;y:number;vx:number;vy:number;size:number;color:string;rot:number;vrot:number;shape:0|1|2;opacity:number; };
+    const COLORS = ['#d4e635', '#a3e635', '#f0ff80', '#ffffff', '#e8ff60', '#b8f000'];
+    type P = { x: number; y: number; vx: number; vy: number; size: number; color: string; rot: number; vrot: number; shape: 0 | 1 | 2; opacity: number; };
     const pts: P[] = Array.from({ length: 220 }, () => ({
       x: Math.random() * window.innerWidth,
       y: -30 - Math.random() * window.innerHeight * 0.6,
@@ -799,7 +799,7 @@ function BirthdayCelebration({ onClose }: { onClose: () => void }) {
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
       rot: Math.random() * Math.PI * 2,
       vrot: (Math.random() - 0.5) * 0.12,
-      shape: Math.floor(Math.random() * 3) as 0|1|2,
+      shape: Math.floor(Math.random() * 3) as 0 | 1 | 2,
       opacity: 0.5 + Math.random() * 0.5,
     }));
 
@@ -810,9 +810,9 @@ function BirthdayCelebration({ onClose }: { onClose: () => void }) {
         p.x += p.vx; p.y += p.vy; p.vy += 0.035; p.rot += p.vrot; p.vx *= 0.997;
         ctx.save(); ctx.globalAlpha = p.opacity; ctx.translate(p.x, p.y); ctx.rotate(p.rot);
         ctx.fillStyle = p.color; ctx.strokeStyle = p.color;
-        if (p.shape === 0) { ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2); }
-        else if (p.shape === 1) { ctx.beginPath(); ctx.arc(0,0,p.size/3,0,Math.PI*2); ctx.fill(); }
-        else { ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(-p.size/2,0); ctx.lineTo(p.size/2,0); ctx.stroke(); }
+        if (p.shape === 0) { ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2); }
+        else if (p.shape === 1) { ctx.beginPath(); ctx.arc(0, 0, p.size / 3, 0, Math.PI * 2); ctx.fill(); }
+        else { ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(-p.size / 2, 0); ctx.lineTo(p.size / 2, 0); ctx.stroke(); }
         ctx.restore();
       });
       raf = requestAnimationFrame(draw);
@@ -837,107 +837,109 @@ function BirthdayCelebration({ onClose }: { onClose: () => void }) {
 
       {/* ── ambient lime glow centre ── */}
       <motion.div className="absolute pointer-events-none"
-        style={{ width: '80vmax', height: '80vmax', borderRadius: '50%', background: 'radial-gradient(circle, rgba(163,230,53,0.07) 0%, transparent 65%)', left:'50%', top:'50%', translate:'-50% -50%' }}
-        animate={{ scale:[1,1.12,1] }} transition={{ duration:4, repeat:Infinity, ease:'easeInOut' }}
+        style={{ width: '80vmax', height: '80vmax', borderRadius: '50%', background: 'radial-gradient(circle, rgba(163,230,53,0.07) 0%, transparent 65%)', left: '50%', top: '50%', translate: '-50% -50%' }}
+        animate={{ scale: [1, 1.12, 1] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       {/* ── top corners brackets ── */}
-      {([{top:24,left:24,r:0},{top:24,right:24,r:90},{bottom:24,right:24,r:180},{bottom:24,left:24,r:270}] as any[]).map((c,i)=>(
+      {([{ top: 24, left: 24, r: 0 }, { top: 24, right: 24, r: 90 }, { bottom: 24, right: 24, r: 180 }, { bottom: 24, left: 24, r: 270 }] as any[]).map((c, i) => (
         <motion.svg key={i} width="32" height="32" viewBox="0 0 32 32" fill="none"
-          className="absolute z-10" style={{...c}}
-          initial={{opacity:0,scale:0.3}} animate={{opacity:step>=1?0.5:0,scale:step>=1?1:0.3}}
-          transition={{duration:0.5,delay:0.1+i*0.06}}>
+          className="absolute z-10" style={{ ...c }}
+          initial={{ opacity: 0, scale: 0.3 }} animate={{ opacity: step >= 1 ? 0.5 : 0, scale: step >= 1 ? 1 : 0.3 }}
+          transition={{ duration: 0.5, delay: 0.1 + i * 0.06 }}>
           <path d="M2 16 L2 2 L16 2" stroke="#d4e635" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-            transform={`rotate(${c.r} 16 16)`}/>
+            transform={`rotate(${c.r} 16 16)`} />
         </motion.svg>
       ))}
 
       {/* ── top label ── */}
       <motion.div className="absolute top-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-3"
-        initial={{opacity:0,y:-10}} animate={{opacity:step>=1?1:0,y:step>=1?0:-10}} transition={{duration:0.5,delay:0.2}}>
-        <motion.div style={{height:1,background:'rgba(212,230,53,0.4)',transformOrigin:'right'}}
-          animate={{width:step>=1?40:0}} transition={{duration:0.6,delay:0.3}}/>
-        <span style={{fontFamily:'monospace',fontSize:9,letterSpacing:'0.38em',textTransform:'uppercase',color:'rgba(212,230,53,0.5)'}}>
+        initial={{ opacity: 0, y: -10 }} animate={{ opacity: step >= 1 ? 1 : 0, y: step >= 1 ? 0 : -10 }} transition={{ duration: 0.5, delay: 0.2 }}>
+        <motion.div style={{ height: 1, background: 'rgba(212,230,53,0.4)', transformOrigin: 'right' }}
+          animate={{ width: step >= 1 ? 40 : 0 }} transition={{ duration: 0.6, delay: 0.3 }} />
+        <span style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.38em', textTransform: 'uppercase', color: 'rgba(212,230,53,0.5)' }}>
           September · 01
         </span>
-        <motion.div style={{height:1,background:'rgba(212,230,53,0.4)',transformOrigin:'left'}}
-          animate={{width:step>=1?40:0}} transition={{duration:0.6,delay:0.3}}/>
+        <motion.div style={{ height: 1, background: 'rgba(212,230,53,0.4)', transformOrigin: 'left' }}
+          animate={{ width: step >= 1 ? 40 : 0 }} transition={{ duration: 0.6, delay: 0.3 }} />
       </motion.div>
 
       {/* ── MAIN CARD ── */}
       <motion.div
         className="relative z-10 flex flex-col items-center text-center mx-4"
-        initial={{scale:0.9,opacity:0,y:30}}
-        animate={{scale:1,opacity:1,y:0}}
-        exit={{scale:0.92,opacity:0,y:16}}
-        transition={{duration:0.75,ease:[0.22,1,0.36,1],delay:0.1}}
-        style={{maxWidth:520,width:'100%'}}
+        initial={{ scale: 0.9, opacity: 0, y: 30 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.92, opacity: 0, y: 16 }}
+        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+        style={{ maxWidth: 520, width: '100%' }}
       >
         {/* "Happy Birthday" — Cormorant italic */}
-        <div style={{overflow:'hidden',marginBottom:4}}>
+        <div style={{ overflow: 'hidden', marginBottom: 4 }}>
           <motion.p
-            initial={{y:'100%'}} animate={{y:step>=1?'0%':'100%'}}
-            transition={{duration:0.65,ease:[0.22,1,0.36,1],delay:0.15}}
-            style={{fontFamily:'"Cormorant Garamond",serif',fontWeight:300,fontStyle:'italic',
-              fontSize:'clamp(18px,3vw,24px)',letterSpacing:'0.12em',color:'rgba(255,255,255,0.45)'}}
+            initial={{ y: '100%' }} animate={{ y: step >= 1 ? '0%' : '100%' }}
+            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+            style={{
+              fontFamily: '"Cormorant Garamond",serif', fontWeight: 300, fontStyle: 'italic',
+              fontSize: 'clamp(18px,3vw,24px)', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)'
+            }}
           >
             Happy Birthday
           </motion.p>
         </div>
 
         {/* NAME — char by char */}
-        <div className="flex flex-wrap justify-center" style={{marginBottom:24}}>
-          {nameChars.map((ch,i)=>(
-            <div key={i} style={{overflow:'hidden'}}>
+        <div className="flex flex-wrap justify-center" style={{ marginBottom: 24 }}>
+          {nameChars.map((ch, i) => (
+            <div key={i} style={{ overflow: 'hidden' }}>
               <motion.span
-                initial={{y:'110%'}}
-                animate={{y:step>=1?'0%':'110%'}}
-                transition={{duration:0.6,ease:[0.22,1,0.36,1],delay:0.25+i*0.04}}
+                initial={{ y: '110%' }}
+                animate={{ y: step >= 1 ? '0%' : '110%' }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.25 + i * 0.04 }}
                 style={{
-                  display:'inline-block',
-                  fontFamily:'"Big Shoulders Display",sans-serif',
-                  fontWeight:900,
-                  fontSize:'clamp(52px,11vw,120px)',
-                  letterSpacing:'-0.03em',
-                  lineHeight:0.9,
-                  textTransform:'uppercase',
-                  color: ch===' ' ? 'transparent' : '#d4e635',
-                  width: ch===' ' ? 'clamp(12px,2vw,22px)' : 'auto',
+                  display: 'inline-block',
+                  fontFamily: '"Big Shoulders Display",sans-serif',
+                  fontWeight: 900,
+                  fontSize: 'clamp(52px,11vw,120px)',
+                  letterSpacing: '-0.03em',
+                  lineHeight: 0.9,
+                  textTransform: 'uppercase',
+                  color: ch === ' ' ? 'transparent' : '#d4e635',
+                  width: ch === ' ' ? 'clamp(12px,2vw,22px)' : 'auto',
                 }}
-              >{ch===' '?'\u00A0':ch}</motion.span>
+              >{ch === ' ' ? '\u00A0' : ch}</motion.span>
             </div>
           ))}
         </div>
 
         {/* horizontal rule */}
-        <motion.div style={{height:1,background:'linear-gradient(to right,transparent,rgba(212,230,53,0.4),transparent)',transformOrigin:'center',width:'70%',marginBottom:24}}
-          initial={{scaleX:0}} animate={{scaleX:step>=2?1:0}} transition={{duration:0.7,ease:[0.22,1,0.36,1],delay:0.1}}/>
+        <motion.div style={{ height: 1, background: 'linear-gradient(to right,transparent,rgba(212,230,53,0.4),transparent)', transformOrigin: 'center', width: '70%', marginBottom: 24 }}
+          initial={{ scaleX: 0 }} animate={{ scaleX: step >= 2 ? 1 : 0 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.1 }} />
 
         {/* message */}
         <motion.p
-          initial={{opacity:0,y:10}} animate={{opacity:step>=2?1:0,y:step>=2?0:10}}
-          transition={{duration:0.55,ease:[0.22,1,0.36,1],delay:0.2}}
-          style={{color:'rgba(255,255,255,0.35)',fontSize:'clamp(13px,1.4vw,15px)',lineHeight:1.8,maxWidth:380,marginBottom:36}}
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: step >= 2 ? 1 : 0, y: step >= 2 ? 0 : 10 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+          style={{ color: 'rgba(255,255,255,0.35)', fontSize: 'clamp(13px,1.4vw,15px)', lineHeight: 1.8, maxWidth: 380, marginBottom: 36 }}
         >
-          Another year of thinking boldly, building beautifully &amp; inspiring endlessly.<br/>
-          <span style={{color:'rgba(212,230,53,0.55)'}}>May this be your greatest year yet.</span>
+          Another year of thinking boldly, building beautifully &amp; inspiring endlessly.<br />
+          <span style={{ color: 'rgba(212,230,53,0.55)' }}>May this be your greatest year yet.</span>
         </motion.p>
 
         {/* CTA button */}
         <motion.div
-          initial={{opacity:0,y:12}} animate={{opacity:step>=2?1:0,y:step>=2?0:12}}
-          transition={{duration:0.5,delay:0.35}}
+          initial={{ opacity: 0, y: 12 }} animate={{ opacity: step >= 2 ? 1 : 0, y: step >= 2 ? 0 : 12 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
         >
           <motion.button
             onClick={onClose}
-            whileHover={{scale:1.05,boxShadow:'0 0 40px rgba(212,230,53,0.4)'}}
-            whileTap={{scale:0.97}}
-            transition={{duration:0.2}}
+            whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(212,230,53,0.4)' }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ duration: 0.2 }}
             style={{
-              fontFamily:'"Big Shoulders Display",sans-serif',fontWeight:700,
-              fontSize:12,letterSpacing:'0.25em',textTransform:'uppercase',
-              color:'#0a0a0a',background:'#d4e635',border:'none',
-              borderRadius:999,padding:'14px 48px',cursor:'pointer',
+              fontFamily: '"Big Shoulders Display",sans-serif', fontWeight: 700,
+              fontSize: 12, letterSpacing: '0.25em', textTransform: 'uppercase',
+              color: '#0a0a0a', background: '#d4e635', border: 'none',
+              borderRadius: 999, padding: '14px 48px', cursor: 'pointer',
             }}
           >
             Let's Go 🎉
@@ -947,14 +949,126 @@ function BirthdayCelebration({ onClose }: { onClose: () => void }) {
 
       {/* ── bottom monospace strip ── */}
       <motion.div className="absolute bottom-7 left-1/2 -translate-x-1/2 z-10 flex items-center gap-4"
-        initial={{opacity:0}} animate={{opacity:step>=2?1:0}} transition={{duration:0.5,delay:0.5}}>
-        {['Think','Build','Inspire'].map((w,i)=>(
+        initial={{ opacity: 0 }} animate={{ opacity: step >= 2 ? 1 : 0 }} transition={{ duration: 0.5, delay: 0.5 }}>
+        {['Think', 'Build', 'Inspire'].map((w, i) => (
           <React.Fragment key={w}>
-            {i>0 && <span style={{color:'rgba(212,230,53,0.2)',fontSize:8}}>✦</span>}
-            <span style={{fontFamily:'monospace',fontSize:9,letterSpacing:'0.28em',textTransform:'uppercase',color:'rgba(212,230,53,0.35)'}}>{w}</span>
+            {i > 0 && <span style={{ color: 'rgba(212,230,53,0.2)', fontSize: 8 }}>✦</span>}
+            <span style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(212,230,53,0.35)' }}>{w}</span>
           </React.Fragment>
         ))}
       </motion.div>
+    </motion.div>
+  );
+}
+
+/* ── Animated counter for Lime Cards ── */
+function AnimatedLimeCounter({ value }: { value: number }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.3 });
+
+  useEffect(() => {
+    if (!inView) return;
+    const duration = 1400; // ms
+    const startTime = performance.now();
+
+    let frameId: number;
+    const update = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // easeOutCubic
+      const ease = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(ease * value));
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(update);
+      }
+    };
+
+    frameId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(frameId);
+  }, [inView, value]);
+
+  return <span ref={ref}>{count}%</span>;
+}
+
+function AnimatedLimeCard({
+  item,
+  index,
+}: {
+  item: { name: string; desc: string; value: number };
+  index: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 45, scale: 0.96 }}
+      whileInView={{ opacity: 1, x: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{
+        duration: 0.65,
+        delay: 0.1 + index * 0.14,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      whileHover={{
+        y: -6,
+        scale: 1.018,
+        boxShadow: '0 20px 40px -10px rgba(212, 248, 54, 0.45)',
+      }}
+      whileTap={{ scale: 0.98 }}
+      className="relative flex items-center justify-between rounded-2xl px-6 sm:px-8 py-5 sm:py-6 transition-all duration-300 select-none cursor-default group overflow-hidden"
+      style={{
+        background: '#d4f836',
+        boxShadow: '0 10px 30px -10px rgba(212,248,54,0.3)',
+      }}
+    >
+      {/* ── Dynamic Sheen Sweep on Hover ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-0">
+        <div
+          className="absolute -top-[100%] bottom-0 w-44 h-[300%] -skew-x-[25deg] opacity-0 group-hover:opacity-100 transition-all duration-1000 -left-[100%] group-hover:left-[220%]"
+          style={{
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)',
+          }}
+        />
+      </div>
+
+      {/* Left: Tool Name + Description */}
+      <div className="min-w-0 pr-3 sm:pr-4 relative z-10">
+        <h3
+          className="text-black font-extrabold text-2xl sm:text-[28px] tracking-tight leading-none group-hover:translate-x-1 transition-transform duration-300"
+          style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+        >
+          {item.name}
+        </h3>
+        <p
+          className="text-black/85 text-xs sm:text-[14px] mt-2 font-medium leading-[1.35] max-w-[210px] sm:max-w-[260px]"
+          style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+        >
+          {item.desc}
+        </p>
+      </div>
+
+      {/* Middle: Animated Vertical Divider */}
+      <motion.div
+        initial={{ scaleY: 0 }}
+        whileInView={{ scaleY: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.55, delay: 0.25 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
+        className="w-[1.5px] h-12 shrink-0 mx-2 sm:mx-5 rounded-full relative z-10 origin-center"
+        style={{ background: 'rgba(0, 0, 0, 0.18)' }}
+      />
+
+      {/* Right: Animated Percentage */}
+      <div className="shrink-0 pl-1 text-right relative z-10">
+        <span
+          className="inline-block font-bold text-4xl sm:text-5xl md:text-[54px] tracking-tight leading-none select-none group-hover:scale-105 transition-transform duration-300"
+          style={{
+            color: 'rgba(0, 0, 0, 0.44)',
+            fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          }}
+        >
+          <AnimatedLimeCounter value={item.value} />
+        </span>
+      </div>
     </motion.div>
   );
 }
@@ -1070,19 +1184,19 @@ export default function App() {
                 aria-label="Close menu"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path d="M6 6L18 18M18 6L6 18"/>
+                  <path d="M6 6L18 18M18 6L6 18" />
                 </svg>
               </button>
 
               {/* Nav links */}
               <nav className="flex flex-col gap-0">
                 {[
-                  { label: 'Home',     href: '#home',     id: 'home' },
-                  { label: 'About',    href: '/about',    id: 'about' },
+                  { label: 'Home', href: '#home', id: 'home' },
+                  { label: 'About', href: '/about', id: 'about' },
                   { label: 'Projects', href: '/projects', id: 'projects' },
                   { label: 'Services', href: '#services', id: 'services' },
-                  { label: 'Skills',   href: '/skills',   id: 'skills' },
-                  { label: 'Contact',  href: '#contact',  id: 'contact' },
+                  { label: 'Skills', href: '/skills', id: 'skills' },
+                  { label: 'Contact', href: '#contact', id: 'contact' },
                 ].map(({ label, href, id }, i) => (
                   <motion.a
                     key={label}
@@ -1189,7 +1303,7 @@ export default function App() {
               style={{ transition: 'stroke 0.25s, transform 0.25s' }}
               className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             >
-              <path d="M7 17L17 7M17 7H7M17 7v10"/>
+              <path d="M7 17L17 7M17 7H7M17 7v10" />
             </svg>
           </a>
         </div>
@@ -1295,6 +1409,7 @@ export default function App() {
 
       {/* ── About Preview Section ── */}
       <motion.section
+        id="about"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.08 }}
@@ -1306,14 +1421,14 @@ export default function App() {
 
           {/* ── TOP ROW — label + nav link ── */}
           <motion.div variants={fadeInUp} className="flex items-center justify-between py-8 border-b" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
-            <span style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(163,230,53,0.5)' }}>
+            <span style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(212,248,54,0.7)' }}>
               02 — About
             </span>
             <a href="/about" style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#a3e635')}
+              onMouseEnter={e => (e.currentTarget.style.color = '#d4f836')}
               onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.3)')}>
               Full Profile
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10" /></svg>
             </a>
           </motion.div>
 
@@ -1336,8 +1451,8 @@ export default function App() {
                   marginBottom: '0.2em',
                 }}>
                   Who<br />
-                  <span style={{ WebkitTextStroke: '1.5px rgba(163,230,53,0.5)', color: 'transparent' }}>Am I</span>
-                  <span style={{ color: '#a3e635' }}>.</span>
+                  <span style={{ WebkitTextStroke: '1.5px rgba(212,248,54,0.5)', color: 'transparent' }}>Am I</span>
+                  <span style={{ color: '#d4f836' }}>.</span>
                 </h2>
               </div>
 
@@ -1379,8 +1494,8 @@ export default function App() {
               <div className="grid grid-cols-3 gap-px" style={{ background: 'rgba(255,255,255,0.04)' }}>
                 {[
                   { value: '20+', label: 'Projects' },
-                  { value: '30+', label: 'Clients'  },
-                  { value: '1+',  label: 'Yrs Exp'  },
+                  { value: '30+', label: 'Clients' },
+                  { value: '1+', label: 'Yrs Exp' },
                 ].map(({ value, label }) => (
                   <div key={label} className="flex flex-col items-center justify-center py-8 gap-1" style={{ background: '#0a0a0a' }}>
                     <span style={{ fontFamily: '"Big Shoulders Display",sans-serif', fontWeight: 900, fontSize: 'clamp(32px,4vw,48px)', letterSpacing: '-0.02em', color: '#a3e635', lineHeight: 1 }}>{value}</span>
@@ -1389,45 +1504,26 @@ export default function App() {
                 ))}
               </div>
 
-              {/* skill rows */}
-              <div className="space-y-0 border-t" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+              {/* ── Image-styled Skill Cards with Animations ── */}
+              <div className="flex flex-col gap-4">
                 {[
-                  { name: 'Photoshop',   num: 95 },
-                  { name: 'Illustrator', num: 90 },
-                  { name: 'CapCut',      num: 93 },
-                ].map(({ name, num }, i) => (
-                  <motion.div
-                    key={name}
-                    className="flex items-center justify-between py-5 border-b group cursor-default"
-                    style={{ borderColor: 'rgba(255,255,255,0.05)' }}
-                    initial={{ opacity: 0, x: 30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    {/* name */}
-                    <span style={{ fontFamily: '"Big Shoulders Display",sans-serif', fontWeight: 800, fontSize: 'clamp(22px,3vw,32px)', letterSpacing: '-0.01em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.75)', transition: 'color 0.25s' }}
-                      className="group-hover:text-white">
-                      {name}
-                    </span>
-
-                    {/* bar + pct */}
-                    <div className="flex items-center gap-4">
-                      <div className="w-24 h-px overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
-                        <motion.div
-                          className="h-full"
-                          style={{ background: '#a3e635', transformOrigin: 'left' }}
-                          initial={{ scaleX: 0 }}
-                          whileInView={{ scaleX: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.9, delay: 0.3 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                        />
-                      </div>
-                      <span style={{ fontFamily: 'monospace', fontSize: 11, color: 'rgba(163,230,53,0.55)', letterSpacing: '0.05em' }}>
-                        {num}%
-                      </span>
-                    </div>
-                  </motion.div>
+                  {
+                    name: 'Photoshop',
+                    desc: 'Proffesional Graphic Designing tool.',
+                    value: 99,
+                  },
+                  {
+                    name: 'Illustrator',
+                    desc: 'Professional Vector Designing tool.',
+                    value: 97,
+                  },
+                  {
+                    name: 'Indesign',
+                    desc: 'Proffesional page layout and desktop publishing',
+                    value: 98,
+                  },
+                ].map((item, i) => (
+                  <AnimatedLimeCard key={item.name} item={item} index={i} />
                 ))}
               </div>
 
@@ -1464,12 +1560,12 @@ export default function App() {
         {/* Services accordion rows */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24">
           {[
-            { num: '01', icon: CodeXml,      title: 'Web Development',   desc: 'Custom websites and web apps built with React, Next.js, and modern technologies. Fast, responsive, and built to convert.' },
-            { num: '02', icon: ShoppingCart, title: 'E-Commerce',         desc: 'Complete online stores with payment integration, inventory management, and seamless shopping experiences.' },
-            { num: '03', icon: Search,       title: 'SEO Optimization',   desc: 'Proven SEO strategies to improve search rankings, drive organic traffic, and grow your online visibility.' },
-            { num: '04', icon: TrendingUp,   title: 'Digital Marketing',  desc: 'Strategic campaigns across social media, email, and content to grow your brand and reach your audience.' },
-            { num: '05', icon: Palette,      title: 'Graphic Design',     desc: 'Creative visual solutions — branding, logos, social media design, and print materials that make an impact.' },
-            { num: '06', icon: Server,       title: 'Server Management',  desc: 'Reliable hosting, SSL setup, domain management, and server optimization for peak performance.' },
+            { num: '01', icon: CodeXml, title: 'Web Development', desc: 'Custom websites and web apps built with React, Next.js, and modern technologies. Fast, responsive, and built to convert.' },
+            { num: '02', icon: ShoppingCart, title: 'E-Commerce', desc: 'Complete online stores with payment integration, inventory management, and seamless shopping experiences.' },
+            { num: '03', icon: Search, title: 'SEO Optimization', desc: 'Proven SEO strategies to improve search rankings, drive organic traffic, and grow your online visibility.' },
+            { num: '04', icon: TrendingUp, title: 'Digital Marketing', desc: 'Strategic campaigns across social media, email, and content to grow your brand and reach your audience.' },
+            { num: '05', icon: Palette, title: 'Graphic Design', desc: 'Creative visual solutions — branding, logos, social media design, and print materials that make an impact.' },
+            { num: '06', icon: Server, title: 'Server Management', desc: 'Reliable hosting, SSL setup, domain management, and server optimization for peak performance.' },
           ].map(({ num, icon: Icon, title, desc }) => (
             <ServiceRow key={num} num={num} Icon={Icon} title={title} desc={desc} />
           ))}
@@ -1482,7 +1578,7 @@ export default function App() {
             {[
               { value: '20+', label: 'Projects' },
               { value: '30+', label: 'Clients' },
-              { value: '1+',  label: 'Years Exp' },
+              { value: '1+', label: 'Years Exp' },
               { value: '100%', label: 'Satisfaction' },
             ].map(({ value, label }) => (
               <div key={label} className="flex flex-col items-center justify-center py-10 gap-2" style={{ background: '#0a0a0a' }}>

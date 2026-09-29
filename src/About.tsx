@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   Award, Users, Coffee, Heart, ArrowLeft, MapPin,
@@ -293,6 +293,117 @@ function AboutFooterMarquee() {
   );
 }
 
+/* ── Animated Counter for About Lime Cards ── */
+function AnimatedAboutLimeCounter({ value }: { value: number }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.3 });
+
+  useEffect(() => {
+    if (!inView) return;
+    const duration = 1400;
+    const startTime = performance.now();
+
+    let frameId: number;
+    const update = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(ease * value));
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(update);
+      }
+    };
+
+    frameId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(frameId);
+  }, [inView, value]);
+
+  return <span ref={ref}>{count}%</span>;
+}
+
+function AnimatedAboutLimeCard({
+  item,
+  index,
+}: {
+  item: { name: string; desc: string; value: number };
+  index: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 40, scale: 0.96 }}
+      whileInView={{ opacity: 1, x: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{
+        duration: 0.65,
+        delay: 0.1 + index * 0.12,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      whileHover={{
+        y: -6,
+        scale: 1.018,
+        boxShadow: '0 20px 40px -10px rgba(212, 248, 54, 0.45)',
+      }}
+      whileTap={{ scale: 0.98 }}
+      className="relative flex items-center justify-between rounded-2xl px-6 sm:px-8 py-5 sm:py-6 transition-all duration-300 select-none cursor-default group overflow-hidden"
+      style={{
+        background: '#d4f836',
+        boxShadow: '0 10px 30px -10px rgba(212,248,54,0.3)',
+      }}
+    >
+      {/* ── Sheen sweep on hover ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-0">
+        <div
+          className="absolute -top-[100%] bottom-0 w-44 h-[300%] -skew-x-[25deg] opacity-0 group-hover:opacity-100 transition-all duration-1000 -left-[100%] group-hover:left-[220%]"
+          style={{
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)',
+          }}
+        />
+      </div>
+
+      {/* Left: Tool Name + Description */}
+      <div className="min-w-0 pr-3 sm:pr-4 relative z-10">
+        <h3
+          className="text-black font-extrabold text-2xl sm:text-[28px] tracking-tight leading-none group-hover:translate-x-1 transition-transform duration-300"
+          style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+        >
+          {item.name}
+        </h3>
+        <p
+          className="text-black/85 text-xs sm:text-[14px] mt-2 font-medium leading-[1.35] max-w-[210px] sm:max-w-[260px]"
+          style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+        >
+          {item.desc}
+        </p>
+      </div>
+
+      {/* Middle: Animated Vertical Divider */}
+      <motion.div
+        initial={{ scaleY: 0 }}
+        whileInView={{ scaleY: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.55, delay: 0.25 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
+        className="w-[1.5px] h-12 shrink-0 mx-2 sm:mx-5 rounded-full relative z-10 origin-center"
+        style={{ background: 'rgba(0, 0, 0, 0.18)' }}
+      />
+
+      {/* Right: Percentage */}
+      <div className="shrink-0 pl-1 text-right relative z-10">
+        <span
+          className="inline-block font-bold text-4xl sm:text-5xl md:text-[54px] tracking-tight leading-none select-none group-hover:scale-105 transition-transform duration-300"
+          style={{
+            color: 'rgba(0, 0, 0, 0.44)',
+            fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          }}
+        >
+          <AnimatedAboutLimeCounter value={item.value} />
+        </span>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function About() {
   const navigate = useNavigate();
 
@@ -440,6 +551,29 @@ export default function About() {
                   <div className="text-xs text-gray-500 mt-1">{label}</div>
                 </div>
               </motion.div>
+            ))}
+          </div>
+
+          {/* ── Image-styled Core Software Cards with Animations ── */}
+          <div className="flex flex-col gap-4">
+            {[
+              {
+                name: 'Photoshop',
+                desc: 'Proffesional Graphic Designing tool.',
+                value: 99,
+              },
+              {
+                name: 'Illustrator',
+                desc: 'Professional Vector Designing tool.',
+                value: 97,
+              },
+              {
+                name: 'Indesign',
+                desc: 'Proffesional page layout and desktop publishing',
+                value: 98,
+              },
+            ].map((item, i) => (
+              <AnimatedAboutLimeCard key={item.name} item={item} index={i} />
             ))}
           </div>
         </motion.div>
